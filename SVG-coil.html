@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>coils with a/A in &lt;path&gt;</title>
+  </head>
+
+  <body>
+    <h1>Coils with a/A in &lt;path&gt;</h1>
+
+
+    <h2>A Right-wards Coil (large-arc=0 sweep=1)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+      <path d="M 0,50 a 50,50 0 0,1 100,0
+                      a 50,50 0 0,1 100,0
+                      a 50,50 0 0,1 100,0"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <h2>A Right-wards Coil (large-arc=0 sweep=0)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+      <path d="M 0,50 a 50,50 0 0,0 100,0
+                      a 50,50 0 0,0 100,0
+                      a 50,50 0 0,0 100,0"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+
+    <hr width="75%"/>
+
+
+    <h2>A Down-wards Coil (large-arc=0 sweep=1)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="300">
+      <path d="M 50,0 a 50,50 0 0,1 0,100
+                      a 50,50 0 0,1 0,100
+                      a 50,50 0 0,1 0,100"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <h2>A Right-wards Coil (large-arc=0 sweep=0)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="300">
+      <path d="M 50,0 a 50,50 0 0,0 0,100
+                      a 50,50 0 0,0 0,100
+                      a 50,50 3 0,0 0,100"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <hr width="75%"/>
+
+    <h1>Reverse-Direction Coils</h1>
+    <p>To reverse direction, change the (relative) end point accordingly and invert the sweep flag (fifth or last but two a/A parameter).</p>
+    <p>For instance, the next example draws the first example image leftwards, resulting in the same appearing image.</p>
+
+    <h2>A Left-wards Coil (large-arc=0 sweep=0): same-looking as right-wards coil (large-arc=0 sweep=1)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+      <path d="M 300,50 a 50,50 0 0,0 -100,0
+                        a 50,50 0 0,0 -100,0
+                        a 50,50 0 0,0 -100,0"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <h2>A Left-wards Coil (large-arc=0 sweep=1): same-looking as right-wards Coil (large-arc=0 sweep=0)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="300" height="100">
+      <path d="M 300,50 a 50,50 0 0,1 -100,0
+                        a 50,50 0 0,1 -100,0
+                        a 50,50 0 0,1 -100,0"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <hr width="75%"/>
+
+
+    <h2>An Up-wards Coil (large-arc=0 sweep=0): same-looking as down-wards coil (large-arc=0 sweep=1)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="300">
+      <path d="M 50,300 a 50,50 0 0,0 0,-100
+                        a 50,50 0 0,0 0,-100
+                        a 50,50 0 0,0 0,-100"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <h2>An Up-wards Coil (large-arc=0 sweep=1): same-looking as down-wards coil (large-arc=0 sweep=0)</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="300">
+      <path d="M 50,300 a 50,50 0 0,1 0,-100
+                        a 50,50 0 0,1 0,-100
+                        a 50,50 0 0,1 0,-100"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+
+
+  </body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>a cat with defs</title>
+  </head>
+
+  <body>
+
+    <h1>A Cat Drawn through defs</h1>
+    <p>The &lt;defs&gt; element is used to store graphical objects that will be used at a later time. Objects created inside a defs element are not rendered directly. To display them you have to reference them (with a &lt;use&gt; element for example).</p>
+    <p>Graphical objects can be referenced from anywhere, however, defining these objects inside of a defs element promotes understandability of the SVG content and is beneficial to the overall accessibility of the document.</p>
+
+    <svg width="140" height="170"
+         xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink">
+      <title>Cat</title>
+      <desc>Stick Figure of a Cat</desc>
+      <circle cx="70" cy="95" r="50" style="stroke: black; fill: none;"/>
+      <circle cx="55" cy="80" r="5"  stroke="black" fill="#339933"/>
+      <circle cx="85" cy="80" r="5"  stroke="black" fill="#339933"/>
+      <g id="whiskers">
+        <line x1="75" y1="95" x2="135" y2="85"  style="stroke: black;"/>
+        <line x1="75" y1="95" x2="135" y2="105" style="stroke: black;"/>
+      </g>
+      <use xlink:href="#whiskers" transform="scale(-1 1) translate(-140 0)"/>
+    </svg>
+
+  </body>
+</html>

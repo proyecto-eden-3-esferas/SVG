@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Arcs through A in &lt;svg:path&gt;</h1>
+
+    <p>To draw an arc around a single point the format of the SVG code is</p>
+    <pre>A rx ry 1? 2? 3? x y</pre>
+    <p>where</p>
+    <ul>
+      <li>rx,ry define the radius of the arc</li>
+      <li>1? is the x-axis-rotation</li>
+      <li>2? is the large-arc-flag</li>
+      <li>3? is the sweep flag</li>
+      <li>x,y is the point the arc is drawn to</li>
+    </ul>
+    <hr/>
+    <p>The radius of the arc is set by the two first parameters set on the A command. The first parameter is rx (radius in x-direction) and the second is ry (radius in y-direction). Setting rx and ry to the same value will result in a circular arc. Setting rx and ry to different values will result in an elliptical arc. In the example above rx was set to 30 and ry to 50.</p>
+    <p>The third parameter set on the A command is the x-axis-rotation. This sets the rotation of the arc's x-axis compared to the normal x-axis. In the above example the x-axis-rotation is set to 0. Most of the time you will not need to change this parameter.</p>
+    <p>The fourth and fifth parameters are the large-arc-flag and sweep-flag parameters. The large-arc-flag determines whether to draw the smaller or bigger arc satisfying the start point, end point and rx and ry.<!-- Here is an example drawing 4 arcs each with different combinations of the large-arc-flag and sweep-flag:--></p>
+    <p>Four different arcs can be drawn from 40,20 to the point 60,70. A long arc, a small arc, and two mirrored versions of each small/large arc. The large-arc-flag determines whether the large or small arc is to be drawn. The sweep-flag determines whether the arc is mirrored around the axis going form start point to end point. Actually, the sweep-flag controls the direction the arc is drawn (clock-wise or counter-clock-wise) which results in a <q>mirroring</q> effect.</p>
+
+    <!--
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+    -->
+    <h2>A large-arc=0 sweep=1 Right-wards Arc</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="100">
+      <path d="M 0,50 A 50,50 0 0,1 100,50"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <h2>A large-arc=0 sweep=0 Right-wards Arc</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="100">
+      <path d="M 0,50 A 50,50 0 0,0 100,50"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <h2>A large-arc=1 sweep=1 Right-wards Arc</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="100">
+      <path d="M 0,50 A 50,50 0 1,1 100,50"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+    <h2>A large-arc=1 sweep=0 Right-wards Arc</h2>
+    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="100">
+      <path d="M 0,50 A 50,50 0 1,0 100,50"
+            stroke="black" stroke-width="1" fill="none"/>
+    </svg>
+
+
+
+  </body>
+</html>
