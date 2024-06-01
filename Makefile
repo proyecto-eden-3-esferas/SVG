@@ -3,7 +3,7 @@ Gplusplus =     c++ -std=c++23
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
-schematics: schematics.test.cpp schematics.h
+schematics: schematics.test.cpp schematics.h schematics.svg.h
 	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h

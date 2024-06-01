@@ -1,4 +1,5 @@
 #include "schematics.h"
+#include "schematics.svg.h"
 
 //#define DRAW_CIRCULAR_COMPONENT_PERIM
 #ifndef DRAW_CIRCULAR_COMPONENT_PERIM
