@@ -3,7 +3,9 @@ Gplusplus =     c++ -std=c++23
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
-schematics: schematics.test.cpp schematics.h schematics.svg.h
+save_to_github:
+	git push svg main
+schematics: schematics.test.cpp schematics.h schematics.svg.h schematics.round.h
 	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h

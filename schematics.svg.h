@@ -5,6 +5,39 @@
 #include "schematics.h"
 #endif
 
+#ifndef SCHEMATICS_ROUND_H
+#include "schematics.round.h"
+#endif
+
+/* SVG Helping Functions
+ * Remember to define attribute 'stroke' (as black or some non-white colour)
+ * in the svg opening tag, or in each svg shape
+ * Sometimes you want to define fill to, possibly inside specific svg shapes
+ * You rarely want to define <svg stroke="black" fill="black"
+ * as the filling will hide a lot of detail
+ */
+#include <iostream>
+#include <string>
+#ifndef SVG_FILE_INDENT_STR
+#define SVG_FILE_INDENT_STR "  "
+#endif
+template<typename OUT = std::ostream>
+OUT& close_svg(OUT& o) {
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "</svg>\n";
+  return o;
+};
+template<typename F = double, typename OUT = std::ostream>
+OUT& open_svg(OUT& o, F w = 200.0, F h = 200.0,
+                                   const std::string& strk = "black",
+                                   const std::string&  fll = "gray",
+                                   F                   fllopct = 0.5) {
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+  o << "<svg width=\"" << w << "\" height=\"" << h;
+  o << "\" stroke=\"" << strk << "\" fill=\"" << fll << "\" fill-opacity=\"" << fllopct << "\">\n";
+  return o;
+}
+
+
 /* 'add_svg_unclosed(SVG_ELEM&, OUT&) leaves the tag add_svg_unclosed
  * so that futher attributes may be added.
  * Remember to add 'close_standalone_tag(OUT&)'
@@ -23,21 +56,22 @@ OUT & add_svg(const T& t, OUT& o = std::cout) {
 /* Partial specializations of add_svg_unclosed(SHAPE,OUT)
  */
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const circular_component<F>& cc, OUT& o = std::cout) {
+OUT & add_svg_unclosed(const circular<F>& cc, OUT& o = std::cout) {
   o << "<circle cx=\"" << cc.cx << "\" cy=\"" << cc.cy << "\" r=\"" << cc.r << "\"";
   return o;
 };
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const elliptical_component<F>& cc, OUT& o = std::cout) {
+OUT & add_svg_unclosed(const elliptical<F>& cc, OUT& o = std::cout) {
   o << "<ellipse cx=\"" << cc.cx << "\" cy=\"" << cc.cy << "\" rx=\"" << cc.rx << "\" ry=\"" << cc.ry << "\"";
   return o;
 };
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const rectangular_component<F>& rct, OUT& o = std::cout) {
+OUT & add_svg_unclosed(const rectangular<F>& rct, OUT& o = std::cout) {
   o << "<rect x=\"" << rct.cx - rct.rx <<      "\" y=\"" << rct.cy - rct.ry << "\" ";
   o <<   "width=\"" <<        2*rct.rx << "\" height=\"" <<        2*rct.ry << "\"";
   return o;
 };
+
 template<typename F = double, typename OUT = std::ostream>
 OUT & add_svg_unclosed(const rectangle<F>& rct, OUT& o = std::cout) {
   o << "<rect x=\"" << rct.x     << "\" y=\""      << rct.y << "\" ";

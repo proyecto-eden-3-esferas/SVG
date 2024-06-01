@@ -22,13 +22,13 @@
 using namespace std;
 
 typedef                       double float_type;
-typedef          component<   float_type> cir_t; // instead of former longish name 'component_t'
-typedef circular_component<   float_type>    circular_component_t;
-typedef rectangular_component<float_type> rectangular_component_t;
+typedef          angle_addressable<   float_type> cir_t; // instead of former longish name 'component_t'
+typedef circular<   float_type>    circular_component_t;
+typedef rectangular<float_type> rectangular_component_t;
 typedef rectangle<            float_type> rectangle_t;
 typedef polyline<             float_type>  polyline_t;
 typedef polygone<             float_type>  polygone_t;
-typedef  elliptical_component<float_type>  elliptical_component_t;
+typedef  elliptical<float_type>  elliptical_component_t;
 typedef               twoline<float_type>                  line_t;
 typedef                    ic<float_type>                    ic_t;
 // std::ostream& operator<<(std::ostream& o, Cmp& cmp) {
@@ -42,9 +42,9 @@ int main()
   float_type a60(cir_t::deg_to_rads(60));
   float_type a80(cir_t::deg_to_rads(80));
 
-  cout << "Test circular_component<>:\n";
+  cout << "Test circular<>:\n";
   circular_component_t cc1(25,50,50);
-  cout << "circular_component<> cc1 of radius 100 has x and y at angle 45: ";
+  cout << "circular<> cc1 of radius 100 has x and y at angle 45: ";
   cout << cc1.xperim(a45) << ',' <<  cc1.yperim(a45) << '\n';
 #ifdef DRAW_CIRCULAR_COMPONENT_PERIM
   line_t l10(cc1.xperim(a10), cc1.yperim(a10), cc1.xperim(a10) + 25, cc1.yperim(a10));
@@ -60,7 +60,7 @@ int main()
   cout << "rc1.trans_angle: " << cir_t::rads_to_deg(rc1.trans_angle) << '\n';
   cout << "rc2.trans_angle: " << cir_t::rads_to_deg(rc2.trans_angle) << '\n';
   cout << "rc3.trans_angle: " << cir_t::rads_to_deg(rc3.trans_angle) << '\n';
-  cout << "Now test rectangular_component rc2(100,100) ::xperim(rads) and ::yperim(rads) for several rads (angles):\n";
+  cout << "Now test rectangular rc2(100,100) ::xperim(rads) and ::yperim(rads) for several rads (angles):\n";
   cout << "a = 10: " << rc2.xperim(cir_t::deg_to_rads(10)) << ',' <<  rc2.yperim(cir_t::deg_to_rads(10)) << '\n';
   cout << "a = 30: " << rc2.xperim(cir_t::deg_to_rads(30)) << ',' <<  rc2.yperim(cir_t::deg_to_rads(30)) << '\n';
   cout << "a = 45: " << rc2.xperim(a45) << ',' <<  rc2.yperim(a45) << '\n';
@@ -124,7 +124,7 @@ int main()
     cout << "x=" << pt.first << ", y=" << pt.second << '\n';
 #endif
 
-  // Keep adding component to the SVG file (handle='ofs')
+  // Keep adding components to the SVG file (handle='ofs')
       add_svg(l2,ofs);
       add_svg(rc2,ofs);
       add_svg(pll1, ofs);
