@@ -5,7 +5,11 @@ Gplusplus =     c++ -std=c++23
 
 save_to_github:
 	git push svg main
-schematics: schematics.test.cpp schematics.h schematics.svg.h schematics.round.h
+schematics: schematics.test.cpp schematics.h schematics.svg.h
+	c++ -std=c++23 $<  -o $@
+schematics.round: schematics.round.test.cpp schematics.h schematics.svg.h schematics.round.h
+	c++ -std=c++23 $<  -o $@
+schematics.ic: schematics.ic.test.cpp schematics.h schematics.svg.h schematics.ic.h
 	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h
@@ -14,4 +18,4 @@ schematics: schematics.test.cpp schematics.h schematics.svg.h schematics.round.h
 	g++ -c -std=c++17 $<
 
 clean:
-	$(RM)  a.out *.test schematics test.html
+	$(RM)  a.out *.test schematics schematics.round schematics.ic test.html

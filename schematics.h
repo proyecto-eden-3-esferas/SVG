@@ -44,8 +44,8 @@ public:
 
 /* class polyline: a line made up of straight segments
  * Points are held in a container supporting push/emplace_back()
- * class polygone  is defined analogously:
- *   just substitute 'polygone' for 'polyline'
+ * class polygon  is defined analogously:
+ *   just substitute 'polygon' for 'polyline'
  */
 template <typename FLOAT = double,
           typename POINT = std::pair<FLOAT,FLOAT>,
@@ -64,16 +64,16 @@ class polyline {
 template <typename FLOAT = double,
           typename POINT = std::pair<FLOAT,FLOAT>,
           typename CONT  = std::vector<POINT> >
-class polygone {
+class polygon {
   public:
   typedef FLOAT float_t;
   typedef POINT point_t;
-  typedef polygone<FLOAT,POINT,CONT> polygone_t;
+  typedef polygon<FLOAT,POINT,CONT> polygon_t;
   CONT points;
   void push_back(const POINT& p)  {points.push_back(p);};
   void push_back(FLOAT x, FLOAT y){points.emplace_back(x,y);};
-  polygone() = default;
-  polygone(const polygone_t& pl) : points(pl.points) {};
+  polygon() = default;
+  polygon(const polygon_t& pl) : points(pl.points) {};
 };
 
 /* class oneline<> is a one-dimensional line
@@ -109,112 +109,6 @@ public:
   float_t get_x(float_t k) const {return x.get(k);};
   float_t get_y(float_t k) const {return y.get(k);};
   twoline(float_t xb, float_t yb, float_t xe, float_t ye) : x(xb,xe), y(yb,ye) {};
-};
-
-template <typename FLOAT = double>
-class ic_side : public twoline<FLOAT> {
-public:
-  typedef FLOAT float_t;
-  typedef oneline<FLOAT> twoline_t;
-  typedef std::size_t size_t;
-  size_t num;
-  float_t get_x(size_t idx) const {return twoline_t::get_x((idx + 0.5) / num);}; // idx < n
-  float_t get_y(size_t idx) const {return twoline_t::get_y((idx + 0.5) / num);}; // idx < n
-  ic_side(float_t xb, float_t yb, float_t xe, float_t ye, size_t n) :
-    twoline_t(xb,yb,xe,ye), num(n) {};
-  //float_t
-};
-
-/* class 'ic'
- * By convention, the pins on an IC are numbered counterclockwise, starting with the upper-left pin closest to the clocking mark.
- */
-template <typename FLOAT = double>
-class ic : public rectangle<FLOAT> {
-public:
-  typedef FLOAT float_t;
-  typedef rectangle<FLOAT> rectangle_t;
-  typedef std::size_t size_t;
-  float_t num_h, num_v; // number of pins vertical-wise and horizontal-wise
-  float_t sep, halfsep; // full and half separation between pins
-  float_t get_x() const {return rectangle_t::x;};
-  float_t get_y() const {return rectangle_t::y;};
-  float_t get_width()  const {return rectangle_t::width;};
-  float_t get_height() const {return rectangle_t::height;};
-  // members for getting the coordinates and facing of pins
-  virtual float_t xperim(size_t idx) const;
-  virtual float_t yperim(size_t idx) const;
-  enum facing {lt, bt, rt, tp};
-  virtual facing faces(size_t idx) const;
-  ic(float_t x, float_t y, // coordinates of upper left-hand corner
-     float_t sp,          // separation between pins
-     float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
-     rectangle_t(nh*sp, nv*sp, x, y), num_h(nh), num_v(nv), sep(sp), halfsep(sp/2) {};
-};
-template <typename FLOAT>
-FLOAT ic<FLOAT>::xperim(std::size_t idx) const {
-  if(idx < num_v)
-    return get_x();
-  else
-    if(idx < (num_v + num_h))
-      return get_x() + sep*(idx - num_v) + halfsep;
-    else
-      if(idx < (2*num_v + num_h))
-        return get_x() + get_width();
-      else
-        return get_x() + get_width() - sep*(idx - num_h - 2*num_v) - halfsep;
-};
-template <typename FLOAT>
-FLOAT ic<FLOAT>::yperim(std::size_t idx) const {
-  if(idx < num_v)
-    return get_y() + sep*idx + halfsep;
-  else {
-    if(idx < (num_v + num_h))
-      return get_y() + get_height();
-    else
-      if(idx < (2*num_v + num_h))
-        return get_y() + get_height() - sep*(idx - num_v - num_h) - halfsep;
-      else
-        return get_y();
-  }
-};
-template <typename FLOAT>
-ic<FLOAT>::facing ic<FLOAT>::faces(std::size_t idx) const {
-  if(idx < num_v)
-    return lt;
-  else
-    if(idx < (num_v + num_h))
-      return bt;
-    else
-      if(idx < (2*num_v + num_h))
-        return rt;
-      else
-        return tp;
-};
-/* Class vic<FLOAT>, for Vertical Integrated Circuit,
- * has pins only on its vertical --left and right-- sides.
- * Thus, it only needs to define or redefine [x|y]perim(IDX).
- */
-template <typename FLOAT = double>
-class vic : public ic<FLOAT> {
-public:
-  typedef           FLOAT      float_t;
-  typedef        ic<FLOAT>        ic_t;
-  typedef rectangle<FLOAT> rectangle_t;
-  typedef std::size_t size_t;
-  size_t adjust(size_t idx) const {
-    if(idx < ic_t::num_v)
-      return idx;
-    else
-      return idx + ic_t::num_h;
-  };
-  float_t     xperim(size_t idx) const {return ic_t::xperim(adjust(idx));};
-  float_t     yperim(size_t idx) const {return ic_t::yperim(adjust(idx));};
-  ic_t::facing faces(size_t idx) const {return ic_t::faces( adjust(idx));};
-  // constructor:
-  vic(float_t x, float_t y,    // coordinates of upper left-hand corner
-     float_t sp,               // separation between pins
-     float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
-     ic_t(x,y,sp,nh,nv) {};
 };
 
 #endif
