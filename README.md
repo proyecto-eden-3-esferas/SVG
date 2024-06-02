@@ -15,6 +15,7 @@ ESPAÑOL: SVG es un lenguaje sencillo para dibujar formas en una página web med
 ## General TODOs
 
 [x] Inclusion of SVG Files (See longish section "Inclusion of SVG Files" below, in here file "README.md")
+
 [x] Arrows (from `class polygon`)
 
 
@@ -31,6 +32,7 @@ ESPAÑOL: SVG es un lenguaje sencillo para dibujar formas en una página web med
 ## Music Notation TODOs
 
 [x] Pentagrams, tetragrams...
+
 [ ] Notes
 
 
