@@ -6,20 +6,37 @@ ESPAÑOL: SVG es un lenguaje sencillo para dibujar formas en una página web med
 
 
 ## Sections
+
 (1) General TODOs
-(2) Electronics TODOs
+
+(2) Diagrammes, Schematics and Electronics
+
+  - Diagrammes, Schematics and Electronics TODOs
+
 (3) Music Notation TODOs
+
 (4) Inclusion of SVG Files
 
 
 ## General TODOs
+
+[ ] Blocks
 
 [x] Inclusion of SVG Files (See longish section "Inclusion of SVG Files" below, in here file "README.md")
 
 [x] Arrows (from `class polygon`)
 
 
-## Electronics TODOs
+
+## Diagrammes, Schematics and Electronics
+
+Components are divided into (1) those located or placed by their centre of gravity (circles, ellipses..., all of them children of angle_addressable<>) and (2) those located by their upper left-hand corner coordinates, such as rectangle and its derived classes (block, ic...)
+
+### Diagrammes, Schematics and Electronics TODOs
+
+[ ] develop block diagrams
+
+[ ] triangles for op-amps, buffers, diodes... (with a centre cx,cy, and therefore a child of angle_addressable<>, or with upper left-hand corner coordinates, and therefore a child of rectangle<>)
 
 [X] coils (see file "SVG-coil.html")
 
@@ -27,7 +44,7 @@ ESPAÑOL: SVG es un lenguaje sencillo para dibujar formas en una página web med
 
 [ ] Transistors
 
-[ ] Buses (actually, bus-markers as skewed segments across lines with a multiplicity number)
+[ ] Buses (actually, bus-markers as skewed segments across lines with a multiplicity number, or some other scheme like increased stroke-width)
 
 ## Music Notation TODOs
 

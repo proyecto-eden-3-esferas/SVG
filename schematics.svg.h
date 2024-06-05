@@ -89,7 +89,7 @@ OUT & add_svg_unclosed(const rectangular<F>& rct, OUT& o = std::cout) {
 #endif
 
 
-/* Then specializations for rectangle<>, polyline<> and polygon<>.
+/* Then specializations for rectangle<>, block<>, polyline<> and polygon<>.
  * Specializations of add_svg_unclosed(POLYLINE&) and add_svg_unclosed(POLYGON&)
  * are analogous.
  */
@@ -99,6 +99,13 @@ OUT & add_svg_unclosed(const rectangle<F>& rct, OUT& o = std::cout) {
   o <<   "width=\"" << rct.width << "\" height=\"" << rct.height << "\"";
   return o;
 };
+template<typename F = double, typename OUT = std::ostream>
+OUT & add_svg_unclosed(const block<F>& blk, OUT& o = std::cout) {
+  o << "<rect x=\"" << blk.x     << "\" y=\""      << blk.y << "\" ";
+  o <<   "width=\"" << blk.width << "\" height=\"" << blk.height << "\"";
+  return o;
+};
+
 template <typename F = double,
           typename POINT = std::pair<F,F>,
           typename CONT  = std::vector<POINT>,

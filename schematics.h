@@ -30,8 +30,9 @@
 
 
 /* rectangle<> has location (x,y) = upper left-hand corner
- * and is very much modelled on svg::rect
+   and is very much modelled on svg::rect
  * It has sides parallel to X and Y axes.
+ * Its child 'block' is meant to be used in block diagrammes
  */
 template <typename FLOAT = double>
 class rectangle {
@@ -39,13 +40,46 @@ public:
   typedef FLOAT float_t;
   float_t width, height;
   float_t x, y; // coordinates of upper left-hand corner
-  rectangle(float_t w, float_t h, float_t l=0, float_t u=0) : width(w), height(h), x(l), y(u) {};
+  rectangle(float_t w, float_t h, float_t lft=0, float_t uppr=0) : width(w), height(h), x(lft), y(uppr) {};
+};
+/* Class block<>, a child of rectangle<>
+ * It keeps the number of ports (possibly realized as pins or as named connections)
+   for each of its four sides.
+ * It produces the coordinates of a port on its perimeter
+   through members 'get_x_right(INDEX)' and so on
+ * These members can be used to write a general get_x(INDEX) and get_y(INDEX)
+   for any index smaller than the total number of ports.
+ * ...
+ */
+template <typename FLOAT = double>
+class block : public rectangle<FLOAT> {
+public:
+  typedef FLOAT float_t;
+  typedef std::size_t size_t;
+  typedef std::size_t index_t;
+  typedef rectangle<FLOAT> rectangle_t;
+  using rectangle_t::x, rectangle_t::y, rectangle_t::width, rectangle_t::height;
+  size_t num_rht, num_btm, num_lft, num_upr; // number of ports on sides right, upper, left and bottom
+  // float_t num_rht, num_upr, num lft, num_btm; // number of ports on sides right, upper, left and bottom
+  float_t get_x_right( index_t idx) const {return x + width;};
+  float_t get_y_right( index_t idx) const {return y + ((idx + 0.5)/num_rht) * height;};
+  float_t get_x_bottom(index_t idx) const {return x + ((num_btm - idx - 0.5) / num_btm) * width;};
+  float_t get_y_bottom(index_t idx) const {return y + height;};
+  float_t get_x_left(  index_t idx) const {return x;};
+  float_t get_y_left(  index_t idx) const {return y + ((num_lft - idx - 0.5)/num_lft) * height;};
+  float_t get_x_top(   index_t idx) const {return x + ((idx + 0.5)/num_upr) * width;};
+  float_t get_y_top(   index_t idx) const {return y;};
+  //
+  block(float_t w, float_t h, float_t x, float_t y,
+        float_t r, float_t b, float_t l, float_t u) :
+    rectangle_t(w,h,x,y), num_rht(r), num_btm(b), num_lft(l), num_upr(u)  {};
 };
 
-/* class polyline: a line made up of straight segments
+/* classes polyline and polygon
+ * class poliline is a line made up of straight segments
  * Points are held in a container supporting push/emplace_back()
  * class polygon  is defined analogously:
- *   just substitute 'polygon' for 'polyline'
+ * (  )just substitute 'polygon' for 'polyline')
  */
 template <typename FLOAT = double,
           typename POINT = std::pair<FLOAT,FLOAT>,
@@ -77,6 +111,8 @@ class polygon {
 };
 
 /* class oneline<> is a one-dimensional line
+ * which holds its beginning and ending as single floats,
+ * and with a  static FLOAT interpolate(BEG,END, K) member
  */
 template <typename FLOAT=double>
 class oneline {

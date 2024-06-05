@@ -1,6 +1,48 @@
 #include "schematics.round.h"
 #include "schematics.svg.h"
 
+/* The pins are:
+ * (0) emitter
+ * (1) base
+ * (2) collector
+ * (3) emitter-side start of cord
+ * (4) collector-side start of cord
+ * (5) from 0
+ * (6) from 1
+ * (7) from 2
+ */
+/*
+template <typename FLOAT = double>
+class transistor : public circular<FLOAT> {
+public:
+  typedef          circular<FLOAT> circular_t;
+  typedef angle_addressable<FLOAT> cir_t;
+  typedef FLOAT float_t;
+  typedef std::size_t size_t;
+  F apow, abase;
+  F x_of_pin(size_t idx) const;
+  F y_of_pin(size_t idx) const {return 0.0;};
+  transistor(float_t ra, float_t x=0, float_t y=0,
+             float_t ap = cir_t(deg_to_rads(120)),
+             float_t ab = cir_t(deg_to_rads(60))) :
+    circular_t(ra,x,y), apow(ap), abase(ab) {};
+};
+template <typename FLOAT>
+FLOAT transistor<FLOAT>::x_of_pin(size_t idx) const {
+  switch (idx) {
+    case 0: return circular_t::x + circular_t::r * cir_t::cos(apow);
+    case 1: return circular_t::x + circular_t::r * cir_t::cos(abase);
+    case 2: return circular_t::x - circular_t::r
+    case 3: return circular_t::x + circular_t::r * cir_t::cos(abase);
+    case 4: return circular_t::x + circular_t::r * cir_t::cos(apow);
+    // Inside the transistor circle, along the base, top to bottom:
+    case 5: return circular_t::x + circular_t::r * cir_t::cos(abase);
+    case 6: return circular_t::x + circular_t::r * cir_t::cos(abase);
+    case 7: return circular_t::x + circular_t::r * cir_t::cos(abase);
+  }
+};
+*/
+
 //#define DRAW_CIRCULAR_COMPONENT_PERIM
 #ifndef DRAW_CIRCULAR_COMPONENT_PERIM
 #define DRAW_RECTANGULAR_COMPONENT_PERIM
