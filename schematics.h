@@ -1,20 +1,24 @@
 #ifndef SCHEMATICS_H
 #define SCHEMATICS_H
 
-/* File "schematics.cpp"
- * Defines several subhierarchies:
+/* Files and Classes in Schematics
+ * Several subhierarchies are defined:
  * (1) angle_addressable<> and its children:
  *     circular, elliptical, and rectangular
  *     (location on perimeter by angle)
+ *     In "schematics.round.cpp"
  * (2) 'oneline' (1-dimensional line) and 'twoline'
  *     Actually, a twoline built by compounding two oneline's.
  *     Points are produced through interpolation
+ *     In "schematics.line.cpp"
  * (3) 'ic_side', for an Integrated Circuit Side
  *     It (protect-ly) inherits from 'twoline'
  *     Points are located through a whole number index
+ *     In "schematics.ic.cpp"
  * (4) 'ic', an IC with pins on all four sides,
  *     'vic', an IC with pins on   vertical sides, and
  *     'hic', an IC with pins on horizontal sides,
+ *     In "schematics.ic.cpp"
  * NOTE: An 'ic_rectangle' can be defined by compounding ic_side's.
  * TODO:
  * (1) define a non-Axis parallel rectangular
@@ -42,6 +46,7 @@ public:
   float_t x, y; // coordinates of upper left-hand corner
   rectangle(float_t w, float_t h, float_t lft=0, float_t uppr=0) : width(w), height(h), x(lft), y(uppr) {};
 };
+
 /* Class block<>, a child of rectangle<>
  * It keeps the number of ports (possibly realized as pins or as named connections)
    for each of its four sides.
@@ -92,8 +97,11 @@ class polyline {
   CONT points;
   void push_back(const POINT& p)  {points.push_back(p);};
   void push_back(FLOAT x, FLOAT y){points.emplace_back(x,y);};
+  // constructors:
   polyline() = default;
   polyline(const polyline_t& pl) : points(pl.points) {};
+  template <typename ITERATOR>
+  polyline(const ITERATOR& b, const ITERATOR& e) : points(b,e) {};
 };
 template <typename FLOAT = double,
           typename POINT = std::pair<FLOAT,FLOAT>,
@@ -108,43 +116,11 @@ class polygon {
   void push_back(FLOAT x, FLOAT y){points.emplace_back(x,y);};
   polygon() = default;
   polygon(const polygon_t& pl) : points(pl.points) {};
+  template <typename ITERATOR>
+  polygon(const ITERATOR& b, const ITERATOR& e) : points(b,e) {};
 };
 
-/* class oneline<> is a one-dimensional line
- * which holds its beginning and ending as single floats,
- * and with a  static FLOAT interpolate(BEG,END, K) member
- */
-template <typename FLOAT=double>
-class oneline {
-public:
-  typedef FLOAT float_t;
-  static float_t interpolate(float_t b, float_t e, float_t k) {
-    return b*(1 - k) + e*k;
-  };
-  float_t get_beg() const {return beg;};
-  float_t get_end() const {return end;};
-  const float_t beg, end;
-  float_t get(float_t k) const {return interpolate(beg,end,k);};
-  oneline(float_t b, float_t e) : beg(b), end(e) {};
-};
 
-/* class twoline<>
- * holds two oneline's (named 'x' and 'y')
- * and represents a line in 2-space
- */
-template <typename FLOAT = double>
-struct twoline {
-public:
-  typedef FLOAT float_t;
-  typedef oneline<FLOAT> oneline_t;
-  oneline_t x,y;
-  float_t get_xbeg() const {return x.get_beg();};
-  float_t get_ybeg() const {return y.get_beg();};
-  float_t get_xend() const {return x.get_end();};
-  float_t get_yend() const {return y.get_end();};
-  float_t get_x(float_t k) const {return x.get(k);};
-  float_t get_y(float_t k) const {return y.get(k);};
-  twoline(float_t xb, float_t yb, float_t xe, float_t ye) : x(xb,xe), y(yb,ye) {};
-};
+
 
 #endif

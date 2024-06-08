@@ -24,3 +24,4 @@ schematics.svg.arc: schematics.svg.arc.test.cpp schematics.h schematics.svg.h sc
 clean:
 	$(RM)  a.out *.test
 	$(RM) schematics schematics.block schematics.round schematics.ic schematics.svg.arc test.html test-arc.html
+	$(RM) point.test point_xy.test point_xyz.test

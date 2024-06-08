@@ -1,11 +1,11 @@
 #ifndef SCHEMATICS_ROUND_H
 #define SCHEMATICS_ROUND_H
 
-/* File "schematics.cpp"
- * Defines several subhierarchies:
- * (1) angle_addressable<> and its children:
- *     circular, elliptical, and rectangular
- *     (location on perimeter by angle)
+/* File "schematics.round.cpp"
+ * Defines subhierarchy:
+ *   angle_addressable<> and its children:
+ *   circular, elliptical, and rectangular
+ *   (location on perimeter by angle)
  */
 
 #include <cmath>

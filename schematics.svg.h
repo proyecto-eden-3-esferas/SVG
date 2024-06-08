@@ -9,6 +9,9 @@
 #include "schematics.round.h"
 #endif
 
+#ifndef SCHEMATICS_LINE_H
+#include "schematics.line.h"
+#endif
 
 /* SVG Helping Functions
  * Remember to define attribute 'stroke' (as black or some non-white colour)

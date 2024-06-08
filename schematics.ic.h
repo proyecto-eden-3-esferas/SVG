@@ -2,8 +2,13 @@
 #define SCHEMATICS_IC_H
 
 // We need twoline<>, rectangle<> etc. so we...
+
 #ifndef SCHEMATICS_H
 #include "schematics.h"
+#endif
+
+#ifndef SCHEMATICS_LINE_H
+#include "schematics.line.h"
 #endif
 
 template <typename FLOAT = double>

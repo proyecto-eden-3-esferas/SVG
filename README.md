@@ -7,15 +7,18 @@ ESPAÑOL: SVG es un lenguaje sencillo para dibujar formas en una página web med
 
 ## Sections
 
-(1) General TODOs
+- General TODOs
 
-(2) Diagrammes, Schematics and Electronics
+- A Geometry Library
 
-  - Diagrammes, Schematics and Electronics TODOs
+- Diagrammes, Schematics and Electronics
 
-(3) Music Notation TODOs
+- Diagrammes, Schematics and Electronics TODOs
 
-(4) Inclusion of SVG Files
+- Music Notation TODOs
+
+- Inclusion of SVG Files
+
 
 
 ## General TODOs
@@ -26,6 +29,28 @@ ESPAÑOL: SVG es un lenguaje sencillo para dibujar formas en una página web med
 
 [x] Arrows (from `class polygon`)
 
+
+
+## A Geometry Library
+
+### Classes and Functions with the Same Interface as those in Boost Geometry
+
+I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all call relieant on these classes compatible with Boost Geometry
+
+
+### For SVG, but also for PostScript and other formats
+
+### Following SVG Structure
+
+If you want a C++ library to handle objects meant to be turned into SVG shapes, then why not write classes that follow SVG structure closely? If a circle has a radius(r), and two coordinates for its centre, then it would be straightforward to implement your SVG circle class with member variables {r, cx, cy}
+
+### Points and Rectangles
+
+One of the first items one will need is a point class, followed closely by rectangle class...
+
+### Boost.Geometry
+
+The prestigious, STL-compatible headers-only Boost library contains Geometry, a geometry library. To use Boost.Geometry one needs to comply with some rules. You can write your own classes, but for them to interoperate with the library you need to register them. Whenever you build an executable, the tool chain spends some 12 seconds doing some internal paperwork. And since it is headers-only, separate compilation proves very work-intensive: you have to write the header files plus code to compile every foreseeable instantiation of template classes and template functions.
 
 
 ## Diagrammes, Schematics and Electronics
