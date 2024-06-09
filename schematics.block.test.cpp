@@ -1,27 +1,25 @@
-#include "schematics.h"
-#include "schematics.svg.h"
+#include "schematics.rectangle.h"
+#include "svg.h"
 
 #define TEST_IC_PIN_LOCATION
 
 #include <fstream>
 using namespace std;
 
-typedef                       double float_type;
-typedef          angle_addressable<   float_type> cir_t; // instead of former longish name 'component_t'
-typedef circular<   float_type>    circular_component_t;
-typedef rectangular<float_type> rectangular_component_t;
-typedef rectangle<            float_type> rectangle_t;
-typedef polyline<             float_type>  polyline_t;
-typedef polygon<             float_type>  polygon_t;
-typedef  elliptical<float_type>  elliptical_component_t;
-typedef               twoline<float_type>                  line_t;
+typedef  double float_type;
+typedef block<float_type> block_t;
+
+#ifdef DRAW_LINES
+#include "schematics.line.h"
+typedef twoline<float_type> line_t;
+#endif
 
 // std::ostream& operator<<(std::ostream& o, Cmp& cmp) {
 
 int main()
 {
 
-  block<float_type> bl1 (60,20, 0,0,  4, 3, 5, 2);
+  block_t bl1 (60,20, 0,0,  4, 3, 5, 2);
   for(int i=0; i < 4; ++i)
     cout << "right side x="  << bl1.get_x_right(i) << ", y=" << bl1.get_y_right(i) << '\n';
   for(int i=0; i < 3; ++i)

@@ -1,5 +1,5 @@
 #include "schematics.svg.arc.h"
-#include "schematics.svg.h"
+//#include "schematics.svg.h"
 
 #include <fstream>
 
@@ -11,7 +11,7 @@ typedef svg_arc<float_type> svg_arc_t;
 int main() {
 
   ofstream ofs("test-arc.html");
-  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<h1>Some SVG arc</h1>\n";
+  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<h1>Some SVG arc(s)...</h1>\n";
   open_svg(ofs);
 
   svg_arc_t sa1(50,50, 33,33, 0,50, false, false, false);

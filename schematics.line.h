@@ -1,6 +1,8 @@
 #ifndef SCHEMATICS_LINE_H
 #define SCHEMATICS_LINE_H
 
+#include <vector>
+
 /* Classes oneline<FLOAT> and twoline<FLOAT> define
    one- and two-dimensional "lines"
  * They make use of static interpolate(BEG,END,K)
@@ -41,5 +43,83 @@ public:
   float_t get_y(float_t k) const {return y.get(k);};
   twoline(float_t xb, float_t yb, float_t xe, float_t ye) : x(xb,xe), y(yb,ye) {};
 };
+
+#ifndef SVG_H
+#include "svg.h"
+#endif
+/* Partial specializations of add_svg_unclosed(TWOLINE&,OUT) */
+template<typename F = double, typename OUT = std::ostream>
+OUT & add_svg_unclosed(const twoline<F>& cc, OUT& o = std::cout) {
+  o << "<line x1=\"" << cc.x.get_beg() << "\" y1=\"" << cc.y.get_beg();
+  o <<    "\" x2=\"" << cc.x.get_end() << "\" y2=\"" << cc.y.get_end() << "\"";
+  return o;
+};
+
+/* classes polyline and polygon
+ * class poliline is a line made up of straight segments
+ * Points are held in a container supporting push/emplace_back()
+ * class polygon  is defined analogously:
+ * (  )just substitute 'polygon' for 'polyline')
+ */
+template <typename FLOAT = double,
+          typename POINT = std::pair<FLOAT,FLOAT>,
+          typename CONT  = std::vector<POINT> >
+class polyline {
+  public:
+  typedef FLOAT float_t;
+  typedef POINT point_t;
+  typedef polyline<FLOAT,POINT,CONT> polyline_t;
+  CONT points;
+  void push_back(const POINT& p)  {points.push_back(p);};
+  void push_back(FLOAT x, FLOAT y){points.emplace_back(x,y);};
+  // constructors:
+  polyline() = default;
+  polyline(const polyline_t& pl) : points(pl.points) {};
+  template <typename ITERATOR>
+  polyline(const ITERATOR& b, const ITERATOR& e) : points(b,e) {};
+};
+template <typename FLOAT = double,
+          typename POINT = std::pair<FLOAT,FLOAT>,
+          typename CONT  = std::vector<POINT> >
+class polygon {
+  public:
+  typedef FLOAT float_t;
+  typedef POINT point_t;
+  typedef polygon<FLOAT,POINT,CONT> polygon_t;
+  CONT points;
+  void push_back(const POINT& p)  {points.push_back(p);};
+  void push_back(FLOAT x, FLOAT y){points.emplace_back(x,y);};
+  polygon() = default;
+  polygon(const polygon_t& pl) : points(pl.points) {};
+  template <typename ITERATOR>
+  polygon(const ITERATOR& b, const ITERATOR& e) : points(b,e) {};
+};
+/* Partial specializations for polyline<> and polygon<>.
+ * Specializations of add_svg_unclosed(POLYLINE&) and add_svg_unclosed(POLYGON&)
+ * are analogous.
+ */
+template <typename F = double,
+          typename POINT = std::pair<F,F>,
+          typename CONT  = std::vector<POINT>,
+          typename OUT = std::ostream>
+OUT & add_svg_unclosed(const polyline<F,POINT,CONT>& pll, OUT& o = std::cout) {
+  o << "<polyline points=\"";
+  for(const auto & pt : pll.points)
+    o << pt.first << ',' << pt.second << ' ';
+  o << '\"';
+  return o;
+};
+template <typename F = double,
+          typename POINT = std::pair<F,F>,
+          typename CONT  = std::vector<POINT>,
+          typename OUT = std::ostream>
+OUT & add_svg_unclosed(const polygon<F,POINT,CONT>& pll, OUT& o = std::cout) {
+  o << "<polygon points=\"";
+  for(const auto & pt : pll.points)
+    o << pt.first << ',' << pt.second << ' ';
+  o << '\"';
+  return o;
+};
+
 
 #endif

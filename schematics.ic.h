@@ -3,8 +3,8 @@
 
 // We need twoline<>, rectangle<> etc. so we...
 
-#ifndef SCHEMATICS_H
-#include "schematics.h"
+#ifndef SCHEMATICS_RECTANGLE_H
+#include "schematics.rectangle.h"
 #endif
 
 #ifndef SCHEMATICS_LINE_H
@@ -143,5 +143,17 @@ public:
      float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
      ic_t(x,y,sp,nh,nv) {};
 };
+
+#ifndef SVG_H
+#include "svg.h"
+#endif
+/* Partial specializations of add_svg_unclosed(IC&,OUT) */
+template<typename F = double, typename OUT = std::ostream>
+OUT & add_svg_unclosed(const ic<F>& i, OUT& o = std::cout) {
+  o << "<rect x=\"" << i.get_x()     << "\" y=\""      << i.get_y() << "\" ";
+  o <<   "width=\"" << i.get_width() << "\" height=\"" << i.get_height() << "\"";
+  return o;
+};
+
 
 #endif

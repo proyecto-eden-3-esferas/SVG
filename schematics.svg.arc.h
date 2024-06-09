@@ -1,5 +1,5 @@
-#ifndef SCHEMATICS_SVG_H
-#include "schematics.svg.h"
+#ifndef SVG_H
+#include "svg.h"
 #endif
 
 /* TODOs:
@@ -44,5 +44,4 @@ OUT & add_svg_unclosed(const svg_arc<F>& a, OUT& o = std::cout) {
   add_to_svg_path(a,o);
   o << '\"';
   return o;
-
 };

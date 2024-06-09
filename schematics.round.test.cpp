@@ -1,7 +1,8 @@
 #include "schematics.round.h"
-#include "schematics.svg.h"
+#include "schematics.line.h"
 
-/* The pins are:
+/* Class transistor,
+ * The pins are:
  * (0) emitter
  * (1) base
  * (2) collector

@@ -10,7 +10,6 @@ typedef    hic<float_type> hic_t;
 
 #ifdef TEST_SVG
 #include <fstream>
-#include "schematics.svg.h"
 #endif
 
 #include <iostream>
