@@ -1,5 +1,6 @@
 #include "schematics.round.h"
 #include "schematics.line.h"
+#include "schematics.arrow.h"
 
 /* Class transistor,
  * The pins are:

@@ -2,9 +2,15 @@ README.txt
 *.test
 test.html
 test-arc.html
+segment
 schematics
 schematics.round
+schematics.round-and-arrow
+schematics.rectangle
 schematics.ic
-test.html
+schematics.line
+schematics.block
 schematics.svg.arc
+
+test.html
 .git

@@ -12,19 +12,6 @@ public:
   typedef POINT point_t;
   typedef std::pair<POINT, POINT> pair_t;
   using pair_t::first, pair_t::second;
-  //
-  /*
-  template<std::size_t IDX>
-  const POINT & get() const {  // get either component point
-    if(IDX == 0) return pair_t::first;
-    else         return pair_t::second;
-  };
-  template<std::size_t IDX>
-  void set(POINT const & pt) { // Set either component point
-    if(IDX == 0) pair_t::first  = pt;
-    else         pair_t::second = pt;
-  };
-  */
   // Constructors:
   segment() = default;
   segment(POINT const & p1, POINT const & p2) : pair_t(p1,p2) {};

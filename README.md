@@ -27,17 +27,17 @@
 
 [x] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`? Or the other way round: derive other triangular schematic symbols (diodes, buffers, OpAmp's etc) from `solid_arrowhead`.
 
-[ ] `slim_arrowhead::rotate_to(ABSOLUTE_ANGLE)` and `slim_arrowhead::rotate_by(RELATIVE_ANGLE)` work as if angles grew clockwise. This is ultimately due to the fact that in SVG the *y* coordinate grows downwards.
-
-[ ] Two-Ports: these might bear a label with their function(resistor, inductor, capacitor, diode, fuse, switch etc.) and their drawings might be completed afterwards. To be derived from class `segment`, to which a `width` or a `rel_width` is added. (A relative width says how wide the rectangle is compared to its length. Using relative widths makes it easier to calculate the corners of the rectangle.)
+[ ] Labels
 
 [ ] A bezier class, to be derived from class `segment`
 
 [ ] An arc class, to be derived from class `segment` (a same functionality class, `svg_arc`, has already been implemented in "schematics.svg.arc.h")
 
-[ ] Labels
-
 [ ] Transistor as a circle, derived from `class circular`. It wass being implemented in "schematics.round.test.cpp" and might move into a file of its own, say "schematics.transistor.h")
+
+[ ] `slim_arrowhead::rotate_to(ABSOLUTE_ANGLE)` and `slim_arrowhead::rotate_by(RELATIVE_ANGLE)` work as if angles grew clockwise. This is ultimately due to the fact that in SVG the *y* coordinate grows downwards.
+
+[x] Two-Ports: these might bear a label with their function(resistor, inductor, capacitor, diode, fuse, switch etc.) and their drawings might be completed afterwards. To be derived from class `segment`, to which a `width` or a `rel_width` is added. (A relative width says how wide the rectangle is compared to its length. Using relative widths makes it easier to calculate the corners of the rectangle.)
 
 [x] Some point classes sharing their interface with boost::geometry for future interoperability. "point_xyz.h" unwritten yet.
 
