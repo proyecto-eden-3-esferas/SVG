@@ -30,17 +30,16 @@ public:
   FLOAT get_ury() const {return get<1>(second) + rhw * ( get<0>(second) - get<0>(first));};
   FLOAT get_lrx() const {return get<0>(second) + rhw * ( get<1>(second) - get<1>(first));};
   FLOAT get_lry() const {return get<1>(second) - rhw * ( get<0>(second) - get<0>(first));};
-  void set_width(FLOAT w);
+  FLOAT get_length() const;
+  void set_width(FLOAT w) {rhw = 0.5 * (w / get_length());};
   // Constructors:
   twoport() = default;
   twoport(POINT const & p1, POINT const & p2, FLOAT relhw) : segment_t(p1,p2), rhw(relhw) {};
 };
 template<typename FLOAT, typename POINT>
-void twoport<FLOAT,POINT>::set_width(FLOAT w) {
-  // calculate the length of port axis:
-  FLOAT len = sqrt( ( get<0>(second) - get<0>(first) ) *  ( get<0>(second) - get<0>(first) ) +
-                    ( get<1>(second) - get<1>(first) ) *  ( get<1>(second) - get<1>(first) ) );
-  rhw = 0.5 * (w / len);
+FLOAT twoport<FLOAT,POINT>::get_length() const {
+  return sqrt( ( get<0>(second) - get<0>(first) ) *  ( get<0>(second) - get<0>(first) ) +
+               ( get<1>(second) - get<1>(first) ) *  ( get<1>(second) - get<1>(first) ) );
 };
 
 template<typename FLOAT = double,

@@ -27,13 +27,17 @@
 
 [x] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`? Or the other way round: derive other triangular schematic symbols (diodes, buffers, OpAmp's etc) from `solid_arrowhead`.
 
-[ ] Labels
+[ ] Implement `float_type twoport::get_angle() const`
+
+[ ] Labels: delve into attributes of the svg::text element as well as svg::tspan contained in an svg::text element
 
 [ ] A bezier class, to be derived from class `segment`
 
 [ ] An arc class, to be derived from class `segment` (a same functionality class, `svg_arc`, has already been implemented in "schematics.svg.arc.h")
 
 [ ] Transistor as a circle, derived from `class circular`. It wass being implemented in "schematics.round.test.cpp" and might move into a file of its own, say "schematics.transistor.h")
+
+[ ] `class twoport` is currently defined in its own file ("schematics.twoport.h") and tested in "segment.test.cpp" because it is derived from segment.
 
 [ ] `slim_arrowhead::rotate_to(ABSOLUTE_ANGLE)` and `slim_arrowhead::rotate_by(RELATIVE_ANGLE)` work as if angles grew clockwise. This is ultimately due to the fact that in SVG the *y* coordinate grows downwards.
 
@@ -50,11 +54,16 @@
 
 ## A Geometry Library
 
+
 ### Classes and Functions with the Same Interface as those in Boost Geometry
 
-I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all call relieant on these classes compatible with Boost Geometry
+I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all calls relieant on these classes compatible with Boost Geometry.
 
-### For SVG, but also for PostScript and other formats
+These classes are to be held in files without a `schematics` prefix.
+
+
+### For SVG, but also for PostScript, among other formats
+
 
 ### Following SVG Structure
 
