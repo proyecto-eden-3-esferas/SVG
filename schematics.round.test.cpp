@@ -64,6 +64,8 @@ using namespace std;
 typedef            double float_type;
 typedef angle_addressable<float_type> cir_t; // instead of former longish name 'component_t'
 typedef          circular<float_type>    circular_component_t;
+typedef slim_arrowhead<float_type> slim_arrowhead_component_t;
+typedef solid_arrowhead<float_type> solid_arrowhead_component_t;
 typedef       rectangular<float_type> rectangular_component_t;
 typedef        elliptical<float_type>  elliptical_component_t;
 typedef           twoline<float_type>                  line_t;
@@ -118,6 +120,11 @@ int main()
   line_t l80(ec2.xperim(a80), ec2.yperim(a80), ec2.xperim(a80)     , ec2.yperim(a80) - 25);
 #endif
 
+  slim_arrowhead_component_t ah1(40, 100, 100, a10);
+
+  solid_arrowhead_component_t ah2(40, 120, 120, a10);
+  cout << "solid_arrowhead ah2 base is at: " << ah2.get_base_x() << ", " << ah2.get_base_y() << '\n';
+
 
 //  ic<float_type> ic1(50,50,5, 3,7);
 
@@ -130,6 +137,17 @@ int main()
       add_svg(l10, ofs);
       add_svg(l30, ofs);
       add_svg(l60, ofs);
+      add_svg(ah1, ofs);
+
+      ah1.cx += 50; ah1.cy+=33;
+      ah1.rotate_by(a10);
+      add_svg(ah1, ofs);
+
+      ah1.cx += 50; ah1.cy+=33;
+      ah1.rotate_by(a10);
+      add_svg(ah1, ofs);
+
+      add_svg(ah2, ofs);
       //add_svg(l80, ofs);
 
   // Keep adding components to the SVG file (handle='ofs')

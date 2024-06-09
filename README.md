@@ -25,10 +25,11 @@
 
 [x] A segment class (same interface as `boost::geometry::model::segment`)
 
-[ ] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`?
+[x] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`? Or the other way round: derive other triangular schematic symbols (diodes, buffers, OpAmp's etc) from `solid_arrowhead`.
 
-[ ] Two-Ports: these might bear a label with their function(resistor, inductor, capacitor, diode, fuse, switch etc.) and their drawings might be
-completed afterwards. To be derived from class `segment`
+[ ] `slim_arrowhead::rotate_to(ABSOLUTE_ANGLE)` and `slim_arrowhead::rotate_by(RELATIVE_ANGLE)` work as if angles grew clockwise. This is ultimately due to the fact that in SVG the *y* coordinate grows downwards.
+
+[ ] Two-Ports: these might bear a label with their function(resistor, inductor, capacitor, diode, fuse, switch etc.) and their drawings might be completed afterwards. To be derived from class `segment`, to which a `width` or a `rel_width` is added. (A relative width says how wide the rectangle is compared to its length. Using relative widths makes it easier to calculate the corners of the rectangle.)
 
 [ ] A bezier class, to be derived from class `segment`
 
