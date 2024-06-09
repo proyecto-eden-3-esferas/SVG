@@ -23,11 +23,27 @@
 
 ## General TODOs
 
-[ ] Blocks
+[x] A segment class (same interface as `boost::geometry::model::segment`)
+
+[ ] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`?
+
+[ ] Two-Ports: these might bear a label with their function(resistor, inductor, capacitor, diode, fuse, switch etc.) and their drawings might be
+completed afterwards. To be derived from class `segment`
+
+[ ] A bezier class, to be derived from class `segment`
+
+[ ] An arc class, to be derived from class `segment` (a same functionality class, `svg_arc`, has already been implemented in "schematics.svg.arc.h")
+
+[ ] Labels
+
+[ ] Transistor as a circle, derived from `class circular`. It wass being implemented in "schematics.round.test.cpp" and might move into a file of its own, say "schematics.transistor.h")
+
+[x] Some point classes sharing their interface with boost::geometry for future interoperability. "point_xyz.h" unwritten yet.
+
+[x] Blocks
 
 [x] Inclusion of SVG Files (See longish section "Inclusion of SVG Files" below, in here file "README.md")
 
-[x] Arrows (from `class polygon`)
 
 
 
@@ -36,7 +52,6 @@
 ### Classes and Functions with the Same Interface as those in Boost Geometry
 
 I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all call relieant on these classes compatible with Boost Geometry
-
 
 ### For SVG, but also for PostScript and other formats
 
@@ -47,6 +62,12 @@ If you want a C++ library to handle objects meant to be turned into SVG shapes, 
 ### Points and Rectangles
 
 One of the first items one will need is a point class, followed closely by rectangle class...
+
+### Segments
+
+> In geometry, a line segment is a part of a line that is bounded by two distinct end points, and contains every point on the line between its end points.
+
+(Wikipedia)
 
 ### Boost.Geometry
 

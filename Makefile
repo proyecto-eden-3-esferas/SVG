@@ -28,7 +28,11 @@ EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.r
 
 clean_executables:
 	$(RM) $(EXECUTABLES)
+clean_all_but_html:
+	$(RM) a.out *.test *.o
+	$(RM) $(EXECUTABLES)
+
 clean_all:
 	$(RM) test.html test-arc.html
-	$(RM) a.out *.test
+	$(RM) a.out *.test *.o
 	$(RM) $(EXECUTABLES)
