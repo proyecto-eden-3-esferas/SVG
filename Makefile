@@ -20,6 +20,8 @@ schematics.svg.arc: schematics.svg.arc.test.cpp svg.h schematics.svg.arc.h
 	c++ -std=c++23 $<  -o $@
 segment: segment.test.cpp svg.h segment.h schematics.twoport.h
 	c++ -std=c++23 $<  -o $@
+schematics.twoport: schematics.twoport.test.cpp svg.h segment.h schematics.twoport.h
+	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
