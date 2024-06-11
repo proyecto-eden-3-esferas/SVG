@@ -31,6 +31,8 @@
 
 [ ] Labels: delve into attributes of the svg::text element as well as svg::tspan contained in an svg::text element
 
+[ ] The text in labels is not filled with black. It this a matter of styling ala CSS?
+
 [ ] static members `angle_addressable::deg_to_rads(FLOAT)` and `angle_addressable::rads_to_deg(FLOAT)`
     should be renamed to
     `angle_addressable::deg_to_rad(FLOAT)` and `angle_addressable::rad_to_deg(FLOAT)` for consistency.

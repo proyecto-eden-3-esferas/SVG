@@ -6,6 +6,8 @@ Gplusplus =     c++ -std=c++23
 save_to_github:
 	git push svg main
 
+schematics.label: schematics.label.test.cpp schematics.label.h svg.h
+	c++ -std=c++23 $<  -o $@
 schematics.rectangle: schematics.rectangle.test.cpp schematics.rectangle.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.line: schematics.line.test.cpp schematics.line.h svg.h
@@ -28,7 +30,7 @@ schematics.twoport: schematics.twoport.test.cpp svg.h segment.h schematics.twopo
 %.o: %.cpp
 	g++ -c -std=c++17 $<
 
-EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment
+EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label
 
 clean_executables:
 	$(RM) $(EXECUTABLES)

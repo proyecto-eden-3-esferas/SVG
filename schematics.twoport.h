@@ -1,6 +1,11 @@
 #ifndef SCHEMATICS_TWOPORT_H
 #define SCHEMATICS_TWOPORT_H
 
+/* As a twoport<> is drawn as a long rectangle, the baseline of a label inside it
+  must fall below is major axis so as to look right.
+ * TWOPORT_BASELINE_K is a positive fractional number between 0 and 0.5,
+   but it seems that 0.1 yields the best result.
+ */
 #ifndef TWOPORT_BASELINE_K
 #define TWOPORT_BASELINE_K 0.1
 #endif
@@ -103,12 +108,12 @@ template<typename FLOAT = double,
 OUT & add_svg_unclosed(const twoport<FLOAT,POINT>& tp, OUT& o = std::cout) {
   if(!tp.caption.empty()) {
     //close_standalone_tag(o);
-    //o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+    //o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
     o << "<text x=\"" << tp.get_midbaseline_x() << "\" y=\"" << tp.get_midbaseline_y() << "\" ";
     o << "style=\"text-anchor: middle\" ";//fill=\"black\"
     o << "transform=\"rotate(" << angle_addressable<FLOAT>::rad_to_deg(tp.get_angle()) << ' ';
     o << tp.get_midbaseline_x() << ',' << tp.get_midbaseline_y() << ")\">";
-    o << tp.caption << "</text>\n";
+    o << tp.caption << "</text>\n" << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   }
   o << "<polygon points=\"";
   o << tp.get_ulx() << ' ' << tp.get_uly() << ' ' << tp.get_llx() << ' ' << tp.get_lly() << ' ';
