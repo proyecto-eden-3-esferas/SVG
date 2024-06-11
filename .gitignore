@@ -1,7 +1,6 @@
 README.txt
 *.test
 test.html
-test-arc.html
 segment
 schematics
 schematics.round
@@ -11,6 +10,6 @@ schematics.ic
 schematics.line
 schematics.block
 schematics.svg.arc
-
-test.html
+schematics.label
+schematics.twoport
 .git

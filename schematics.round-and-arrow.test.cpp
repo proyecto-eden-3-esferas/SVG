@@ -25,8 +25,8 @@ public:
   F x_of_pin(size_t idx) const;
   F y_of_pin(size_t idx) const {return 0.0;};
   transistor(float_t ra, float_t x=0, float_t y=0,
-             float_t ap = cir_t(deg_to_rads(120)),
-             float_t ab = cir_t(deg_to_rads(60))) :
+             float_t ap = cir_t(deg_to_rad(120)),
+             float_t ab = cir_t(deg_to_rad(60))) :
     circular_t(ra,x,y), apow(ap), abase(ab) {};
 };
 template <typename FLOAT>
@@ -74,11 +74,11 @@ typedef           twoline<float_type>                  line_t;
 int main()
 {
 
-  float_type a10(cir_t::deg_to_rads(10));
-  float_type a30(cir_t::deg_to_rads(30));
-  float_type a45(cir_t::deg_to_rads(45));
-  float_type a60(cir_t::deg_to_rads(60));
-  float_type a80(cir_t::deg_to_rads(80));
+  float_type a10(cir_t::deg_to_rad(10));
+  float_type a30(cir_t::deg_to_rad(30));
+  float_type a45(cir_t::deg_to_rad(45));
+  float_type a60(cir_t::deg_to_rad(60));
+  float_type a80(cir_t::deg_to_rad(80));
 
   cout << "Test circular<>:\n";
   circular_component_t cc1(25,50,50);
@@ -99,11 +99,11 @@ int main()
   cout << "rc2.trans_angle: " << cir_t::rads_to_deg(rc2.trans_angle) << '\n';
   cout << "rc3.trans_angle: " << cir_t::rads_to_deg(rc3.trans_angle) << '\n';
   cout << "Now test rectangular rc2(100,100) ::xperim(rads) and ::yperim(rads) for several rads (angles):\n";
-  cout << "a = 10: " << rc2.xperim(cir_t::deg_to_rads(10)) << ',' <<  rc2.yperim(cir_t::deg_to_rads(10)) << '\n';
-  cout << "a = 30: " << rc2.xperim(cir_t::deg_to_rads(30)) << ',' <<  rc2.yperim(cir_t::deg_to_rads(30)) << '\n';
+  cout << "a = 10: " << rc2.xperim(cir_t::deg_to_rad(10)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(10)) << '\n';
+  cout << "a = 30: " << rc2.xperim(cir_t::deg_to_rad(30)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(30)) << '\n';
   cout << "a = 45: " << rc2.xperim(a45) << ',' <<  rc2.yperim(a45) << '\n';
-  cout << "a = 60: " << rc2.xperim(cir_t::deg_to_rads(60)) << ',' <<  rc2.yperim(cir_t::deg_to_rads(60)) << '\n';
-  cout << "a = 80: " << rc2.xperim(cir_t::deg_to_rads(80)) << ',' <<  rc2.yperim(cir_t::deg_to_rads(80)) << '\n';
+  cout << "a = 60: " << rc2.xperim(cir_t::deg_to_rad(60)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(60)) << '\n';
+  cout << "a = 80: " << rc2.xperim(cir_t::deg_to_rad(80)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(80)) << '\n';
 #ifdef DRAW_RECTANGULAR_COMPONENT_PERIM
   line_t l10(rc2.xperim(a10), rc2.yperim(a10), rc2.xperim(a10) + 25, rc2.yperim(a10));
   line_t l30(rc2.xperim(a30), rc2.yperim(a30), rc2.xperim(a30) + 25, rc2.yperim(a30));

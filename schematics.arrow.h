@@ -41,7 +41,7 @@ public:
     barb1y = r * cir_t::sin(std::numbers::pi + half_angle + shaft_angle);
   };
   void rotate_by( float rel_angle ) {rotate_to(shaft_angle + rel_angle);};
-  slim_arrowhead(float_t ra, float_t x=0, float_t y=0, float_t ha=cir_t::deg_to_rads(15) )
+  slim_arrowhead(float_t ra, float_t x=0, float_t y=0, float_t ha=cir_t::deg_to_rad(15) )
   : circular_t(ra,x,y), half_angle(ha),
     barb0x( - r * cir_t::cos(half_angle)),
     barb0y( + r * cir_t::sin(half_angle)),
@@ -59,7 +59,7 @@ public:
   //
   float_t get_base_x() const {return (get_barb0x() + get_barb1x()) / 2;};
   float_t get_base_y() const {return (get_barb0y() + get_barb1y()) / 2;};
-  solid_arrowhead(float_t ra, float_t x=0, float_t y=0, float_t ha=cir_t::deg_to_rads(15) )
+  solid_arrowhead(float_t ra, float_t x=0, float_t y=0, float_t ha=cir_t::deg_to_rad(15) )
   : slim_arrowhead<FLOAT>(ra, x, y, ha) {};
 };
 

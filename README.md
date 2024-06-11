@@ -27,17 +27,7 @@
 
 [x] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`? Or the other way round: derive other triangular schematic symbols (diodes, buffers, OpAmp's etc) from `solid_arrowhead`.
 
-[x] Implement `float_type twoport::get_angle() const`
-
-[ ] Labels: delve into attributes of the svg::text element as well as svg::tspan contained in an svg::text element
-
 [ ] The text in labels is not filled with black. It this a matter of styling ala CSS?
-
-[ ] static members `angle_addressable::deg_to_rads(FLOAT)` and `angle_addressable::rads_to_deg(FLOAT)`
-    should be renamed to
-    `angle_addressable::deg_to_rad(FLOAT)` and `angle_addressable::rad_to_deg(FLOAT)` for consistency.
-    (just change "rads" to "rad")
-
 [ ] A bezier class, to be derived from class `segment`
 
 [ ] An arc class, to be derived from class `segment` (a same functionality class, `svg_arc`, has already been implemented in "schematics.svg.arc.h")
@@ -49,6 +39,16 @@
 [ ] `slim_arrowhead::rotate_to(ABSOLUTE_ANGLE)` and `slim_arrowhead::rotate_by(RELATIVE_ANGLE)` work as if angles grew clockwise. This is ultimately due to the fact that in SVG the *y* coordinate grows downwards.
 
 [x] Two-Ports: these might bear a label with their function(resistor, inductor, capacitor, diode, fuse, switch etc.) and their drawings might be completed afterwards. To be derived from class `segment`, to which a `width` or a `rel_width` is added. (A relative width says how wide the rectangle is compared to its length. Using relative widths makes it easier to calculate the corners of the rectangle.)
+
+[x] Implement `float_type twoport::get_angle() const`
+
+[x] Labels: delve into attributes of the svg::text element as well as svg::tspan contained in an svg::text element
+
+
+[x] static members `angle_addressable::deg_to_rads(FLOAT)` and `angle_addressable::rads_to_deg(FLOAT)`
+    should be renamed to
+    `angle_addressable::deg_to_rad(FLOAT)` and `angle_addressable::rad_to_deg(FLOAT)` for consistency.
+    (just change "rads" to "rad")
 
 [x] Some point classes sharing their interface with boost::geometry for future interoperability. "point_xyz.h" unwritten yet.
 

@@ -32,17 +32,8 @@ public:
   : x(xx), y(yy), text(s), deg(dg), anchor(ta) {};
 };
 
-/*
-template<typename T, typename F = double, typename OUT = std::ostream>
-OUT & add_svg(const T& t, OUT& o = std::cout) {
-};
-*/
 template<typename FLOAT = double, typename OUT = std::ostream>
 OUT & add_svg(const label<FLOAT>& lbl, OUT& o = std::cout) {
-//template<typename FLOAT = double,
-//         typename POINT = point<FLOAT, 2, boost::geometry::cs::cartesian>,
-//         typename OUT = std::ostream>
-//OUT & add_svg_unclosed(const label<FLOAT,char>& lbl, OUT& o = std::cout) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << "<text x=\"" << lbl.x << "\" y=\"" << lbl.y << "\" ";
   o << "style=\"text-anchor: ";
