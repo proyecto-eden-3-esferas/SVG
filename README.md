@@ -27,7 +27,19 @@
 
 [x] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`? Or the other way round: derive other triangular schematic symbols (diodes, buffers, OpAmp's etc) from `solid_arrowhead`.
 
+[ ] There is some code duplication in class ic. Look at the following member prototypes:
+```
+virtual float_t xperim(size_t idx) const;
+virtual float_t yperim(size_t idx) const;
+enum facing {lt, bt, rt, tp};
+virtual facing faces(size_t idx) const;
+```
+Now, the implementations of `xperim(IDX)` and `yperim(IDX)` should use `virtual facing faces(size_t idx)`. Also, if `{x|y}perim(IDX)` are so defiend, only `faces(IDX)` needs to be virtual.
+
 [ ] The text in labels is not filled with black. It this a matter of styling ala CSS?
+
+[ ] global function `OUT & add_svg_unclosed(const twoport<FLOAT,POINT>& tp, OUT& o = std::cout)` (in *schematics.twoport.h*) prints a caption, then draws a rectangle. To avoid duplication of code I have to create a temporary `label` object from the `twoport` parameter, as I explain in a comment in the source file.
+
 [ ] A bezier class, to be derived from class `segment`
 
 [ ] An arc class, to be derived from class `segment` (a same functionality class, `svg_arc`, has already been implemented in "schematics.svg.arc.h")

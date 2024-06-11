@@ -19,7 +19,7 @@
 #endif
 
 #ifndef SCHEMATICS_ROUND_H
-#include "schematics.round.h"
+#include "schematics.angle.h"
 #endif
 
 #include <cmath> // for atan2(y,x), returning an angle in rads
@@ -101,21 +101,35 @@ FLOAT twoport<FLOAT,POINT>::get_midbaseline_y() const {
 
 };
 
-
+#ifndef SCHEMATICS_LABEL_H
+#include "schematics.label.h"
+#endif
 template<typename FLOAT = double,
          typename POINT = point<FLOAT, 2, boost::geometry::cs::cartesian>,
          typename OUT = std::ostream>
 OUT & add_svg_unclosed(const twoport<FLOAT,POINT>& tp, OUT& o = std::cout) {
   if(!tp.caption.empty()) {
-    //close_standalone_tag(o);
-    //o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+    /* add a text element to the SVG element
+     * by means of add_svg(TEMP_LABEL),
+     * where TEMP_LABEL is a temporary label constructed from 'tp'
+     * Neither you nor I like to construct a temporary and throw it away at once, but
+     * I have avoided duplicating code.
+     */
+    add_svg( label<FLOAT, char>(tp.get_midbaseline_x(),
+                                tp.get_midbaseline_y(),
+                                tp.caption,
+                                angle_addressable<FLOAT>::rad_to_deg(tp.get_angle()),
+                                label<FLOAT,char>::text_anchor::middle),
+                                                                         o);
+    /*
     o << "<text x=\"" << tp.get_midbaseline_x() << "\" y=\"" << tp.get_midbaseline_y() << "\" ";
     o << "style=\"text-anchor: middle\" ";//fill=\"black\"
     o << "transform=\"rotate(" << angle_addressable<FLOAT>::rad_to_deg(tp.get_angle()) << ' ';
     o << tp.get_midbaseline_x() << ',' << tp.get_midbaseline_y() << ")\">";
     o << tp.caption << "</text>\n" << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  }
-  o << "<polygon points=\"";
+    */
+  } // if
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<polygon points=\"";
   o << tp.get_ulx() << ' ' << tp.get_uly() << ' ' << tp.get_llx() << ' ' << tp.get_lly() << ' ';
   o << tp.get_lrx() << ' ' << tp.get_lry() << ' ' << tp.get_urx() << ' ' << tp.get_ury() << '\"';
   return o;

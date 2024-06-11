@@ -41,10 +41,11 @@ public:
   float_t get_width()  const {return rectangle_t::width;};
   float_t get_height() const {return rectangle_t::height;};
   // members for getting the coordinates and facing of pins
+  enum facing {lt, bt, rt, tp};
+  virtual facing faces(size_t idx) const; // Whether pin 'idx' faces left, down, right, or up
   virtual float_t xperim(size_t idx) const;
   virtual float_t yperim(size_t idx) const;
-  enum facing {lt, bt, rt, tp};
-  virtual facing faces(size_t idx) const;
+  // Constructor:
   ic(float_t x, float_t y, // coordinates of upper left-hand corner
      float_t sp,          // separation between pins
      float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
