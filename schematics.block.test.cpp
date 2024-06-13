@@ -1,5 +1,5 @@
-#include "schematics.rectangle.h"
-#include "svg.h"
+//#include "schematics.rectangle.h"
+//#include "svg.h"
 
 #define TEST_IC_PIN_LOCATION
 
@@ -24,6 +24,7 @@ int main()
 {
 
   block_t bl1 (60,20, 0,0,  4, 3, 5, 2);
+
   for(int i=0; i < 4; ++i)
     cout << "right side x="  << bl1.get_x_right(i) << ", y=" << bl1.get_y_right(i) << '\n';
   for(int i=0; i < 3; ++i)
@@ -32,6 +33,10 @@ int main()
     cout << "left side x="  << bl1.get_x_left(i) << ", y=" << bl1.get_y_left(i) << '\n';
   for(int i=0; i < 2; ++i)
     cout << "top side x="  << bl1.get_x_top(i) << ", y=" << bl1.get_y_top(i) << '\n';
+
+  cout << "\nNow test port positions through xperim(IDX) and yperim(IDX), with " << bl1.size() << " port(s)\n";
+  for(int i=0; i < bl1.size(); ++i)
+    cout << "position: " << bl1.xperim(i) << ", " << bl1.yperim(i) << '\n';
 
   // open file "test.html" to hold an SVG element:
   ofstream ofs("test.html");

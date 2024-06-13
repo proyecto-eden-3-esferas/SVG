@@ -40,8 +40,10 @@ public:
   using rectangle_t::x, rectangle_t::y, rectangle_t::width, rectangle_t::height;
   float_t num_h, num_v; // number of pins vertical-wise and horizontal-wise
   float_t sep, halfsep; // full and half separation between pins
+  //
+  size_t size() const {return 2 * (num_h + num_v);
   // members for getting the coordinates and facing of pins
-  enum    facing {lt, bt, rt, tp};        // for left, bottom, right, and top
+  enum    facing {lt, bt, rt, tp, none};        // for left, bottom, right, and top
   virtual facing faces(size_t idx) const; // Whether pin 'idx' faces left, down, right, or up
   virtual float_t xperim(size_t idx) const;
   virtual float_t yperim(size_t idx) const;
@@ -63,7 +65,10 @@ ic<FLOAT>::facing ic<FLOAT>::faces(std::size_t idx) const {
       if(idx < (2*num_v + num_h))
         return rt;
       else
-        return tp;
+        if(idx < (2*num_v + 2*num_h))
+          return tp;
+        else
+          return none;
 };
 template <typename FLOAT>
 FLOAT ic<FLOAT>::xperim(std::size_t idx) const {

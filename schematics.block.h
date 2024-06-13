@@ -25,8 +25,10 @@ public:
   using rectangle_t::x, rectangle_t::y, rectangle_t::width, rectangle_t::height;
   //size_t num_rht, num_btm, num_lft, num_upr; // number of ports on sides right, upper, left and bottom
   size_t num_lft, num_btm, num_rht, num_upr; // number of ports on sides right, upper, left and bottom
+  //
+  size_t size() const {return num_lft + num_btm + num_rht + num_upr;};
   // members for getting the coordinates and facing of pins
-  enum    facing {lt, bt, rt, tp};        // for left, bottom, right, and top
+  enum    facing {lt, bt, rt, tp, none};        // for left, bottom, right, and top
   virtual facing faces(size_t idx) const; // Whether pin 'idx' faces left, down, right, or up
   virtual float_t xperim(size_t idx) const;
   virtual float_t yperim(size_t idx) const;
@@ -46,6 +48,7 @@ public:
         float_t l, float_t b, float_t r, float_t u) :
     rectangle_t(w,h,x,y), num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
 };
+
 // Implementation of members of block<FLOAT>
 template <typename FLOAT>
 block<FLOAT>::facing block<FLOAT>::faces(std::size_t idx) const {
@@ -58,7 +61,10 @@ block<FLOAT>::facing block<FLOAT>::faces(std::size_t idx) const {
       if(idx < (num_lft + num_btm + num_rht))
         return rt;
       else
-        return tp;
+        if(idx < (num_lft + num_btm + num_rht + num_upr))
+          return tp;
+        else
+          return none;
 };
 template <typename FLOAT>
 FLOAT block<FLOAT>::xperim(std::size_t idx) const {
@@ -73,7 +79,7 @@ FLOAT block<FLOAT>::xperim(std::size_t idx) const {
       return get_x_right(idx - num_lft - num_btm);
       break;
     case facing::tp:
-      return get_x_top(idx - num_lft - num_btm);
+      return get_x_top(idx - num_lft - num_btm - num_rht);
       break;
     default:
       return x;

@@ -37,6 +37,9 @@ virtual facing faces(size_t idx) const;
 ```
 Now, the implementations of `xperim(IDX)` and `yperim(IDX)` should use `virtual facing faces(size_t idx)`. Also, if `{x|y}perim(IDX)` are so defiend, only `faces(IDX)` needs to be virtual.
 
+[ ] block should be tested through members {x|y}perim(IDX)
+
+[ ] ic should be derived from block, which will take some re-coding
 
 [ ] The text in labels is not filled with black. It this a matter of styling ala CSS?
 
@@ -44,6 +47,8 @@ Now, the implementations of `xperim(IDX)` and `yperim(IDX)` should use `virtual 
 [ ] global function `OUT & add_svg_unclosed(const twoport<FLOAT,POINT>& tp, OUT& o = std::cout)` (in *schematics.twoport.h*) prints a caption, then draws a rectangle. To avoid duplication of code I have to create a temporary `label` object from the `twoport` parameter, as I explain in a comment in the source file.
 
 One solution is for `twoport` to be derived from `label` or to *contain* a `label`. And it is a *scalable* solution: just think about all the labels that a `block` in a block diagram or an `ic` in a schematic diagram might need.
+
+No, as regards `block`'s, I want them to hold one std::string per port (ports are drawn as pins or as the start of lines on the rectangle that matches them). Exactly, `block`'s are large objects in memory, are likely to be used often, and will probably have a lot of children (will probably be derived from often).
 
 [ ] Maybe `ic` (currently in *schematics.ic.h* and currently derived directly from `rectangle`) should be derived from `block` (in *schematics.rectangle.h*), itself derived from `rectangle`. On a block the pins are set off evenly according to how many there are on a side.
 
