@@ -37,7 +37,14 @@ virtual facing faces(size_t idx) const;
 ```
 Now, the implementations of `xperim(IDX)` and `yperim(IDX)` should use `virtual facing faces(size_t idx)`. Also, if `{x|y}perim(IDX)` are so defiend, only `faces(IDX)` needs to be virtual.
 
-[ ] block should be tested through members {x|y}perim(IDX)
+[x] block should be tested through members {x|y}perim(IDX)
+
+[ ] Add `FLOAT raise` parameter to global function specialization:
+```
+template<typename F = double, typename OUT = std::ostream>
+OUT & add_svg_unclosed(const labeled_block<F>& lblk, OUT& o = std::cout)
+```
+so as to raise the baseline of the labels above the lines connecting to the ports on `lblk`
 
 [ ] ic should be derived from block, which will take some re-coding
 
