@@ -41,7 +41,7 @@ public:
   float_t num_h, num_v; // number of pins vertical-wise and horizontal-wise
   float_t sep, halfsep; // full and half separation between pins
   // members for getting the coordinates and facing of pins
-  enum facing {lt, bt, rt, tp};
+  enum    facing {lt, bt, rt, tp};        // for left, bottom, right, and top
   virtual facing faces(size_t idx) const; // Whether pin 'idx' faces left, down, right, or up
   virtual float_t xperim(size_t idx) const;
   virtual float_t yperim(size_t idx) const;
@@ -50,6 +50,20 @@ public:
      float_t sp,          // separation between pins
      float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
      rectangle_t(nh*sp, nv*sp, x, y), num_h(nh), num_v(nv), sep(sp), halfsep(sp/2) {};
+};
+// Implementation of members of ic<FLOAT>
+template <typename FLOAT>
+ic<FLOAT>::facing ic<FLOAT>::faces(std::size_t idx) const {
+  if(idx < num_v)
+    return lt;
+  else
+    if(idx < (num_v + num_h))
+      return bt;
+    else
+      if(idx < (2*num_v + num_h))
+        return rt;
+      else
+        return tp;
 };
 template <typename FLOAT>
 FLOAT ic<FLOAT>::xperim(std::size_t idx) const {
@@ -71,7 +85,6 @@ FLOAT ic<FLOAT>::xperim(std::size_t idx) const {
       break;
   }
 };
-
 template <typename FLOAT>
 FLOAT ic<FLOAT>::yperim(std::size_t idx) const {
   switch(faces(idx)) {
@@ -91,19 +104,6 @@ FLOAT ic<FLOAT>::yperim(std::size_t idx) const {
       return y;
       break;
   }
-};
-template <typename FLOAT>
-ic<FLOAT>::facing ic<FLOAT>::faces(std::size_t idx) const {
-  if(idx < num_v)
-    return lt;
-  else
-    if(idx < (num_v + num_h))
-      return bt;
-    else
-      if(idx < (2*num_v + num_h))
-        return rt;
-      else
-        return tp;
 };
 /* Following are two DIP (Dual In Package) classes,
  * vertically- and horizontally-pinned,

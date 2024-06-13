@@ -7,7 +7,7 @@
 using namespace std;
 
 typedef  double float_type;
-typedef block<float_type> block_t;
+typedef   block<float_type> block_t;
 
 #ifdef DRAW_LINES
 #include "schematics.line.h"
