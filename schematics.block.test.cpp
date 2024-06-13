@@ -23,7 +23,7 @@ typedef twoline<float_type> line_t;
 int main()
 {
 
-  block_t bl1 (60,20, 0,0,  4, 3, 5, 2);
+  block_t bl1 (100,100,  60,20,  4, 3, 5, 2);
 
   for(int i=0; i < 4; ++i)
     cout << "right side x="  << bl1.get_x_right(i) << ", y=" << bl1.get_y_right(i) << '\n';

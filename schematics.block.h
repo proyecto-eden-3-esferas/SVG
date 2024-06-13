@@ -35,16 +35,16 @@ public:
   /* The following take relative indexes,
    * are referenced in "schmatics.block.test.cpp", and
    * should be made protected virtual */
-  virtual float_t get_x_right( index_t idx) const {return x + width;};
-  virtual float_t get_y_right( index_t idx) const {return y + ((idx + 0.5)/num_rht) * height;};
-  virtual float_t get_x_bottom(index_t idx) const {return x + ((num_btm - idx - 0.5) / num_btm) * width;};
-  virtual float_t get_y_bottom(index_t idx) const {return y + height;};
   virtual float_t get_x_left(  index_t idx) const {return x;};
-  virtual float_t get_y_left(  index_t idx) const {return y + ((num_lft - idx - 0.5)/num_lft) * height;};
-  virtual float_t get_x_top(   index_t idx) const {return x + ((idx + 0.5)/num_upr) * width;};
+  virtual float_t get_y_left(  index_t idx) const {return y + ((idx + 0.5) / num_lft) * height;};
+  virtual float_t get_x_bottom(index_t idx) const {return x + ((idx + 0.5) / num_btm) * width;};
+  virtual float_t get_y_bottom(index_t idx) const {return y + height;};
+  virtual float_t get_x_right( index_t idx) const {return x + width;};
+  virtual float_t get_y_right( index_t idx) const {return y + ((num_rht - idx - 0.5) / num_rht) * height;};
+  virtual float_t get_x_top(   index_t idx) const {return x + ((num_upr - idx - 0.5) / num_upr) * width;};
   virtual float_t get_y_top(   index_t idx) const {return y;};
   //
-  block(float_t w, float_t h, float_t x, float_t y,
+  block(float_t x, float_t y, float_t w, float_t h,
         float_t l, float_t b, float_t r, float_t u) :
     rectangle_t(w,h,x,y), num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
 };
