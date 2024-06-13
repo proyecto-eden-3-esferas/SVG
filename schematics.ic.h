@@ -53,29 +53,43 @@ public:
 };
 template <typename FLOAT>
 FLOAT ic<FLOAT>::xperim(std::size_t idx) const {
-  if(idx < num_v)
-    return get_x();
-  else
-    if(idx < (num_v + num_h))
+  switch(faces(idx)) {
+    case facing::lt:
+      return get_x();
+      break;
+    case facing::bt:
       return get_x() + sep*(idx - num_v) + halfsep;
-    else
-      if(idx < (2*num_v + num_h))
-        return get_x() + get_width();
-      else
-        return get_x() + get_width() - sep*(idx - num_h - 2*num_v) - halfsep;
+      break;
+    case facing::rt:
+      return get_x() + get_width();
+      break;
+    case facing::tp:
+      return get_x() + get_width() - sep*(idx - num_h - 2*num_v) - halfsep;
+      break;
+    default:
+      return get_x();
+      break;
+  }
 };
+
 template <typename FLOAT>
 FLOAT ic<FLOAT>::yperim(std::size_t idx) const {
-  if(idx < num_v)
-    return get_y() + sep*idx + halfsep;
-  else {
-    if(idx < (num_v + num_h))
+  switch(faces(idx)) {
+    case facing::lt:
+      return get_y() + sep*idx + halfsep;
+      break;
+    case facing::bt:
       return get_y() + get_height();
-    else
-      if(idx < (2*num_v + num_h))
-        return get_y() + get_height() - sep*(idx - num_v - num_h) - halfsep;
-      else
-        return get_y();
+      break;
+    case facing::rt:
+      return get_y() + get_height() - sep*(idx - num_v - num_h) - halfsep;
+      break;
+    case facing::tp:
+      return get_y();
+      break;
+    default:
+      return get_y();
+      break;
   }
 };
 template <typename FLOAT>

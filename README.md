@@ -27,7 +27,8 @@
 
 [x] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`? Or the other way round: derive other triangular schematic symbols (diodes, buffers, OpAmp's etc) from `solid_arrowhead`.
 
-[ ] There is some code duplication in class ic. Look at the following member prototypes:
+
+[x] There is some code duplication in class `ic`, you see? Look at the following member prototypes:
 ```
 virtual float_t xperim(size_t idx) const;
 virtual float_t yperim(size_t idx) const;
@@ -36,15 +37,23 @@ virtual facing faces(size_t idx) const;
 ```
 Now, the implementations of `xperim(IDX)` and `yperim(IDX)` should use `virtual facing faces(size_t idx)`. Also, if `{x|y}perim(IDX)` are so defiend, only `faces(IDX)` needs to be virtual.
 
+
 [ ] The text in labels is not filled with black. It this a matter of styling ala CSS?
 
+
 [ ] global function `OUT & add_svg_unclosed(const twoport<FLOAT,POINT>& tp, OUT& o = std::cout)` (in *schematics.twoport.h*) prints a caption, then draws a rectangle. To avoid duplication of code I have to create a temporary `label` object from the `twoport` parameter, as I explain in a comment in the source file.
+
+One solution is for `twoport` to be derived from `label` or to *contain* a `label`. And it is a *scalable* solution: just think about all the labels that a `block` in a block diagram or an `ic` in a schematic diagram might need.
+
+[ ] Maybe `ic` (currently in *schematics.ic.h* and currently derived directly from `rectangle`) should be derived from `block` (in *schematics.rectangle.h*), itself derived from `rectangle`. On a block the pins are set off evenly according to how many there are on a side.
+
+[ ] Perhaps the rule for pin placement on a `block`'s side (which calculates its *x* and *y* coordinates) should be made virtual and still a default implementation be provided.
 
 [ ] A bezier class, to be derived from class `segment`
 
 [ ] An arc class, to be derived from class `segment` (a same functionality class, `svg_arc`, has already been implemented in "schematics.svg.arc.h")
 
-[ ] Transistor as a circle, derived from `class circular`. It wass being implemented in "schematics.round.test.cpp" and might move into a file of its own, say "schematics.transistor.h")
+[ ] Transistor as a circle, derived from `class circular`. It was being implemented in "schematics.round.test.cpp" and might move into a file of its own, say "schematics.transistor.h")
 
 [ ] `class twoport` is currently defined in its own file ("schematics.twoport.h") and tested in "segment.test.cpp" because it is derived from segment.
 
@@ -106,6 +115,12 @@ The prestigious, STL-compatible headers-only Boost library contains Geometry, a 
 ## Diagrammes, Schematics and Electronics
 
 Components are divided into (1) those located or placed by their centre of gravity (circles, ellipses..., all of them children of angle_addressable<>) and (2) those located by their upper left-hand corner coordinates, such as rectangle and its derived classes (block, ic...)
+
+### Blocks and IC's
+
+An IC has a fixed separation between pins, whereas on a block in a block diagram the separation should discretionary.
+
+Both `ic` (in *schematics.ic.h*) and `block` (in *schematics.rectangle.h*) are derived from `rectangle`.
 
 ### Diagrammes, Schematics and Electronics TODOs
 
