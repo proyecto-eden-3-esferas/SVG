@@ -26,7 +26,10 @@ public:
 };
 
 /* class 'ic'
- * By convention, the pins on an IC are numbered counterclockwise, starting with the upper-left pin closest to the clocking mark.
+ * By convention, the pins on an IC are numbered counterclockwise,
+   starting with the upper-left pin closest to the clocking mark.
+ * The constructor does NOT take width and height arguments but calculates them
+   from the number of pins on each side
  */
 template <typename FLOAT = double>
 class ic : public rectangle<FLOAT> {
@@ -34,12 +37,9 @@ public:
   typedef FLOAT float_t;
   typedef rectangle<FLOAT> rectangle_t;
   typedef std::size_t size_t;
+  using rectangle_t::x, rectangle_t::y, rectangle_t::width, rectangle_t::height;
   float_t num_h, num_v; // number of pins vertical-wise and horizontal-wise
   float_t sep, halfsep; // full and half separation between pins
-  float_t get_x() const {return rectangle_t::x;};
-  float_t get_y() const {return rectangle_t::y;};
-  float_t get_width()  const {return rectangle_t::width;};
-  float_t get_height() const {return rectangle_t::height;};
   // members for getting the coordinates and facing of pins
   enum facing {lt, bt, rt, tp};
   virtual facing faces(size_t idx) const; // Whether pin 'idx' faces left, down, right, or up
@@ -55,19 +55,19 @@ template <typename FLOAT>
 FLOAT ic<FLOAT>::xperim(std::size_t idx) const {
   switch(faces(idx)) {
     case facing::lt:
-      return get_x();
+      return x;
       break;
     case facing::bt:
-      return get_x() + sep*(idx - num_v) + halfsep;
+      return x + sep*(idx - num_v) + halfsep;
       break;
     case facing::rt:
-      return get_x() + get_width();
+      return x + width;
       break;
     case facing::tp:
-      return get_x() + get_width() - sep*(idx - num_h - 2*num_v) - halfsep;
+      return x + width - sep*(idx - num_h - 2*num_v) - halfsep;
       break;
     default:
-      return get_x();
+      return x;
       break;
   }
 };
@@ -76,19 +76,19 @@ template <typename FLOAT>
 FLOAT ic<FLOAT>::yperim(std::size_t idx) const {
   switch(faces(idx)) {
     case facing::lt:
-      return get_y() + sep*idx + halfsep;
+      return y + sep*idx + halfsep;
       break;
     case facing::bt:
-      return get_y() + get_height();
+      return y + height;
       break;
     case facing::rt:
-      return get_y() + get_height() - sep*(idx - num_v - num_h) - halfsep;
+      return y + height - sep*(idx - num_v - num_h) - halfsep;
       break;
     case facing::tp:
-      return get_y();
+      return y;
       break;
     default:
-      return get_y();
+      return y;
       break;
   }
 };
@@ -165,8 +165,8 @@ public:
 /* Partial specializations of add_svg_unclosed(IC&,OUT) */
 template<typename F = double, typename OUT = std::ostream>
 OUT & add_svg_unclosed(const ic<F>& i, OUT& o = std::cout) {
-  o << "<rect x=\"" << i.get_x()     << "\" y=\""      << i.get_y() << "\" ";
-  o <<   "width=\"" << i.get_width() << "\" height=\"" << i.get_height() << "\"";
+  o << "<rect x=\"" << i.x     << "\" y=\""      << i.y << "\" ";
+  o <<   "width=\"" << i.width << "\" height=\"" << i.height << "\"";
   return o;
 };
 
