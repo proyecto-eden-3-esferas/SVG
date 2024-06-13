@@ -17,104 +17,7 @@ public:
   rectangle(float_t w, float_t h, float_t lft=0, float_t uppr=0) : width(w), height(h), x(lft), y(uppr) {};
 };
 
-/* Class block<>, a child of rectangle<>
- * It keeps the number of ports (possibly realized as pins or as named connections)
-   for each of its four sides.
- * It produces the coordinates of a port on its perimeter
-   through members 'get_x_right(INDEX)' and so on,
-   or through newly added xperim(IDX) and yperim(IDX) members, which match members of class ic
- * These members can be used to write a general get_x(INDEX) and get_y(INDEX)
-   for any index smaller than the total number of ports.
- * ...
- */
-template <typename FLOAT = double>
-class block : public rectangle<FLOAT> {
-public:
-  typedef FLOAT float_t;
-  typedef std::size_t size_t;
-  typedef std::size_t index_t;
-  typedef rectangle<FLOAT> rectangle_t;
-  using rectangle_t::x, rectangle_t::y, rectangle_t::width, rectangle_t::height;
-  //size_t num_rht, num_btm, num_lft, num_upr; // number of ports on sides right, upper, left and bottom
-  size_t num_lft, num_btm, num_rht, num_upr; // number of ports on sides right, upper, left and bottom
-  // members for getting the coordinates and facing of pins
-  enum    facing {lt, bt, rt, tp};        // for left, bottom, right, and top
-  virtual facing faces(size_t idx) const; // Whether pin 'idx' faces left, down, right, or up
-  virtual float_t xperim(size_t idx) const;
-  virtual float_t yperim(size_t idx) const;
-  /* The following take relative indexes,
-   * are referenced in "schmatics.block.test.cpp", and
-   * should be made protected virtual */
-  virtual float_t get_x_right( index_t idx) const {return x + width;};
-  virtual float_t get_y_right( index_t idx) const {return y + ((idx + 0.5)/num_rht) * height;};
-  virtual float_t get_x_bottom(index_t idx) const {return x + ((num_btm - idx - 0.5) / num_btm) * width;};
-  virtual float_t get_y_bottom(index_t idx) const {return y + height;};
-  virtual float_t get_x_left(  index_t idx) const {return x;};
-  virtual float_t get_y_left(  index_t idx) const {return y + ((num_lft - idx - 0.5)/num_lft) * height;};
-  virtual float_t get_x_top(   index_t idx) const {return x + ((idx + 0.5)/num_upr) * width;};
-  virtual float_t get_y_top(   index_t idx) const {return y;};
-  //
-  block(float_t w, float_t h, float_t x, float_t y,
-        float_t l, float_t b, float_t r, float_t u) :
-    rectangle_t(w,h,x,y), num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
-};
-// Implementation of members of block<FLOAT>
-template <typename FLOAT>
-block<FLOAT>::facing block<FLOAT>::faces(std::size_t idx) const {
-  if(idx < num_lft)
-    return lt;
-  else
-    if(idx < (num_lft + num_btm))
-      return bt;
-    else
-      if(idx < (num_lft + num_btm + num_rht))
-        return rt;
-      else
-        return tp;
-};
-template <typename FLOAT>
-FLOAT block<FLOAT>::xperim(std::size_t idx) const {
-  switch(faces(idx)) {
-    case facing::lt:
-      return get_x_left(idx);
-      break;
-    case facing::bt:
-      return get_x_bottom(idx - num_lft);
-      break;
-    case facing::rt:
-      return get_x_right(idx - num_lft - num_btm);
-      break;
-    case facing::tp:
-      return get_x_top(idx - num_lft - num_btm);
-      break;
-    default:
-      return x;
-      break;
-  }
-};
-template <typename FLOAT>
-FLOAT block<FLOAT>::yperim(std::size_t idx) const {
-  switch(faces(idx)) {
-    case facing::lt:
-      return get_y_left(idx);
-      break;
-    case facing::bt:
-      return get_y_bottom(idx - num_lft);
-      break;
-    case facing::rt:
-      return get_y_right(idx - num_lft - num_btm);
-      break;
-    case facing::tp:
-      return get_y_top(idx - num_lft - num_btm - num_rht);
-      break;
-    default:
-      return y;
-      break;
-  }
-};
-
-
-// Partial specializations of add_svg_unclosed(RECTANGLE&,OUT&) and svg_unclosed(BLOCK&,OUT&)
+// Partial specialization of add_svg_unclosed(RECTANGLE&,OUT&)
 #ifndef SVG_H
 #include "svg.h"
 #endif
@@ -122,12 +25,6 @@ template<typename F = double, typename OUT = std::ostream>
 OUT & add_svg_unclosed(const rectangle<F>& rct, OUT& o = std::cout) {
   o << "<rect x=\"" << rct.x     << "\" y=\""      << rct.y << "\" ";
   o <<   "width=\"" << rct.width << "\" height=\"" << rct.height << "\"";
-  return o;
-};
-template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const block<F>& blk, OUT& o = std::cout) {
-  o << "<rect x=\"" << blk.x     << "\" y=\""      << blk.y << "\" ";
-  o <<   "width=\"" << blk.width << "\" height=\"" << blk.height << "\"";
   return o;
 };
 

@@ -6,6 +6,10 @@
 #include <fstream>
 using namespace std;
 
+#ifndef SCHEMATICS_BLOCK_H
+#include "schematics.block.h"
+#endif
+
 typedef  double float_type;
 typedef   block<float_type> block_t;
 
