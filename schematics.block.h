@@ -48,6 +48,7 @@ public:
         float_t l, float_t b, float_t r, float_t u) :
     rectangle_t(w,h,x,y), num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
 };
+// block_t(x,y,w,h, l,b,r,u)
 
 // Implementation of members of block<FLOAT>
 template <typename FLOAT>

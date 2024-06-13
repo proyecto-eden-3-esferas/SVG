@@ -19,7 +19,8 @@ int main() {
 
   ic_t   ic1( 50, 50, 20, 3, 7);
   ic_t   ic2(100,100, 20, 2, 5);
-  vic_t vic1( 75, 75, 20, 2, 5);
+  vic_t vic1( 75, 75, 20,    5);
+  vic_t hic1( 75, 75, 20, 7   );
 
 #ifdef TEST_IC_PIN_LOCATION
   cout << "Output pin positions of 2 x 5 IC (all four sides):\n";

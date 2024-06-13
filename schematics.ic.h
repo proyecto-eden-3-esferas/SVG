@@ -7,6 +7,8 @@
 #include "schematics.rectangle.h"
 #endif
 
+#include "schematics.block.h"
+
 #ifndef SCHEMATICS_LINE_H
 #include "schematics.line.h"
 #endif
@@ -32,84 +34,22 @@ public:
    from the number of pins on each side
  */
 template <typename FLOAT = double>
-class ic : public rectangle<FLOAT> {
+class ic : public block<FLOAT> {
 public:
   typedef FLOAT float_t;
   typedef rectangle<FLOAT> rectangle_t;
+  typedef block<FLOAT> block_t;
   typedef std::size_t size_t;
-  using rectangle_t::x, rectangle_t::y, rectangle_t::width, rectangle_t::height;
-  float_t num_h, num_v; // number of pins vertical-wise and horizontal-wise
-  float_t sep, halfsep; // full and half separation between pins
-  //
-  size_t size() const {return 2 * (num_h + num_v);
-  // members for getting the coordinates and facing of pins
-  enum    facing {lt, bt, rt, tp, none};        // for left, bottom, right, and top
-  virtual facing faces(size_t idx) const; // Whether pin 'idx' faces left, down, right, or up
-  virtual float_t xperim(size_t idx) const;
-  virtual float_t yperim(size_t idx) const;
+  using block_t::x, block_t::y, block_t::width, block_t::height;
   // Constructor:
   ic(float_t x, float_t y, // coordinates of upper left-hand corner
      float_t sp,          // separation between pins
-     float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
-     rectangle_t(nh*sp, nv*sp, x, y), num_h(nh), num_v(nv), sep(sp), halfsep(sp/2) {};
+     size_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
+     block_t(x, y, nh*sp, nv*sp, nv, nh, nv, nh) //, num_h(nh), num_v(nv), sep(sp), halfsep(sp/2)
+     {};
 };
-// Implementation of members of ic<FLOAT>
-template <typename FLOAT>
-ic<FLOAT>::facing ic<FLOAT>::faces(std::size_t idx) const {
-  if(idx < num_v)
-    return lt;
-  else
-    if(idx < (num_v + num_h))
-      return bt;
-    else
-      if(idx < (2*num_v + num_h))
-        return rt;
-      else
-        if(idx < (2*num_v + 2*num_h))
-          return tp;
-        else
-          return none;
-};
-template <typename FLOAT>
-FLOAT ic<FLOAT>::xperim(std::size_t idx) const {
-  switch(faces(idx)) {
-    case facing::lt:
-      return x;
-      break;
-    case facing::bt:
-      return x + sep*(idx - num_v) + halfsep;
-      break;
-    case facing::rt:
-      return x + width;
-      break;
-    case facing::tp:
-      return x + width - sep*(idx - num_h - 2*num_v) - halfsep;
-      break;
-    default:
-      return x;
-      break;
-  }
-};
-template <typename FLOAT>
-FLOAT ic<FLOAT>::yperim(std::size_t idx) const {
-  switch(faces(idx)) {
-    case facing::lt:
-      return y + sep*idx + halfsep;
-      break;
-    case facing::bt:
-      return y + height;
-      break;
-    case facing::rt:
-      return y + height - sep*(idx - num_v - num_h) - halfsep;
-      break;
-    case facing::tp:
-      return y;
-      break;
-    default:
-      return y;
-      break;
-  }
-};
+
+
 /* Following are two DIP (Dual In Package) classes,
  * vertically- and horizontally-pinned,
  * class vic<FLOAT>, for Vertical Integrated Circuit
@@ -126,20 +66,11 @@ public:
   typedef        ic<FLOAT>        ic_t;
   typedef rectangle<FLOAT> rectangle_t;
   typedef std::size_t size_t;
-  size_t adjust(size_t idx) const {
-    if(idx < ic_t::num_v)
-      return idx;
-    else
-      return idx + ic_t::num_h;
-  };
-  float_t     xperim(size_t idx) const {return ic_t::xperim(adjust(idx));};
-  float_t     yperim(size_t idx) const {return ic_t::yperim(adjust(idx));};
-  ic_t::facing faces(size_t idx) const {return ic_t::faces( adjust(idx));};
   // constructor:
   vic(float_t x, float_t y,    // coordinates of upper left-hand corner
      float_t sp,               // separation between pins
-     float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
-     ic_t(x,y,sp,nh,nv) {};
+     size_t num) : // number of pins vertical-wise
+     ic_t(x,y,sp,0,num) {};
 };
 template <typename FLOAT = double>
 class hic : public ic<FLOAT> {
@@ -148,20 +79,11 @@ public:
   typedef        ic<FLOAT>        ic_t;
   typedef rectangle<FLOAT> rectangle_t;
   typedef std::size_t size_t;
-  size_t adjust(size_t idx) const {
-    if(idx < ic_t::num_h)
-      return idx +   ic_t::num_v;
-    else
-      return idx + 2*ic_t::num_h;
-  };
-  float_t     xperim(size_t idx) const {return ic_t::xperim(adjust(idx));};
-  float_t     yperim(size_t idx) const {return ic_t::yperim(adjust(idx));};
-  ic_t::facing faces(size_t idx) const {return ic_t::faces( adjust(idx));};
   // constructor:
   hic(float_t x, float_t y,    // coordinates of upper left-hand corner
      float_t sp,               // separation between pins
-     float_t nh, float_t nv) : // number of pins horizontal- and vertical-wise
-     ic_t(x,y,sp,nh,nv) {};
+     size_t num) : // number of pins horizontal-wise
+     ic_t(x,y,sp,num,0) {};
 };
 
 #ifndef SVG_H
