@@ -34,9 +34,9 @@ public:
 
 // Partial specialization of svg_unclosed(BLOCK&,OUT&)
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const labeled_block<F>& lblk, OUT& o = std::cout) {
+OUT & add_svg_unclosed(const labeled_block<F>& lblk, OUT& o = std::cout, F raise = 25) {
   for(int i = 0; i < lblk.size(); ++i) {
-    o << "<text x=\"" << lblk.xperim(i) << "\" y=\"" << lblk.yperim(i) << "\" ";
+    o << "<text x=\"" << lblk.xperim(i) << "\" y=\"" << lblk.yperim(i) + raise << "\" ";
     o << "style=\"text-anchor: ";
     switch (lblk.faces(i)) {
       case labeled_block<F>::facing::lt:
@@ -57,10 +57,6 @@ OUT & add_svg_unclosed(const labeled_block<F>& lblk, OUT& o = std::cout) {
     }
     o << "\">" << lblk.strings[i] << "</text>\n" << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   }
-  /*
-  o << "<rect x=\"" << lblk.x     << "\" y=\""      << lblk.y << "\" ";
-  o <<   "width=\"" << lblk.width << "\" height=\"" << blk.height << "\"";
-  */
   add_svg_unclosed(static_cast<const block<F>&>(lblk), o);
   return o;
 };

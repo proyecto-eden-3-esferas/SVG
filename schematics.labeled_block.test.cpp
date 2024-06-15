@@ -32,15 +32,6 @@ int main()
   cout << "Now \'lbl2\' stores " << lbl2.strings.size() << " string(s)\n";
   cout << "Now \'lbl3\' stores " << lbl3.strings.size() << " string(s)\n";
 
-  for(int i=0; i < 4; ++i)
-    cout << "right side x="  << lbl1.get_x_right(i) << ", y=" << lbl1.get_y_right(i) << '\n';
-  for(int i=0; i < 3; ++i)
-    cout << "bottom side x="  << lbl1.get_x_bottom(i) << ", y=" << lbl1.get_y_bottom(i) << '\n';
-  for(int i=0; i < 5; ++i)
-    cout << "left side x="  << lbl1.get_x_left(i) << ", y=" << lbl1.get_y_left(i) << '\n';
-  for(int i=0; i < 2; ++i)
-    cout << "top side x="  << lbl1.get_x_top(i) << ", y=" << lbl1.get_y_top(i) << '\n';
-
   cout << "\nNow test port positions through xperim(IDX) and yperim(IDX), with " << lbl1.size() << " port(s)\n";
   for(int i=0; i < lbl1.size(); ++i)
     cout << "position: " << lbl1.xperim(i) << ", " << lbl1.yperim(i) << '\n';

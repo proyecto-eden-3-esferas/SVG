@@ -40,11 +40,16 @@ Now, the implementations of `xperim(IDX)` and `yperim(IDX)` should use `virtual 
 [x] block should be tested through members {x|y}perim(IDX)
 
 [ ] Add `FLOAT raise` parameter to global function specialization:
+
+[ ] In "schematics.sq_polyline.h", write classes that take start and end points by reference. Name them `ref_??_polyline`...
+
 ```
 template<typename F = double, typename OUT = std::ostream>
 OUT & add_svg_unclosed(const labeled_block<F>& lblk, OUT& o = std::cout)
 ```
-so as to raise the baseline of the labels above the lines connecting to the ports on `lblk`
+so as to raise the baseline of the labels above the lines connecting to the ports on `lblk`.
+
+Actually, this is effected by *subtracting* `raise` from the y coordinate.
 
 [ ] ic should be derived from block, which will take some re-coding
 
