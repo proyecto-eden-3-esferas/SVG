@@ -26,7 +26,7 @@ schematics.block: schematics.block.test.cpp schematics.rectangle.h schematics.bl
 	c++ -std=c++23 $<  -o $@
 schematics.labeled_block: schematics.labeled_block.test.cpp schematics.labeled_block.h schematics.rectangle.h schematics.block.h svg.h
 	c++ -std=c++23 $<  -o $@
-schematics.sq_polyline: schematics.sq_polyline.test.cpp schematics.sq_polyline.h svg.h
+schematics.sq_polyline: schematics.sq_polyline.test.cpp schematics.sq_polyline.h schematics.vec_polyline.h svg.h
 	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h

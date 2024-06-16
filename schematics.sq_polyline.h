@@ -12,13 +12,13 @@
 template <typename FLOAT=double>
 class sq_polyline {
 protected:
-  void add_start_to_svg_path(std::ostream& is) const {is << " M " << x1 << ' ' << y1;};
-  void   add_end_to_svg_path(std::ostream& is) const {is << " L " << x2 << ' ' << y2;};
+  void add_start_to_svg_path(std::ostream& o) const {o << " M " << x1 << ' ' << y1;};
+  void   add_end_to_svg_path(std::ostream& o) const {o << " L " << x2 << ' ' << y2;};
 public:
   FLOAT x1, y1, x2, y2; // same names as attributes of svg::line
-  virtual void add_to_svg_path(std::ostream& is) const {
-    add_start_to_svg_path(is);
-    add_end_to_svg_path(  is);
+  virtual void add_to_svg_path(std::ostream& o) const {
+    add_start_to_svg_path(o);
+    add_end_to_svg_path(  o);
   };
   //
   sq_polyline() = default;
@@ -35,10 +35,10 @@ public:
   using sq_polyline_t::add_start_to_svg_path, sq_polyline_t::add_end_to_svg_path;
   using sq_polyline_t::x1, sq_polyline_t::y1, sq_polyline_t::x2, sq_polyline_t::y2;
 
-  virtual void add_to_svg_path(std::ostream& is) const {
-    add_start_to_svg_path(is);
-    is << " H " << x2;
-    add_end_to_svg_path(  is);
+  virtual void add_to_svg_path(std::ostream& o) const {
+    add_start_to_svg_path(o);
+    o << " H " << x2;
+    add_end_to_svg_path(  o);
   };
   //
   h_polyline() = default;
@@ -51,10 +51,10 @@ public:
   using sq_polyline_t::add_start_to_svg_path, sq_polyline_t::add_end_to_svg_path;
   using sq_polyline_t::x1, sq_polyline_t::y1, sq_polyline_t::x2, sq_polyline_t::y2;
 
-  virtual void add_to_svg_path(std::ostream& is) const {
-    add_start_to_svg_path(is);
-    is << " V " << y2;
-    add_end_to_svg_path(  is);
+  virtual void add_to_svg_path(std::ostream& o) const {
+    add_start_to_svg_path(o);
+    o << " V " << y2;
+    add_end_to_svg_path(  o);
   };
   //
   v_polyline() = default;
@@ -71,11 +71,11 @@ public:
   using sq_polyline_t::add_start_to_svg_path, sq_polyline_t::add_end_to_svg_path;
   using sq_polyline_t::x1, sq_polyline_t::y1, sq_polyline_t::x2, sq_polyline_t::y2;
   FLOAT d;
-  virtual void add_to_svg_path(std::ostream& is) const {
-    add_start_to_svg_path(is);
-    is << " h " << d;
-    is << " L " << x1 + d << ' ' << y2 << ' ';
-    add_end_to_svg_path(  is);
+  virtual void add_to_svg_path(std::ostream& o) const {
+    add_start_to_svg_path(o);
+    o << " h " << d;
+    o << " L " << x1 + d << ' ' << y2 << ' ';
+    add_end_to_svg_path(  o);
   };
   //
   hv_polyline() = default;
@@ -88,11 +88,11 @@ public:
   using sq_polyline_t::add_start_to_svg_path, sq_polyline_t::add_end_to_svg_path;
   using sq_polyline_t::x1, sq_polyline_t::y1, sq_polyline_t::x2, sq_polyline_t::y2;
   FLOAT d;
-  virtual void add_to_svg_path(std::ostream& is) const {
-    add_start_to_svg_path(is);
-    is << " v " << d;
-    is << " L " << x2 << ' ' << y1 + d << ' ';
-    add_end_to_svg_path(  is);
+  virtual void add_to_svg_path(std::ostream& o) const {
+    add_start_to_svg_path(o);
+    o << " v " << d;
+    o << " L " << x2 << ' ' << y1 + d << ' ';
+    add_end_to_svg_path(  o);
   };
   //
   vh_polyline() = default;
@@ -110,12 +110,12 @@ public:
   using sq_polyline_t::add_start_to_svg_path, sq_polyline_t::add_end_to_svg_path;
   using sq_polyline_t::x1, sq_polyline_t::y1, sq_polyline_t::x2, sq_polyline_t::y2;
   FLOAT d1, d2;
-  virtual void add_to_svg_path(std::ostream& is) const {
-    add_start_to_svg_path(is);
-    is << " h " << d1;
-    if << " v " << d2
-    is << " L " << x2 << ' ' << y1 + d2 << ' ';
-    add_end_to_svg_path(  is);
+  virtual void add_to_svg_path(std::ostream& o) const {
+    add_start_to_svg_path(o);
+    o << " h " << d1;
+    o << " v " << d2;
+    o << " L " << x2 << ' ' << y1 + d2 << ' ';
+    add_end_to_svg_path(  o);
   };
   hvh_polyline() = default;
   hvh_polyline(FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT d1, FLOAT d2)
@@ -128,12 +128,12 @@ public:
   using sq_polyline_t::add_start_to_svg_path, sq_polyline_t::add_end_to_svg_path;
   using sq_polyline_t::x1, sq_polyline_t::y1, sq_polyline_t::x2, sq_polyline_t::y2;
   FLOAT d1, d2;
-  virtual void add_to_svg_path(std::ostream& is) const {
-    add_start_to_svg_path(is);
-    is << " v " << d1;
-    if << " h " << d2
-    is << " L " << x1 + d2 << ' ' << y2 << ' ';
-    add_end_to_svg_path(  is);
+  virtual void add_to_svg_path(std::ostream& o) const {
+    add_start_to_svg_path(o);
+    o << " v " << d1;
+    o << " h " << d2;
+    o << " L " << x1 + d2 << ' ' << y2 << ' ';
+    add_end_to_svg_path(  o);
   };
   vhv_polyline() = default;
   vhv_polyline(FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT d1, FLOAT d2)
