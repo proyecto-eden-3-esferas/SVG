@@ -33,6 +33,19 @@ OUT& open_svg(OUT& o, F w = 200.0, F h = 200.0,
   o << "\" stroke=\"" << strk << "\" fill=\"" << fll << "\" fill-opacity=\"" << fllopct << "\">\n";
   return o;
 }
+
+template<typename F = double, typename OUT = std::ostream>
+OUT& open_svg_path_p(OUT& o) {
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+  o << "<path d=\"";
+  return o;
+};
+template<typename OUT = std::ostream>
+OUT& close_svg_path(OUT& o = std::cout) {
+  o << "\"/>\n";
+  return o;
+};
+
 template<typename OUT = std::ostream>
 OUT& close_svg(OUT& o) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "</svg>\n";

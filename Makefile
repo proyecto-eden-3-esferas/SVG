@@ -28,13 +28,15 @@ schematics.labeled_block: schematics.labeled_block.test.cpp schematics.labeled_b
 	c++ -std=c++23 $<  -o $@
 schematics.sq_polyline: schematics.sq_polyline.test.cpp schematics.sq_polyline.h schematics.vec_polyline.h svg.h
 	c++ -std=c++23 $<  -o $@
+schematics.sq_polyline-and-block: schematics.sq_polyline-and-block.test.cpp schematics.block.h schematics.sq_polyline.h schematics.vec_polyline.h svg.h
+	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
 %.o: %.cpp
 	g++ -c -std=c++17 $<
 
-EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block
+EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block
 
 clean_executables:
 	$(RM) $(EXECUTABLES)

@@ -30,11 +30,11 @@ public:
       }
     } // for
     if(even(lengths.size() ) ) { // last segment was vertical,   so
-      o << " L " << x2;
+      o << " H " << x2;
       o << " V " << y2;
     } else {                   // last segment was horizontal, so
       o << " V " << y2;
-      o << " L " << x2;
+      o << " H " << x2;
     }
     add_end_to_svg_path(  o);
   };
