@@ -24,14 +24,15 @@ public:
   typedef angle_addressable<FLOAT> cir_t;
   typedef FLOAT float_t;
   typedef std::size_t size_t;
-  F apow;  // angle of the emitter or, symetrically, the collector
-  F abase; // angle of the base
-  F kbase; //
-  F x_of_pin(size_t idx) const;
-  F y_of_pin(size_t idx) const;
+  enum ports {emitter, base, collector, emitter_side_start_of_cord, collector_side_start_of_cord, from0, from1, from2};
+  FLOAT apow;  // angle of the emitter or, symetrically, the collector
+  FLOAT abase; // angle of the base
+  FLOAT kbase; //
+  FLOAT x_of_pin(size_t idx) const;
+  FLOAT y_of_pin(size_t idx) const;
   bjt(float_t ra, float_t x=0, float_t y=0,
-             float_t ab = cir_t(deg_to_rad(120)),
-             float_t ap = cir_t(deg_to_rad(60)),
+             float_t ab = cir_t::deg_to_rad(120),
+             float_t ap = cir_t::deg_to_rad(60),
              float_t kb = 0.2) :
     circular_t(ra,x,y), apow(ap), abase(ab), kbase(0.2) {};
 };
@@ -40,7 +41,7 @@ FLOAT bjt<FLOAT>::x_of_pin(size_t idx) const {
   switch (idx) {
     case 0: return circular_t::x + circular_t::r * cir_t::cos(apow);
     case 1: return circular_t::x + circular_t::r * cir_t::cos(abase);
-    case 2: return circular_t::x - circular_t::r
+    case 2: return circular_t::x - circular_t::r;
     case 3: return circular_t::x + circular_t::r * cir_t::cos(abase);
     case 4: return circular_t::x + circular_t::r * cir_t::cos(apow);
     // Inside the bjt circle, along the base, top to bottom:
@@ -54,7 +55,7 @@ FLOAT bjt<FLOAT>::y_of_pin(size_t idx) const {
   switch (idx) {
     case 0: return circular_t::x + circular_t::r * cir_t::sin(apow);
     case 1: return circular_t::x + circular_t::r * cir_t::sin(abase);
-    case 2: return circular_t::x - circular_t::r
+    case 2: return circular_t::x - circular_t::r;
     case 3: return circular_t::x + circular_t::r * cir_t::sin(abase);
     case 4: return circular_t::x + circular_t::r * cir_t::sin(apow);
     // Inside the bjt circle, along the base, top to bottom:
@@ -63,5 +64,13 @@ FLOAT bjt<FLOAT>::y_of_pin(size_t idx) const {
     case 7: return circular_t::x + circular_t::r * cir_t::sin(abase);
   }
 };
+
+template<typename F = double, typename OUT = std::ostream>
+OUT & add_svg_unclosed(const bjt<F>& cc, OUT& o = std::cout) {
+  o << "<circle cx=\"" << cc.cx << "\" cy=\"" << cc.cy << "\" r=\"" << cc.r << "\"/>";
+  // add_svg(static_cast<circular<float_type>>(b), o);
+  return o;
+};
+
 
 #endif
