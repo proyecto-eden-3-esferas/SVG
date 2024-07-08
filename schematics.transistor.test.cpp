@@ -8,7 +8,7 @@
 using namespace std;
 
 typedef double float_type;
-typedef bjt<float_type> bjt_t;
+typedef transistor<float_type> bjt_t;
 
 int main() {
 
@@ -16,10 +16,11 @@ int main() {
 
   // open file "test.transistor.html" to hold an SVG element:
   ofstream ofs("test.transistor.html");
-  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
+  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Drawing transistors in SVG</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.2);
     //add_svg(static_cast<circular<float_type>>(bjt1), ofs);
-    add_svg(bjt1, ofs);
+    //add_svg(bjt1, ofs);
+    bjt1.add_svg(ofs);
 
   // Keep adding components to the SVG file (handle='ofs')
     close_svg(ofs);
