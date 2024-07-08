@@ -51,7 +51,7 @@ so as to raise the baseline of the labels above the lines connecting to the port
 
 Actually, this is effected by *subtracting* `raise` from the y coordinate.
 
-[ ] ic should be derived from block, which will take some re-coding
+[x] ic should be derived from block, which will take some re-coding
 
 [ ] The text in labels is not filled with black. It this a matter of styling ala CSS?
 
@@ -61,8 +61,6 @@ Actually, this is effected by *subtracting* `raise` from the y coordinate.
 One solution is for `twoport` to be derived from `label` or to *contain* a `label`. And it is a *scalable* solution: just think about all the labels that a `block` in a block diagram or an `ic` in a schematic diagram might need.
 
 No, as regards `block`'s, I want them to hold one std::string per port (ports are drawn as pins or as the start of lines on the rectangle that matches them). Exactly, `block`'s are large objects in memory, are likely to be used often, and will probably have a lot of children (will probably be derived from often).
-
-[ ] Maybe `ic` (currently in *schematics.ic.h* and currently derived directly from `rectangle`) should be derived from `block` (in *schematics.rectangle.h*), itself derived from `rectangle`. On a block the pins are set off evenly according to how many there are on a side.
 
 [ ] Perhaps the rule for pin placement on a `block`'s side (which calculates its *x* and *y* coordinates) should be made virtual and still a default implementation be provided.
 
@@ -98,6 +96,30 @@ No, as regards `block`'s, I want them to hold one std::string per port (ports ar
 
 
 ## A Geometry Library
+
+### The Class Hierarchy
+
+- Global functions in *svg.h*
+
+  - OUT& open_svg(OUT& o, F w = 200.0, F h = 200.0,
+                  STROKE = "black",
+                  FILL = "gray",
+                  FILL-OPACITY = 0.5);
+  - OUT& open_svg_path_p(OUT& o);
+  - OUT& close_svg_path(OUT& o = std::cout);
+  - OUT & close_standalone_tag(OUT& o = std::cout);
+  - OUT & add_svg_unclosed(const T& t, OUT& o = std::cout);
+  - OUT & add_svg(const T& t, OUT& o = std::cout);
+
+- Classes for straight 1-D and 2-D lines, polylines and polygons in *schematics.line.h*
+
+- Class `rectangle` in *schematics.rectangle.h* is an SVG rectangle and the parent of classes `block` and `ic` in *schematics.ic.h*, with children `vic` (vertical IC) and `hic` (horizontal IC)
+
+- Class `twoport` is currently derived from `segment` in *segment.h*
+
+- In *schematics.arrow.h* are defined `slim_arrowhead`, derived from `circular` (in order to use cx, cy, r etc.), and its trivial child `solid_arrowhead`
+
+- Classes in *schematics.round.h* (`circular`, `elliptical`, and `rectangular`) are derived from `angle_addressable` in *schematics.angle.h*. These derived classes produce x,y coordinates through members `xperim(RADS)` and `yperim(RADS)`.
 
 
 ### Classes and Functions with the Same Interface as those in Boost Geometry

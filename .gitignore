@@ -12,4 +12,6 @@ schematics.block
 schematics.svg.arc
 schematics.label
 schematics.twoport
+schematics.labeled_block
+schematics.sq_polyline-and-block
 .git

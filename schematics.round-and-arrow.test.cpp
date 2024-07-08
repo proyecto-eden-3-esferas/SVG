@@ -2,48 +2,6 @@
 #include "schematics.line.h"
 #include "schematics.arrow.h"
 
-/* Class transistor,
- * The pins are:
- * (0) emitter
- * (1) base
- * (2) collector
- * (3) emitter-side start of cord
- * (4) collector-side start of cord
- * (5) from 0
- * (6) from 1
- * (7) from 2
- */
-/*
-template <typename FLOAT = double>
-class transistor : public circular<FLOAT> {
-public:
-  typedef          circular<FLOAT> circular_t;
-  typedef angle_addressable<FLOAT> cir_t;
-  typedef FLOAT float_t;
-  typedef std::size_t size_t;
-  F apow, abase;
-  F x_of_pin(size_t idx) const;
-  F y_of_pin(size_t idx) const {return 0.0;};
-  transistor(float_t ra, float_t x=0, float_t y=0,
-             float_t ap = cir_t(deg_to_rad(120)),
-             float_t ab = cir_t(deg_to_rad(60))) :
-    circular_t(ra,x,y), apow(ap), abase(ab) {};
-};
-template <typename FLOAT>
-FLOAT transistor<FLOAT>::x_of_pin(size_t idx) const {
-  switch (idx) {
-    case 0: return circular_t::x + circular_t::r * cir_t::cos(apow);
-    case 1: return circular_t::x + circular_t::r * cir_t::cos(abase);
-    case 2: return circular_t::x - circular_t::r
-    case 3: return circular_t::x + circular_t::r * cir_t::cos(abase);
-    case 4: return circular_t::x + circular_t::r * cir_t::cos(apow);
-    // Inside the transistor circle, along the base, top to bottom:
-    case 5: return circular_t::x + circular_t::r * cir_t::cos(abase);
-    case 6: return circular_t::x + circular_t::r * cir_t::cos(abase);
-    case 7: return circular_t::x + circular_t::r * cir_t::cos(abase);
-  }
-};
-*/
 
 //#define DRAW_CIRCULAR_COMPONENT_PERIM
 #ifndef DRAW_CIRCULAR_COMPONENT_PERIM
@@ -95,9 +53,9 @@ int main()
   cout << "Test rectangular_components rc*\n";
   //rectangular_component_t rc1(30,20, 40,50), rc2(30,20, 42,52), rc3(30,20, 38,48);
   rectangular_component_t rc1(30,20, 40,50), rc2(30,20, 42,52), rc3(30,20, 38,48);
-  cout << "rc1.trans_angle: " << cir_t::rads_to_deg(rc1.trans_angle) << '\n';
-  cout << "rc2.trans_angle: " << cir_t::rads_to_deg(rc2.trans_angle) << '\n';
-  cout << "rc3.trans_angle: " << cir_t::rads_to_deg(rc3.trans_angle) << '\n';
+  cout << "rc1.trans_angle: " << cir_t::rad_to_deg(rc1.trans_angle) << '\n';
+  cout << "rc2.trans_angle: " << cir_t::rad_to_deg(rc2.trans_angle) << '\n';
+  cout << "rc3.trans_angle: " << cir_t::rad_to_deg(rc3.trans_angle) << '\n';
   cout << "Now test rectangular rc2(100,100) ::xperim(rads) and ::yperim(rads) for several rads (angles):\n";
   cout << "a = 10: " << rc2.xperim(cir_t::deg_to_rad(10)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(10)) << '\n';
   cout << "a = 30: " << rc2.xperim(cir_t::deg_to_rad(30)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(30)) << '\n';

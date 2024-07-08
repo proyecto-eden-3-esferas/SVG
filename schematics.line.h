@@ -5,7 +5,7 @@
 
 /* Classes oneline<FLOAT> and twoline<FLOAT> define
    one- and two-dimensional "lines"
- * They make use of static interpolate(BEG,END,K)
+ * They make use of static oneline::interpolate(BEG,END,K)
    to interpolate between beginning and end by a factor k
  * Class oneline<>, a one-dimensional line,
    holds its beginning and ending as single floats,
@@ -26,8 +26,9 @@ public:
   oneline(float_t b, float_t e) : beg(b), end(e) {};
 };
 /* class twoline<>
- * holds two oneline's (named 'x' and 'y')
- * and represents a line in 2-space
+   holds two oneline's (named 'x' and 'y')
+   and represents a line in 2-space
+ * An analogous 3-D threeline might be written
  */
 template <typename FLOAT = double>
 struct twoline {
@@ -56,10 +57,10 @@ OUT & add_svg_unclosed(const twoline<F>& cc, OUT& o = std::cout) {
 };
 
 /* classes polyline and polygon
- * class poliline is a line made up of straight segments
+ * class polyline is a line made up of straight segments
  * Points are held in a container supporting push/emplace_back()
  * class polygon  is defined analogously:
- * (  )just substitute 'polygon' for 'polyline')
+ * (just substitute 'polygon' for 'polyline')
  */
 template <typename FLOAT = double,
           typename POINT = std::pair<FLOAT,FLOAT>,
@@ -113,9 +114,9 @@ template <typename F = double,
           typename POINT = std::pair<F,F>,
           typename CONT  = std::vector<POINT>,
           typename OUT = std::ostream>
-OUT & add_svg_unclosed(const polygon<F,POINT,CONT>& pll, OUT& o = std::cout) {
+OUT & add_svg_unclosed(const polygon<F,POINT,CONT>& plg, OUT& o = std::cout) {
   o << "<polygon points=\"";
-  for(const auto & pt : pll.points)
+  for(const auto & pt : plg.points)
     o << pt.first << ',' << pt.second << ' ';
   o << '\"';
   return o;

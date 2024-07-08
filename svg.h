@@ -4,10 +4,10 @@
 
 /* SVG Helping Functions
  * Remember to define attribute 'stroke' (as black or some non-white colour)
- * in the svg opening tag, or in each svg shape
+   in the svg opening tag, or in each svg shape
  * Sometimes you want to define fill to, possibly inside specific svg shapes
  * You rarely want to define <svg stroke="black" fill="black"
- * as the filling will hide a lot of detail
+   as the filling will hide a lot of detail
  */
 
 #include <iostream>
@@ -52,17 +52,17 @@ OUT& close_svg(OUT& o) {
   return o;
 };
 
-/* 'add_svg_unclosed(SVG_ELEM&, OUT&)' leaves the tag add_svg_unclosed
+/* 'add_svg_unclosed(SVG_ELEM&, OUT&)' leaves the tag unclosed
    so that further attributes may be added.
  * Remember to close tag with 'close_standalone_tag(OUT&)'
    after adding those new attributes.
  * If you do not need to add further attributes, use 'add_svg(T&,OUT&)'
- * Remember to add 'close_standalone_tag(OUT&)'
+ * Remember to add 'close_standalone_tag(OUT&)' after calling add_svg_unclosed()
  */
-template<typename OUT = std::ostream>
-OUT & close_standalone_tag(OUT& o = std::cout) {o << "/>\n"; return o;};
 template<typename T, typename F = double, typename OUT = std::ostream>
 OUT & add_svg_unclosed(const T& t, OUT& o = std::cout) {o << "UNDEFINED WHATEVER!!!\n"; return o;};
+template<typename OUT = std::ostream>
+OUT & close_standalone_tag(OUT& o = std::cout) {o << "/>\n"; return o;};
 template<typename T, typename F = double, typename OUT = std::ostream>
 OUT & add_svg(const T& t, OUT& o = std::cout) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;

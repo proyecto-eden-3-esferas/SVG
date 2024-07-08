@@ -6,17 +6,12 @@
  *   circular
  *   elliptical, and
  *   rectangular
+ * Note that the names of the classes are adjectives
  */
-
-
-//#include <numbers>
-//#include <utility>
-//#include <vector>
 
 #ifndef SCHEMATICS_ANGLE_H
 #include "schematics.angle.h"
 #endif
-
 
 //  Children of angle_addressable<>
 

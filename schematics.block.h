@@ -6,8 +6,8 @@
 #endif
 
 /* Class block<>, a child of rectangle<>
- * It keeps the number of ports (possibly realized as pins or as named connections)
-   for each of its four sides.
+ * It stores the number of ports (possibly realized as pins or as named connections)
+   on each of its four sides.
  * It produces the coordinates of a port on its perimeter
    through members 'get_x_right(INDEX)' and so on,
    or through newly added xperim(IDX) and yperim(IDX) members, which match members of class ic

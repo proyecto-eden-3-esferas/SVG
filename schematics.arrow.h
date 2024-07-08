@@ -19,7 +19,7 @@ public:
      and 'half_angle' is kept in case we want to rotate
      the arrowhead to an angle, through rotate_to(ABS_ANGLE).
    * Rotation only changes the four barb[01][xy] coordinates
-   * Clients should not access these directly, but call get_barb**() instead.
+   * Clients should not access these directly, but call get_barb[01][xy]() instead.
    * Translations are effected by changing (cx,cy)
    */
   using cir_t::cx, cir_t::cy;
@@ -32,7 +32,6 @@ public:
   float_t get_barb1x() const {return cx + barb1x;};
   float_t get_barb1y() const {return cy + barb1y;};
   float_t shaft_angle;
-  //void rotate_by( float rel_angle ) {}; // UNIMPLEMENTED
   void rotate_to( float abs_angle ) {
     shaft_angle = abs_angle;
     barb0x = r * cir_t::cos(std::numbers::pi - half_angle + shaft_angle);

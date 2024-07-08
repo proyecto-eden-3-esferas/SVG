@@ -24,8 +24,14 @@ using namespace std;
 
 int main() {
 
-  block_t bl1(100,100,  60,100,  4, 0, 4, 0);
-  block_t bl2(300,100,  60,100,  4, 0, 4, 0);
+  block_t bl1(100,200,  60,100,  4, 0, 4, 0);
+  block_t bl2(300,200,  60,100,  4, 0, 4, 0);
+  std::vector<vec_polyline_t> v;
+  for(int i=0; i < 4; ++i) {
+    v.emplace_back(vec_polyline_t(bl1.xperim(i), bl1.yperim(i),
+                                  bl2.xperim(i), bl2.yperim(i),
+                                  { -(i+1)*10, -50 -(i+1)*10, 200}));
+  }
 
   h_polyline_t    hpl1(100, 100,  180, 22);
   v_polyline_t    vpl1(100, 100,  180, 18);
@@ -71,6 +77,9 @@ int main() {
         //vpl1.add_to_svg_path(ofs);
         //hvpl1.add_to_svg_path(ofs);
         //vhpl1.add_to_svg_path(ofs);
+        for(const auto p : v) {
+          p.add_to_svg_path(ofs);
+        }
         hvhpl1.add_to_svg_path(ofs);
         vhvpl1.add_to_svg_path(ofs);
         //sqpl1.add_to_svg_path(ofs);

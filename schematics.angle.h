@@ -4,7 +4,7 @@
 #include <cmath>
 
 /* angle_addressable<>
- * (1) can return a point's coordinates according to an angle,
+ * (1) can return a point's coordinates from an angle,
  * (2) contains some static member functions for trigonometry,
  *     which are defined differently in specializations for FLOAT = float or long double
  * (3) declares pure virtual members 'xperim(rads)' and 'xperim(rads)'
