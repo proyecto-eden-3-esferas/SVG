@@ -8,8 +8,6 @@ save_to_github:
 
 schematics.label: schematics.label.test.cpp schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
-schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h schematics.label.h svg.h
-	c++ -std=c++23 $<  -o $@
 schematics.rectangle: schematics.rectangle.test.cpp schematics.rectangle.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.line: schematics.line.test.cpp schematics.line.h svg.h
@@ -31,6 +29,9 @@ schematics.labeled_block: schematics.labeled_block.test.cpp schematics.labeled_b
 schematics.sq_polyline: schematics.sq_polyline.test.cpp schematics.sq_polyline.h schematics.vec_polyline.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.sq_polyline-and-block: schematics.sq_polyline-and-block.test.cpp schematics.block.h schematics.sq_polyline.h schematics.vec_polyline.h svg.h
+	c++ -std=c++23 $<  -o $@
+
+schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h schematics.fet.h schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h

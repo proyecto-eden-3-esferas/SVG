@@ -48,13 +48,18 @@ public:
   template <typename OUT = std::ostream>
   OUT& add_collector_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_svg(OUT& o) const;
+  OUT& add_svg(OUT& o) const {
+    add_emitter_to_svg(o);
+    add_collector_to_svg(o);
+    add_circle_to_svg(o);
+    return add_base_to_svg(o);
+  };
   //
   transistor(float_t ra, float_t x=0, float_t y=0,
              float_t ab = cir_t::deg_to_rad(130),
              float_t ap = cir_t::deg_to_rad(60),
-             float_t kb = 0.8) :
-    circular_t(ra,x,y), ae(ap), ac(ap), abase(ab), kbase(kb), kkbase(kb) {};
+             float_t kb = 0.8, float_t kkb = 0.7) :
+    circular_t(ra,x,y), ae(ap), ac(ap), abase(ab), kbase(kb), kkbase(kkb) {};
 };
 /* Implementations of transistor<FLOAT> methods
  */
@@ -84,14 +89,6 @@ OUT& transistor<FLOAT>::add_collector_to_svg(OUT& o) const {
   o << "<line x1=\"" << x_of_pin(2) << "\" y1=\"" << y_of_pin(2) << '\"';
   o <<      " x2=\"" << x_of_pin(6) << "\" y2=\"" << y_of_pin(6) << "\"/>\n";
   return o;
-};
-template <typename FLOAT>
-template <typename OUT>
-OUT& transistor<FLOAT>::add_svg(OUT& o) const {
-  add_emitter_to_svg(o);
-  add_collector_to_svg(o);
-  add_circle_to_svg(o);
-  return add_base_to_svg(o);
 };
 //
 template <typename FLOAT>
@@ -132,6 +129,5 @@ OUT & add_svg_unclosed(const transistor<F>& tr, OUT& o = std::cout) {
   // add_svg(static_cast<circular<float_type>>(b), o);
   return o;
 };
-
 
 #endif
