@@ -55,4 +55,7 @@ OUT& fet<FLOAT>::add_collector_to_svg(OUT& o) const {
   return o;
 };
 
+template<typename F = double, typename OUT = std::ostream>
+OUT & add_svg_unclosed(const fet<F>& tr, OUT& o = std::cout) { return tr.add_svg(o);};
+
 #endif

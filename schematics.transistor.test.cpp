@@ -23,8 +23,13 @@ int main() {
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.2);
     //add_svg(static_cast<circular<float_type>>(tr1), ofs);
     //add_svg(tr1, ofs);
-    tr1.add_svg(ofs);
-    ft1.add_svg(ofs);
+
+    //tr1.add_svg(ofs);
+    //ft1.add_svg(ofs);
+
+    add_svg(tr1, ofs);
+    add_svg(ft1, ofs);
+
     //ft1.add_emitter_to_svg(ofs);
     //ft1.add_collector_to_svg(ofs);
 

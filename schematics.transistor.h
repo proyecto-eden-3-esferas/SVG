@@ -123,11 +123,14 @@ FLOAT transistor<FLOAT>::y_of_pin(size_t idx) const {
 
 template<typename F = double, typename OUT = std::ostream>
 OUT & add_svg_unclosed(const transistor<F>& tr, OUT& o = std::cout) {
+  return tr.add_svg(o);
+  /*
   o << "<circle cx=\"" << tr.cx << "\" cy=\"" << tr.cy << "\" r=\"" << tr.r << "\"/>\n";
   o << "<line x1=\"" << tr.x_of_pin(3) << "\" y1=\"" << tr.y_of_pin(3) << '\"';
   o <<       "x2=\"" << tr.x_of_pin(4) << "\" y2=\"" << tr.y_of_pin(4) << "\">\n";
   // add_svg(static_cast<circular<float_type>>(b), o);
   return o;
+  */
 };
 
 #endif

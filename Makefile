@@ -20,8 +20,11 @@ schematics.svg.arc: schematics.svg.arc.test.cpp svg.h schematics.svg.arc.h
 	c++ -std=c++23 $<  -o $@
 segment: segment.test.cpp svg.h segment.h schematics.twoport.h
 	c++ -std=c++23 $<  -o $@
-schematics.twoport: schematics.twoport.test.cpp svg.h segment.h schematics.twoport.h
+
+schematics.twoport:   schematics.twoport.test.cpp   svg.h schematics.line.h schematics.angle.h schematics.twoport.h schematics.capacitor.h
 	c++ -std=c++23 $<  -o $@
+schematics.capacitor: schematics.capacitor.test.cpp svg.h schematics.line.h schematics.angle.h schematics.twoport.h schematics.capacitor.h
+
 schematics.block: schematics.block.test.cpp schematics.rectangle.h schematics.block.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.labeled_block: schematics.labeled_block.test.cpp schematics.labeled_block.h schematics.rectangle.h schematics.block.h svg.h
@@ -34,12 +37,13 @@ schematics.sq_polyline-and-block: schematics.sq_polyline-and-block.test.cpp sche
 schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h schematics.fet.h schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
 
+
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
 %.o: %.cpp
 	g++ -c -std=c++17 $<
 
-EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor
+EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor
 
 clean_executables:
 	$(RM) $(EXECUTABLES)

@@ -3,6 +3,10 @@
 
 #include <vector>
 
+#ifndef SCHEMATICS_ROUND_H
+#include "schematics.angle.h"
+#endif
+
 /* Classes oneline<FLOAT> and twoline<FLOAT> define
    one- and two-dimensional "lines"
  * They make use of static oneline::interpolate(BEG,END,K)
@@ -42,7 +46,24 @@ public:
   float_t get_yend() const {return y.get_end();};
   float_t get_x(float_t k) const {return x.get(k);};
   float_t get_y(float_t k) const {return y.get(k);};
+  //
+  FLOAT get_length() const;
+  FLOAT get_angle()  const;
+  FLOAT get_midx() const {return (get_xbeg() + get_xend() ) / 2;};
+  FLOAT get_midy() const {return (get_ybeg() + get_yend() ) / 2;};
+  //
   twoline(float_t xb, float_t yb, float_t xe, float_t ye) : x(xb,xe), y(yb,ye) {};
+};
+// Implementation of twoline members:
+template<typename FLOAT>
+FLOAT twoline<FLOAT>::get_length() const {
+  return sqrt( ( get_xend() - get_xbeg() ) *  ( get_xend() - get_xbeg() ) +
+               ( get_yend() - get_ybeg() ) *  ( get_yend() - get_ybeg() ) );
+};
+template<typename FLOAT>
+FLOAT twoline<FLOAT>::get_angle() const {
+  return atan2(get_yend() - get_ybeg(),
+               get_xend() - get_xbeg());
 };
 
 #ifndef SVG_H
