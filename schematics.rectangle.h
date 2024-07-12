@@ -22,10 +22,10 @@ public:
 #include "svg.h"
 #endif
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const rectangle<F>& rct, OUT& o = std::cout) {
+void add_svg_unclosed(const rectangle<F>& rct, OUT& o = std::cout) {
   o << "<rect x=\"" << rct.x     << "\" y=\""      << rct.y << "\" ";
   o <<   "width=\"" << rct.width << "\" height=\"" << rct.height << "\"";
-  return o;
+  //return o; // void return type
 };
 
 #endif

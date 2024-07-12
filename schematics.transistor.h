@@ -39,20 +39,20 @@ public:
   FLOAT x_of_pin(size_t idx) const;
   FLOAT y_of_pin(size_t idx) const;
   template <typename OUT = std::ostream>
-  OUT& add_circle_to_svg(OUT& o) const;
+  void add_circle_to_svg(OUT& o) const;
   // Lines inside the transistor circle: base, emitter, collector
   template <typename OUT = std::ostream>
-  OUT& add_base_to_svg(OUT& o) const;
+  void add_base_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_emitter_to_svg(OUT& o) const;
+  void add_emitter_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_collector_to_svg(OUT& o) const;
+  void add_collector_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_svg(OUT& o) const {
+  void add_svg(OUT& o) const {
     add_emitter_to_svg(o);
     add_collector_to_svg(o);
     add_circle_to_svg(o);
-    return add_base_to_svg(o);
+    add_base_to_svg(o);
   };
   //
   transistor(float_t ra, float_t x=0, float_t y=0,
@@ -65,30 +65,30 @@ public:
  */
 template <typename FLOAT>
 template <typename OUT>
-OUT& transistor<FLOAT>::add_circle_to_svg(OUT& o) const {
+void transistor<FLOAT>::add_circle_to_svg(OUT& o) const {
   o << "<circle cx=\"" << cx << "\" cy=\"" << cy << "\" r=\"" << r << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 template <typename FLOAT>
 template <typename OUT>
-OUT& transistor<FLOAT>::add_base_to_svg(OUT& o) const {
+void transistor<FLOAT>::add_base_to_svg(OUT& o) const {
   o << "<line x1=\"" << x_of_pin(3) << "\" y1=\"" << y_of_pin(3) << '\"';
   o <<      " x2=\"" << x_of_pin(4) << "\" y2=\"" << y_of_pin(4) << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 template <typename FLOAT>
 template <typename OUT>
-OUT& transistor<FLOAT>::add_emitter_to_svg(OUT& o) const {
+void transistor<FLOAT>::add_emitter_to_svg(OUT& o) const {
   o << "<line x1=\"" << x_of_pin(0) << "\" y1=\"" << y_of_pin(0) << '\"';
   o <<      " x2=\"" << x_of_pin(5) << "\" y2=\"" << y_of_pin(5) << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 template <typename FLOAT>
 template <typename OUT>
-OUT& transistor<FLOAT>::add_collector_to_svg(OUT& o) const {
+void transistor<FLOAT>::add_collector_to_svg(OUT& o) const {
   o << "<line x1=\"" << x_of_pin(2) << "\" y1=\"" << y_of_pin(2) << '\"';
   o <<      " x2=\"" << x_of_pin(6) << "\" y2=\"" << y_of_pin(6) << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 //
 template <typename FLOAT>
@@ -122,15 +122,6 @@ FLOAT transistor<FLOAT>::y_of_pin(size_t idx) const {
 };
 
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const transistor<F>& tr, OUT& o = std::cout) {
-  return tr.add_svg(o);
-  /*
-  o << "<circle cx=\"" << tr.cx << "\" cy=\"" << tr.cy << "\" r=\"" << tr.r << "\"/>\n";
-  o << "<line x1=\"" << tr.x_of_pin(3) << "\" y1=\"" << tr.y_of_pin(3) << '\"';
-  o <<       "x2=\"" << tr.x_of_pin(4) << "\" y2=\"" << tr.y_of_pin(4) << "\">\n";
-  // add_svg(static_cast<circular<float_type>>(b), o);
-  return o;
-  */
-};
+void add_svg_unclosed(const transistor<F>& tr, OUT& o = std::cout) { tr.add_svg(o);};
 
 #endif

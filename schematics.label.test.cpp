@@ -13,8 +13,8 @@ label_t lbl2(200.0, 100.0, "rising", -45, label<float_type>::text_anchor::start)
 
 int main() {
 
-  // open file "test.html" to hold an SVG element:
-  ofstream ofs("test.html");
+  // open file "test-label.html" to hold an SVG element:
+  ofstream ofs("test-label.html");
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.2);
       add_svg(lbl1, ofs);

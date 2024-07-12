@@ -64,20 +64,20 @@ public:
 
 // Specializations for slim_arrowhead<FLOAT> and solid_arrowhead<FLOAT>:
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const slim_arrowhead<F>& ah, OUT& o = std::cout) {
+void add_svg_unclosed(const slim_arrowhead<F>& ah, OUT& o = std::cout) {
   o << "<polyline points=\"";
   o << ah.get_barb0x() << ' ' << ah.get_barb0y() << "  ";
   o << ah.cx << ' ' << ah.cy << "  ";
   o << ah.get_barb1x() << ' ' << ah.get_barb1y() << '\"';
-  return o;
+  //return o; // void return type
 };
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const solid_arrowhead<F>& ah, OUT& o = std::cout) {
+void add_svg_unclosed(const solid_arrowhead<F>& ah, OUT& o = std::cout) {
   o << "<polygon points=\"";
   o << ah.get_barb0x() << ' ' << ah.get_barb0y() << "  ";
   o << ah.cx << ' ' << ah.cy << "  ";
   o << ah.get_barb1x() << ' ' << ah.get_barb1y() << '\"';
-  return o;
+  //return o; // void return type
 };
 
 #endif

@@ -71,10 +71,10 @@ FLOAT twoline<FLOAT>::get_angle() const {
 #endif
 /* Partial specializations of add_svg_unclosed(TWOLINE&,OUT) */
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const twoline<F>& cc, OUT& o = std::cout) {
+void add_svg_unclosed(const twoline<F>& cc, OUT& o = std::cout) {
   o << "<line x1=\"" << cc.x.get_beg() << "\" y1=\"" << cc.y.get_beg();
   o <<    "\" x2=\"" << cc.x.get_end() << "\" y2=\"" << cc.y.get_end() << "\"";
-  return o;
+  //return o; // void return type
 };
 
 /* classes polyline and polygon
@@ -124,23 +124,23 @@ template <typename F = double,
           typename POINT = std::pair<F,F>,
           typename CONT  = std::vector<POINT>,
           typename OUT = std::ostream>
-OUT & add_svg_unclosed(const polyline<F,POINT,CONT>& pll, OUT& o = std::cout) {
+void add_svg_unclosed(const polyline<F,POINT,CONT>& pll, OUT& o = std::cout) {
   o << "<polyline points=\"";
   for(const auto & pt : pll.points)
     o << pt.first << ',' << pt.second << ' ';
   o << '\"';
-  return o;
+  //return o; // void return type
 };
 template <typename F = double,
           typename POINT = std::pair<F,F>,
           typename CONT  = std::vector<POINT>,
           typename OUT = std::ostream>
-OUT & add_svg_unclosed(const polygon<F,POINT,CONT>& plg, OUT& o = std::cout) {
+void add_svg_unclosed(const polygon<F,POINT,CONT>& plg, OUT& o = std::cout) {
   o << "<polygon points=\"";
   for(const auto & pt : plg.points)
     o << pt.first << ',' << pt.second << ' ';
   o << '\"';
-  return o;
+  //return o; // void return type
 };
 
 

@@ -33,7 +33,7 @@ public:
 };
 
 template<typename FLOAT = double, typename OUT = std::ostream>
-OUT & add_svg(const label<FLOAT>& lbl, OUT& o = std::cout) {
+void add_svg(const label<FLOAT>& lbl, OUT& o = std::cout) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << "<text x=\"" << lbl.x << "\" y=\"" << lbl.y << "\" ";
   o << "style=\"text-anchor: ";
@@ -45,7 +45,7 @@ OUT & add_svg(const label<FLOAT>& lbl, OUT& o = std::cout) {
   }
   o << "transform=\"rotate(" << lbl.deg << ' ' << lbl.x << ',' << lbl.y << ")\">";
   o << lbl.text << "</text>\n";
-  return o;
+  //return o; // void return type
 };
 
 

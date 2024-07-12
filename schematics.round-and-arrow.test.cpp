@@ -87,8 +87,8 @@ int main()
 
 //  ic<float_type> ic1(50,50,5, 3,7);
 
-// open file "test.html" to hold an SVG element:
-  ofstream ofs("test.html");
+// open file "round-and-arrow.html" to hold an SVG element:
+  ofstream ofs("round-and-arrow.html");
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.5);
       add_svg(cc1, ofs);

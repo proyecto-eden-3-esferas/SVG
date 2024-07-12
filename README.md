@@ -23,6 +23,16 @@
 
 ## General TODOs
 
+
+[x] Change return type of SVG functions from OUTSTREAM& to void.
+[x] Comment out `return o;`
+    through `sed --in-place 's/^  return o;/  \/\/return o; \/\/ void return type/g' *.h *.cpp`
+[ ] Test the thus modified files
+
+[ ] Write buffer, then diode, then schottky...
+[ ] Write multiplexer
+[ ] Write Arithmetic-Logic Unit (ALU), possibly derived from class block
+
 [x] A segment class (same interface as `boost::geometry::model::segment`)
 
 [x] Arrows (from `class polygon`?) To be named `solid_arrowhead` and `slim_arrowhead`. What about their being derived from a `triangle` class, itself derived from `angle_addressable`? Or the other way round: derive other triangular schematic symbols (diodes, buffers, OpAmp's etc) from `solid_arrowhead`.

@@ -37,8 +37,8 @@ int main()
     cout << "x=" << pt.first << ", y=" << pt.second << '\n';
 #endif
 
-  // open file "test.html" to hold an SVG element:
-  ofstream ofs("test.html");
+  // open file "test-line.html" to hold an SVG element:
+  ofstream ofs("test-line.html");
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.5);
 

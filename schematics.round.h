@@ -83,21 +83,21 @@ FLOAT rectangular<FLOAT>::yperim(FLOAT rads) const {
 #endif
 // First, specializations for angle-addressable components in "schematics.round.h"
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const circular<F>& cc, OUT& o = std::cout) {
+void add_svg_unclosed(const circular<F>& cc, OUT& o = std::cout) {
   o << "<circle cx=\"" << cc.cx << "\" cy=\"" << cc.cy << "\" r=\"" << cc.r << "\"";
-  return o;
+  //return o; // void return type
 };
 
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const elliptical<F>& cc, OUT& o = std::cout) {
+void add_svg_unclosed(const elliptical<F>& cc, OUT& o = std::cout) {
   o << "<ellipse cx=\"" << cc.cx << "\" cy=\"" << cc.cy << "\" rx=\"" << cc.rx << "\" ry=\"" << cc.ry << "\"";
-  return o;
+  //return o; // void return type
 };
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const rectangular<F>& rct, OUT& o = std::cout) {
+void add_svg_unclosed(const rectangular<F>& rct, OUT& o = std::cout) {
   o << "<rect x=\"" << rct.cx - rct.rx <<      "\" y=\"" << rct.cy - rct.ry << "\" ";
   o <<   "width=\"" <<        2*rct.rx << "\" height=\"" <<        2*rct.ry << "\"";
-  return o;
+  //return o; // void return type
 };
 
 

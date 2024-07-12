@@ -37,7 +37,7 @@ int main() {
 
 #ifdef TEST_SVG
 
-  ofstream ofs("test.html");
+  ofstream ofs("test-ic.html");
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.5);
       add_svg(ic1, ofs);

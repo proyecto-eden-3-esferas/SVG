@@ -23,32 +23,32 @@
  * Both functions output indentation string (SVG_FILE_INDENT_STR) twice
  */
 template<typename F = double, typename OUT = std::ostream>
-OUT& open_svg(OUT& o, F w = 200.0, F h = 200.0,
+void open_svg(OUT& o, F w = 200.0, F h = 200.0,
                                    const std::string& strk = "black",
                                    const std::string&  fll = "gray",
                                    F                   fllopct = 0.5) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << "<svg width=\"" << w << "\" height=\"" << h;
   o << "\" stroke=\"" << strk << "\" fill=\"" << fll << "\" fill-opacity=\"" << fllopct << "\">\n";
-  return o;
+  //return o; // void return type
 }
 
 template<typename F = double, typename OUT = std::ostream>
-OUT& open_svg_path_p(OUT& o) {
+void open_svg_path_p(OUT& o) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << "<path d=\"";
-  return o;
+  //return o; // void return type
 };
 template<typename OUT = std::ostream>
-OUT& close_svg_path(OUT& o = std::cout) {
+void close_svg_path(OUT& o = std::cout) {
   o << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 
 template<typename OUT = std::ostream>
-OUT& close_svg(OUT& o) {
+void close_svg(OUT& o) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "</svg>\n";
-  return o;
+  //return o; // void return type
 };
 
 /* 'add_svg_unclosed(SVG_ELEM&, OUT&)' leaves the tag unclosed
@@ -59,14 +59,14 @@ OUT& close_svg(OUT& o) {
  * Remember to add 'close_standalone_tag(OUT&)' after calling add_svg_unclosed()
  */
 template<typename T, typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const T& t, OUT& o = std::cout) {o << "UNDEFINED WHATEVER!!!\n"; return o;};
+void add_svg_unclosed(const T& t, OUT& o = std::cout) {o << "UNDEFINED WHATEVER!!!\n";};
 template<typename OUT = std::ostream>
-OUT & close_standalone_tag(OUT& o = std::cout) {o << "/>\n"; return o;};
+void close_standalone_tag(OUT& o = std::cout) {o << "/>\n";};
 template<typename T, typename F = double, typename OUT = std::ostream>
-OUT & add_svg(const T& t, OUT& o = std::cout) {
+void add_svg(const T& t, OUT& o = std::cout) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   add_svg_unclosed(t,o);
-  return close_standalone_tag(o);
+  close_standalone_tag(o);
 };
 
 

@@ -91,10 +91,10 @@ public:
 #endif
 /* Partial specializations of add_svg_unclosed(IC&,OUT) */
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const ic<F>& i, OUT& o = std::cout) {
+void add_svg_unclosed(const ic<F>& i, OUT& o = std::cout) {
   o << "<rect x=\"" << i.x     << "\" y=\""      << i.y << "\" ";
   o <<   "width=\"" << i.width << "\" height=\"" << i.height << "\"";
-  return o;
+  //return o; // void return type
 };
 
 

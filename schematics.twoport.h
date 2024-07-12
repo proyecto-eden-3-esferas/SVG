@@ -72,7 +72,7 @@ FLOAT twoport<FLOAT>::get_midbaseline_y() const {
 template<typename FLOAT = double,
          typename POINT = point<FLOAT, 2, boost::geometry::cs::cartesian>,
          typename OUT = std::ostream>
-OUT & add_svg_unclosed(const twoport<FLOAT>& tp, OUT& o = std::cout) {
+void add_svg_unclosed(const twoport<FLOAT>& tp, OUT& o = std::cout) {
   if(!tp.caption.empty()) {
     /* add a text element to the SVG element
      * by means of add_svg(TEMP_LABEL),
@@ -90,7 +90,7 @@ OUT & add_svg_unclosed(const twoport<FLOAT>& tp, OUT& o = std::cout) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<polygon points=\"";
   o << tp.get_ulx() << ' ' << tp.get_uly() << ' ' << tp.get_llx() << ' ' << tp.get_lly() << ' ';
   o << tp.get_lrx() << ' ' << tp.get_lry() << ' ' << tp.get_urx() << ' ' << tp.get_ury() << '\"';
-  return o;
+  //return o; // void return type
 };
 
 #endif

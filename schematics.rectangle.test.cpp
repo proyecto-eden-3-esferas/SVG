@@ -14,8 +14,8 @@ int main()
 
   rectangle_t rect1(60,30, 25, 25);
 
-// open file "test.html" to hold an SVG element:
-  ofstream ofs("test.html");
+// open file "test-rectangle.html" to hold an SVG element:
+  ofstream ofs("test-rectangle.html");
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.5);
       add_svg(rect1, ofs);

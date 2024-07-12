@@ -115,10 +115,10 @@ FLOAT block<FLOAT>::yperim(std::size_t idx) const {
 #endif
 
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const block<F>& blk, OUT& o = std::cout) {
+void add_svg_unclosed(const block<F>& blk, OUT& o = std::cout) {
   o << "<rect x=\"" << blk.x     << "\" y=\""      << blk.y << "\" ";
   o <<   "width=\"" << blk.width << "\" height=\"" << blk.height << "\"";
-  return o;
+  //return o; // void return type
 };
 
 #endif

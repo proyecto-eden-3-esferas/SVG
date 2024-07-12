@@ -40,8 +40,8 @@ int main()
   for(int i=0; i < bl1.size(); ++i)
     cout << "position: " << bl1.xperim(i) << ", " << bl1.yperim(i) << '\n';
 
-  // open file "test.html" to hold an SVG element:
-  ofstream ofs("test.html");
+  // open file "test-block.html" to hold an SVG element:
+  ofstream ofs("test-block.html");
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "yellow", 0.25);
   // Keep adding components to the SVG file (handle='ofs')

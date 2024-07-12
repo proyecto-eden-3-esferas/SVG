@@ -23,7 +23,7 @@ segment: segment.test.cpp svg.h segment.h schematics.twoport.h
 
 schematics.twoport:   schematics.twoport.test.cpp   svg.h schematics.line.h schematics.angle.h schematics.twoport.h schematics.capacitor.h
 	c++ -std=c++23 $<  -o $@
-schematics.capacitor: schematics.capacitor.test.cpp svg.h schematics.line.h schematics.angle.h schematics.twoport.h schematics.capacitor.h
+schematics.capacitor: schematics.twoport.test.cpp svg.h schematics.line.h schematics.angle.h schematics.twoport.h schematics.capacitor.h
 
 schematics.block: schematics.block.test.cpp schematics.rectangle.h schematics.block.h svg.h
 	c++ -std=c++23 $<  -o $@
@@ -43,7 +43,7 @@ schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h sc
 %.o: %.cpp
 	g++ -c -std=c++17 $<
 
-EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor
+EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline
 
 clean_executables:
 	$(RM) $(EXECUTABLES)

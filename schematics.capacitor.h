@@ -58,16 +58,16 @@ public:
   FLOAT get_midy2() const {return get_midx() + half_sep * sin(angle);};
   //
   template <typename OUT = std::ostream>
-  OUT& add_label_to_svg(OUT& o) const;
+  void add_label_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_line1_to_svg(OUT& o) const;
+  void add_line1_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_line2_to_svg(OUT& o) const;
+  void add_line2_to_svg(OUT& o) const;
   //
   template <typename OUT = std::ostream>
-  OUT& add_perp1_to_svg(OUT& o) const;
+  void add_perp1_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_perp2_to_svg(OUT& o) const;
+  void add_perp2_to_svg(OUT& o) const;
   // Constructors:
   capacitor() = default;
   capacitor(float_t xb, float_t yb, float_t xe, float_t ye, std::string s, FLOAT w, FLOAT sp) :
@@ -76,7 +76,7 @@ public:
 // Implementation of capacitor<> member functions:
 template <typename FLOAT>
 template <typename OUT>
-OUT& capacitor<FLOAT>::add_label_to_svg(OUT& o) const {
+void capacitor<FLOAT>::add_label_to_svg(OUT& o) const {
   return
   add_svg( label<FLOAT, char>(get_midx(),
                               get_midy(),
@@ -88,36 +88,36 @@ OUT& capacitor<FLOAT>::add_label_to_svg(OUT& o) const {
 //
 template <typename FLOAT>
 template <typename OUT>
-OUT& capacitor<FLOAT>::add_line1_to_svg(OUT& o) const {
+void capacitor<FLOAT>::add_line1_to_svg(OUT& o) const {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<line ";
   o << "x1=\"" << get_xbeg()  << "\" y1=\"" << get_ybeg() << "\" ";
   o << "x2=\"" << get_midx1() << "\" y2=\"" << get_midy1() << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 template <typename FLOAT>
 template <typename OUT>
-OUT& capacitor<FLOAT>::add_line2_to_svg(OUT& o) const {
+void capacitor<FLOAT>::add_line2_to_svg(OUT& o) const {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<line ";
   o << "x1=\"" << get_midx2()  << "\" y1=\"" << get_midy2() << "\" ";
   o << "x2=\"" << get_xend() << "\" y2=\"" << get_yend() << "\"/>";
-  return o;
+  //return o; // void return type
 };
 //
 template <typename FLOAT>
 template <typename OUT>
-OUT& capacitor<FLOAT>::add_perp1_to_svg(OUT& o) const {
+void capacitor<FLOAT>::add_perp1_to_svg(OUT& o) const {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<line ";
   o << "x1=\"" << get_midx1() + half_width*sin(angle) << "\" y1=\"" << get_midy1() - half_width*cos(angle) << "\" ";
   o << "x2=\"" << get_midx1() - half_width*sin(angle) << "\" y2=\"" << get_midy1() + half_width*cos(angle) << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 template <typename FLOAT>
 template <typename OUT>
-OUT& capacitor<FLOAT>::add_perp2_to_svg(OUT& o) const {
+void capacitor<FLOAT>::add_perp2_to_svg(OUT& o) const {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<line ";
   o << "x1=\"" << get_midx2() + half_width*sin(angle) << "\" y1=\"" << get_midy2() - half_width*cos(angle) << "\" ";
   o << "x2=\"" << get_midx2() - half_width*sin(angle) << "\" y2=\"" << get_midy2() + half_width*cos(angle) << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 
 
@@ -126,13 +126,13 @@ OUT& capacitor<FLOAT>::add_perp2_to_svg(OUT& o) const {
 #endif
 
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg(const capacitor<F>& cp, OUT& o = std::cout) {
+void add_svg(const capacitor<F>& cp, OUT& o = std::cout) {
   cp.add_line1_to_svg(o);
   cp.add_line2_to_svg(o);
   cp.add_perp1_to_svg(o);
   cp.add_perp2_to_svg(o);
   cp.add_label_to_svg(o);
-  return o;
+  //return o; // void return type
 };
 
 
@@ -157,7 +157,7 @@ public:
   FLOAT barb21x, barb21y, barb22x, barb22y;
   //
   template <typename OUT = std::ostream>
-  OUT& add_curv1_to_svg(OUT& o) const;
+  void add_curv1_to_svg(OUT& o) const;
 
   // Constructors:
   polarized_capacitor() = default;
@@ -180,27 +180,27 @@ OUT& polarized_capacitor<FLOAT>::add_curv1_to_svg(OUT& o) const {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<line ";
   o << "x1=\"" << barb12x     << "\" y1=\"" << barb12y << "\" ";
   o << "x2=\"" << get_midx1() << "\" y2=\"" << get_midy1() << "\" fill=\"none\"/>\n";
-  return o;
+  //return o; // void return type
 };
 */
 template <typename FLOAT>
 template <typename OUT>
-OUT& polarized_capacitor<FLOAT>::add_curv1_to_svg(OUT& o) const {
+void polarized_capacitor<FLOAT>::add_curv1_to_svg(OUT& o) const {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<path ";
   o << "d=\"M " << barb11x     << ',' << barb11y;
   o << "A " << r << ',' << r << ", 0, 0, 0, " << barb12x << ',' << barb12y << "\" fill=\"none\"/>\n";
-  return o;
+  //return o; // void return type
 };
 
 // Global SVG functions:
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg(const polarized_capacitor<F>& pcp, OUT& o = std::cout) {
+void add_svg(const polarized_capacitor<F>& pcp, OUT& o = std::cout) {
   pcp.add_line1_to_svg(o);
   pcp.add_line2_to_svg(o);
   pcp.add_curv1_to_svg(o);
   pcp.add_perp2_to_svg(o);
   pcp.add_label_to_svg(o);
-  return o;
+  //return o; // void return type
 };
 
 #endif

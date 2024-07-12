@@ -19,15 +19,15 @@ public:
   using transistor_t::add_circle_to_svg, transistor_t::add_base_to_svg;
   //
   template <typename OUT = std::ostream>
-  OUT& add_emitter_to_svg(OUT& o) const;
+  void add_emitter_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_collector_to_svg(OUT& o) const;
+  void add_collector_to_svg(OUT& o) const;
   template <typename OUT = std::ostream>
-  OUT& add_svg(OUT& o) const {
+  void add_svg(OUT& o) const {
     add_emitter_to_svg(o);
     add_collector_to_svg(o);
     add_circle_to_svg(o);
-    return add_base_to_svg(o);
+    add_base_to_svg(o);
   };
   //
   fet(float_t ra, float_t x=0, float_t y=0,
@@ -38,24 +38,24 @@ public:
 
 template <typename FLOAT>
 template <typename OUT>
-OUT& fet<FLOAT>::add_emitter_to_svg(OUT& o) const {
+void fet<FLOAT>::add_emitter_to_svg(OUT& o) const {
   o << "<line x1=\"" << x_of_pin(0) << "\" y1=\"" << y_of_pin(0) << '\"';
   o <<      " x2=\"" << x_of_pin(0) << "\" y2=\"" << y_of_pin(5) << "\"/>\n";
   o << "<line x1=\"" << x_of_pin(0) << "\" y1=\"" << y_of_pin(5) << '\"';
   o <<      " x2=\"" << x_of_pin(5) << "\" y2=\"" << y_of_pin(5) << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 template <typename FLOAT>
 template <typename OUT>
-OUT& fet<FLOAT>::add_collector_to_svg(OUT& o) const {
+void fet<FLOAT>::add_collector_to_svg(OUT& o) const {
   o << "<line x1=\"" << x_of_pin(2) << "\" y1=\"" << y_of_pin(2) << '\"';
   o <<      " x2=\"" << x_of_pin(2) << "\" y2=\"" << y_of_pin(6) << "\"/>\n";
   o << "<line x1=\"" << x_of_pin(2) << "\" y1=\"" << y_of_pin(6) << '\"';
   o <<      " x2=\"" << x_of_pin(6) << "\" y2=\"" << y_of_pin(6) << "\"/>\n";
-  return o;
+  //return o; // void return type
 };
 
 template<typename F = double, typename OUT = std::ostream>
-OUT & add_svg_unclosed(const fet<F>& tr, OUT& o = std::cout) { return tr.add_svg(o);};
+void add_svg_unclosed(const fet<F>& tr, OUT& o = std::cout) { tr.add_svg(o);};
 
 #endif
