@@ -1,9 +1,11 @@
 #ifndef SCHEMATICS_CAPACITOR_H
 #define SCHEMATICS_CAPACITOR_H
 
-/* As a capacitor<> is drawn as a ...
- * TWOPORT_BASELINE_K is a positive fractional number between 0 and 0.5,
-   but it seems that 0.1 yields the best result.
+/* A capacitor<> is drawn as a gapped lined and two plates.
+ * Polarized capacitors have one curved and one straight plate.
+ * TODO:
+ [ ] var_capacitor
+
  */
 
 
@@ -17,6 +19,15 @@
 
 #ifndef SCHEMATICS_ROUND_H
 #include "schematics.angle.h"
+#endif
+
+// Include "schematics.arrow.h" to draw variable capacitors:
+#ifndef SCHEMATICS_ARROW_H
+#include "schematics.arrow.h"
+#endif
+
+#ifndef SVG_ARC_H
+#include "schematics.svg.arc.h"
 #endif
 
 #include <cmath> // for atan2(y,x), returning an angle in rads
@@ -124,5 +135,72 @@ OUT & add_svg(const capacitor<F>& cp, OUT& o = std::cout) {
   return o;
 };
 
+
+/* Polarized capacitor
+ */
+template<typename FLOAT = double>
+class polarized_capacitor : public capacitor<FLOAT> {
+public:
+  typedef capacitor<FLOAT> capacitor_t;
+  using capacitor_t::get_length, capacitor_t::get_angle;
+  using capacitor_t::half_width, capacitor_t::half_sep, capacitor_t::len, capacitor_t::angle;
+  using capacitor_t::get_midx1, capacitor_t::get_midy1, capacitor_t::get_midx2, capacitor_t::get_midy2;
+  using capacitor_t::add_label_to_svg;
+  using capacitor_t::add_line1_to_svg, capacitor_t::add_line2_to_svg;
+  using capacitor_t::add_perp1_to_svg, capacitor_t::add_perp2_to_svg;
+  //
+  //FLOAT angle;
+  FLOAT r;      // the radius of the arc representing the curved/negative plate
+  FLOAT haa; // for "half arc angle": half the angle swept by the curved plate
+  FLOAT cx1, cy1, cx2, cy2; // the center of the arc representing the curved/negative plate
+  FLOAT barb11x, barb11y, barb12x, barb12y; // "barb" by analogy to an arrow head (see "schematics.arrow.h")
+  FLOAT barb21x, barb21y, barb22x, barb22y;
+  //
+  template <typename OUT = std::ostream>
+  OUT& add_curv1_to_svg(OUT& o) const;
+
+  // Constructors:
+  polarized_capacitor() = default;
+  polarized_capacitor(float_t xb, float_t yb, float_t xe, float_t ye, std::string s, FLOAT w, FLOAT sp, FLOAT ra) :
+  capacitor_t(xb,yb,xe,ye, s, w,sp),
+  r(ra), haa(asin(half_width / r)),
+  cx1(get_midx1() - r*cos(get_angle())), cy1(get_midy1() - r*sin(get_angle())),
+  cx2(get_midx2() + r*cos(get_angle())), cy2(get_midy2() + r*sin(get_angle())),
+  barb11x(cx1 + r*cos(angle + haa)), barb11y(cy1 + r*sin(angle + haa)),
+  barb12x(cx1 + r*cos(angle - haa)), barb12y(cy1 + r*sin(angle - haa))
+  {};
+};
+/*
+template <typename FLOAT>
+template <typename OUT>
+OUT& polarized_capacitor<FLOAT>::add_curv1_to_svg(OUT& o) const {
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<line ";
+  o << "x1=\"" << barb11x     << "\" y1=\"" << barb11y << "\" ";
+  o << "x2=\"" << get_midx1() << "\" y2=\"" << get_midy1() << "\" fill=\"none\"/>\n";
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<line ";
+  o << "x1=\"" << barb12x     << "\" y1=\"" << barb12y << "\" ";
+  o << "x2=\"" << get_midx1() << "\" y2=\"" << get_midy1() << "\" fill=\"none\"/>\n";
+  return o;
+};
+*/
+template <typename FLOAT>
+template <typename OUT>
+OUT& polarized_capacitor<FLOAT>::add_curv1_to_svg(OUT& o) const {
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "<path ";
+  o << "d=\"M " << barb11x     << ',' << barb11y;
+  o << "A " << r << ',' << r << ", 0, 0, 0, " << barb12x << ',' << barb12y << "\" fill=\"none\"/>\n";
+  return o;
+};
+
+// Global SVG functions:
+template<typename F = double, typename OUT = std::ostream>
+OUT & add_svg(const polarized_capacitor<F>& pcp, OUT& o = std::cout) {
+  pcp.add_line1_to_svg(o);
+  pcp.add_line2_to_svg(o);
+  pcp.add_curv1_to_svg(o);
+  pcp.add_perp2_to_svg(o);
+  pcp.add_label_to_svg(o);
+  return o;
+};
 
 #endif

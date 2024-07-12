@@ -1,3 +1,6 @@
+#ifndef SVG_ARC_H
+#define SVG_ARC_H
+
 #ifndef SVG_H
 #include "svg.h"
 #endif
@@ -11,7 +14,7 @@
 template<typename F = double>
 class svg_arc {
 public:
-  F bx, by;
+  F bx, by; // begining point
   F rx, ry; // radii
   F ex, ey; // end point
   bool clockwise;           // 1 means clockwise and 0 means counter-clockwise.
@@ -36,12 +39,9 @@ template<typename F = double, typename OUT = std::ostream>
 OUT & add_svg_unclosed(const svg_arc<F>& a, OUT& o = std::cout) {
   o << "<path d=\"";
   o << "M " << a.bx << ' ' << a.by << ' ';
-  /*
-  o << "A " << a.rx << ' ' << a.ry << ' ';
-  o << std::noboolalpha << a.x_axis_rotation << ' ' << a.large_arc << ' ' << a.clockwise << ' ';
-  o         << a.ex << ' ' << a.ey << '\"';
-  */
   add_to_svg_path(a,o);
   o << '\"';
   return o;
 };
+
+#endif
