@@ -33,12 +33,24 @@ int main()
 {
 
   float_type a10(cir_t::deg_to_rad(10));
+  float_type a15(cir_t::deg_to_rad(15));
+  float_type a22(cir_t::deg_to_rad(22));
   float_type a30(cir_t::deg_to_rad(30));
   float_type a45(cir_t::deg_to_rad(45));
   float_type a60(cir_t::deg_to_rad(60));
   float_type a80(cir_t::deg_to_rad(80));
 
+
+  cout << "Test angle_addressable::get_{x|y}_rotated(x,y):\n";
+  circular_component_t cc0(100,1000,1000);
+  float_type x(1100), y(1000);
+  cout << "cc0.get_x_rotated(1100,1000, a45)= " << cc0.get_x_rotated(1100,1000, a45) << '\n';
+  cout << "cc0.get_y_rotated(1100,1000, a45)= " << cc0.get_y_rotated(1100,1000, a45) << '\n';
+  cc0.rotate(x,y,a45);
+  cout << "cc0.rotate(x,y,a45) makes x=" << x << ", and y=" << y << "\n\n";
+
   cout << "Test circular<>:\n";
+
   circular_component_t cc1(25,50,50);
   cout << "circular<> cc1 of radius 100 has x and y at angle 45: ";
   cout << cc1.xperim(a45) << ',' <<  cc1.yperim(a45) << '\n';
@@ -79,9 +91,9 @@ int main()
   line_t l80(ec2.xperim(a80), ec2.yperim(a80), ec2.xperim(a80)     , ec2.yperim(a80) - 25);
 #endif
 
-  slim_arrowhead_component_t ah1(40, 100, 100, a10);
+  slim_arrowhead_component_t  ah1(40, 100, 100,  a45, a22);
 
-  solid_arrowhead_component_t ah2(40, 120, 120, a10);
+  solid_arrowhead_component_t ah2(40, 120, 120, -a45, a15);
   cout << "solid_arrowhead ah2 base is at: " << ah2.get_base_x() << ", " << ah2.get_base_y() << '\n';
 
 
@@ -99,11 +111,11 @@ int main()
       add_svg(ah1, ofs);
 
       ah1.cx += 50; ah1.cy+=33;
-      ah1.rotate_by(a10);
+      ah1.rotate_by(a22);
       add_svg(ah1, ofs);
 
       ah1.cx += 50; ah1.cy+=33;
-      ah1.rotate_by(a10);
+      ah1.rotate_by(a22);
       add_svg(ah1, ofs);
 
       add_svg(ah2, ofs);

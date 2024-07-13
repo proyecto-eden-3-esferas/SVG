@@ -27,7 +27,9 @@
 [x] Change return type of SVG functions from OUTSTREAM& to void.
 [x] Comment out `return o;`
     through `sed --in-place 's/^  return o;/  \/\/return o; \/\/ void return type/g' *.h *.cpp`
-[ ] Test the thus modified files
+[x] Test the thus modified files
+
+[ ] signals four narrowing conversions from int to double, as in `((-(i + 1)) * 10)`
 
 [ ] Write buffer, then diode, then schottky...
 [ ] Write multiplexer

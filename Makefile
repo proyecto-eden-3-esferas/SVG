@@ -12,7 +12,7 @@ schematics.rectangle: schematics.rectangle.test.cpp schematics.rectangle.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.line: schematics.line.test.cpp schematics.line.h svg.h
 	c++ -std=c++23 $<  -o $@
-schematics.round-and-arrow: schematics.round-and-arrow.test.cpp svg.h schematics.round.h schematics.arrow.h
+schematics.round-and-arrow: schematics.round-and-arrow.test.cpp svg.h schematics.round.h schematics.angle.h schematics.arrow.h
 	c++ -std=c++23 $<  -o $@
 schematics.ic: schematics.ic.test.cpp svg.h schematics.ic.h
 	c++ -std=c++23 $<  -o $@
