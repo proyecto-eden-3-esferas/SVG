@@ -27,7 +27,7 @@ public:
   float_t r;
   using cir_t::cx, cir_t::cy;
   virtual float_t xperim(float_t rads) const {return cx + r*cir_t::cos(rads);};
-  virtual float_t yperim(float_t rads) const {return cy - r*cir_t::sin(rads);};
+  virtual float_t yperim(float_t rads) const {return cy + r*cir_t::sin(rads);};
   circular(float_t ra, float_t x=0, float_t y=0) : cir_t(x,y), r(ra) {};
 };
 
@@ -59,21 +59,20 @@ public:
   virtual float_t yperim(float_t rads) const;// {return rx*cir_t::sin(rads);};
   rectangular(float_t xr, float_t yr, float_t _cx = 0, float_t _cy=0) :
   cir_t(_cx, _cy), rx(xr), ry(yr), trans_angle(atan(yr/xr)), long_radius(sqrt(xr*xr + yr*yr)) {};
-  //  rx(xr), ry(yr), cx(_cx), cy(_cy), trans_angle(atan(yr/xr)), long_radius(sqrt(xr*xr + yr*yr)) {};
 };
 template <typename FLOAT>
 FLOAT rectangular<FLOAT>::xperim(FLOAT rads) const {
-  if(abs(rads) <= trans_angle)
+  if(abs(rads) <= trans_angle || (rads - std::numbers::pi_v<FLOAT>) <= trans_angle)
     return cx + rx;
   else
     return cx + long_radius*cir_t::cos(rads);
 };
 template <typename FLOAT>
 FLOAT rectangular<FLOAT>::yperim(FLOAT rads) const {
-  if(abs(rads) <= trans_angle)
-    return cy - long_radius*cir_t::sin(rads);
+  if(abs(rads) <= trans_angle  ||  (rads - std::numbers::pi_v<FLOAT>) <= trans_angle)
+    return cy + long_radius*cir_t::sin(rads);
   else
-    return cy - ry;
+    return cy + ry;
 };
 
 
@@ -99,6 +98,5 @@ void add_svg_unclosed(const rectangular<F>& rct, OUT& o = std::cout) {
   o <<   "width=\"" <<        2*rct.rx << "\" height=\"" <<        2*rct.ry << "\"";
   //return o; // void return type
 };
-
 
 #endif

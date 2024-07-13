@@ -21,7 +21,7 @@
 using namespace std;
 
 typedef            double float_type;
-typedef angle_addressable<float_type> cir_t; // instead of former longish name 'component_t'
+typedef angle_addressable<float_type> cir_t;
 typedef          circular<float_type>    circular_component_t;
 typedef slim_arrowhead<float_type> slim_arrowhead_component_t;
 typedef solid_arrowhead<float_type> solid_arrowhead_component_t;
@@ -39,6 +39,14 @@ int main()
   float_type a45(cir_t::deg_to_rad(45));
   float_type a60(cir_t::deg_to_rad(60));
   float_type a80(cir_t::deg_to_rad(80));
+
+  cout << "Testing cir_t::normalize(ANGLE)...\n";
+  float_type aaa1 = - 3*a60;
+  cir_t::normalize(aaa1);
+  cout << "angle -180 becomes " << aaa1 << '\n';
+  aaa1 = 1000;
+  cir_t::normalize(aaa1);
+  cout << "angle 1000 rads becomes " << aaa1 << '\n' << '\n';
 
 
   cout << "Test angle_addressable::get_{x|y}_rotated(x,y):\n";
@@ -99,8 +107,8 @@ int main()
 
 //  ic<float_type> ic1(50,50,5, 3,7);
 
-// open file "round-and-arrow.html" to hold an SVG element:
-  ofstream ofs("round-and-arrow.html");
+// open file "test-round-and-arrow.html" to hold an SVG element:
+  ofstream ofs("test-round-and-arrow.html");
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.5);
       add_svg(cc1, ofs);

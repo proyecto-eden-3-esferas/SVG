@@ -1,8 +1,13 @@
 #ifndef SCHEMATICS_ANGLE_H
 #define SCHEMATICS_ANGLE_H
 
+#include <numbers>
 #include <cmath>
 
+
+/* class angle_addressable_base<>
+ * provides trigonometric functions
+ */
 
 template <typename FLOAT = double>
 class angle_addressable_base {
@@ -57,37 +62,57 @@ public:
   using angle_addressable_base_t::sin,  angle_addressable_base_t::cos;
   using angle_addressable_base_t::atan, angle_addressable_base_t::atan2;
   float_t cx, cy;
+  //
+  static void normalize(float_t& a);
+//   static void normalize(float_t& a) {
+//     while( a < 0)
+//       a +=     2*std::numbers::pi_v<float_t>;
+//     while( a > 2*std::numbers::pi_v<float_t>)
+//       a -=     2*std::numbers::pi_v<float_t>;
+//   };
   // Members for rotating a point around around this->(cx,cy)
   float_t distance(float_t x, float_t y) const { return sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy) );};
-  float_t    angle(float_t x, float_t y) const { return atan2( y - cy, x - cx);};
-  float_t get_x_rotated(float_t x, float_t y, float_t a) const {
-    float_t d = distance(x,y);
-    float_t new_a = angle(x,y) + a;
-    return cx + d * cos(new_a);
-  };
-  float_t get_y_rotated(float_t x, float_t y, float_t a) const {
-    float_t d = distance(x,y);
-    float_t new_a = angle(x,y) + a;
-    return cy + d * sin(new_a);
-  };
-  void rotate(float_t& x, float_t& y, float_t a) const {
-    float_t d = distance(x,y);
-    float_t new_a = angle(x,y) + a;
-    x = cx + d * cos(new_a);
-    y = cy + d * sin(new_a);
-  };
-  //static float_t deg_to_rads(float_t d) {return (d / 180)      * 3.141592;};
-  //static float_t rads_to_deg(float_t r) {return (r / 3.141592) * 180;};
-  static float_t deg_to_rad(float_t d) {return (d / 180)      * 3.141592;};
-  static float_t rad_to_deg(float_t r) {return (r / 3.141592) * 180;};
-  static float_t  sin(float_t a) {return :: sin(a);};
-  static float_t  cos(float_t a) {return :: cos(a);};
-  static float_t atan(float_t a) {return ::atan(a);};
-  static float_t atan2(float_t a, float_t b) {return ::atan2(a,b);};
+  float_t    angle(float_t x, float_t y) const { return atan2(y - cy,               x - cx);};
+  float_t get_x_rotated(float_t x, float_t y, float_t a) const;
+  float_t get_y_rotated(float_t x, float_t y, float_t a) const;
+  void rotate(float_t& x, float_t& y, float_t a) const;
+  static float_t deg_to_rad(float_t d) {return (d / 180) * std::numbers::pi_v<float_t>;};
+  static float_t rad_to_deg(float_t r) {return (r / std::numbers::pi_v<float_t>) * 180;};
   virtual float_t xperim(float_t rads) const = 0;
   virtual float_t yperim(float_t rads) const = 0;
   angle_addressable() = default;
   angle_addressable(float_t x, float_t y) : cx(x), cy(y) {};
+};
+
+// Implementations of angle_addressable<> members
+
+template <typename FLOAT>
+void angle_addressable<FLOAT>::normalize(FLOAT& a) {
+  while( a < 0)
+    a +=     2*std::numbers::pi_v<FLOAT>;
+  while( a > 2*std::numbers::pi_v<FLOAT>)
+    a -=     2*std::numbers::pi_v<FLOAT>;
+};
+
+template <typename FLOAT>
+FLOAT angle_addressable<FLOAT>::get_x_rotated(FLOAT x, FLOAT y, FLOAT a) const {
+  FLOAT d = distance(x,y);
+  FLOAT new_a = angle(x,y) + a;
+  return cx + d * cos(new_a);
+};
+template <typename FLOAT>
+FLOAT angle_addressable<FLOAT>::get_y_rotated(FLOAT x, FLOAT y, FLOAT a) const {
+  FLOAT d = distance(x,y);
+  FLOAT new_a = angle(x,y) + a;
+  return cy + d * sin(new_a);
+};
+
+template <typename FLOAT>
+void angle_addressable<FLOAT>::rotate(FLOAT& x, FLOAT& y, FLOAT a) const {
+  FLOAT d = distance(x,y);
+  FLOAT new_a = angle(x,y) + a;
+  x = cx + d * cos(new_a);
+  y = cy + d * sin(new_a);
 };
 
 #endif

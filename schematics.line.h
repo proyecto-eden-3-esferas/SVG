@@ -47,10 +47,17 @@ public:
   float_t get_x(float_t k) const {return x.get(k);};
   float_t get_y(float_t k) const {return y.get(k);};
   //
-  FLOAT get_length() const;
-  FLOAT get_angle()  const;
-  FLOAT get_midx() const {return (get_xbeg() + get_xend() ) / 2;};
-  FLOAT get_midy() const {return (get_ybeg() + get_yend() ) / 2;};
+  float_t get_length() const;
+  float_t get_angle()  const;
+  float_t get_midx() const {return (get_xbeg() + get_xend() ) / 2;};
+  float_t get_midy() const {return (get_ybeg() + get_yend() ) / 2;};
+  //
+  float_t xperim(float_t rela, // relative angle
+                 float_t r = get_length() / 2,
+                 float_t k = 0.5) const;
+  float_t yperim(float_t rela, // relative angle
+                 float_t r = get_length() / 2,
+                 float_t k = 0.5) const;
   //
   twoline(float_t xb, float_t yb, float_t xe, float_t ye) : x(xb,xe), y(yb,ye) {};
 };
@@ -64,6 +71,18 @@ template<typename FLOAT>
 FLOAT twoline<FLOAT>::get_angle() const {
   return atan2(get_yend() - get_ybeg(),
                get_xend() - get_xbeg());
+};
+template<typename FLOAT>
+FLOAT twoline<FLOAT>::xperim(FLOAT rela, FLOAT r, FLOAT k) const {
+  FLOAT a = rela + get_angle();
+  FLOAT cx = get_x(k);
+  return cx + r*cos(a);
+};
+template<typename FLOAT>
+FLOAT twoline<FLOAT>::yperim(FLOAT rela, FLOAT r, FLOAT k) const {
+  FLOAT a = rela + get_angle();
+  FLOAT cy = get_y(k);
+  return cy + r*sin(a);
 };
 
 #ifndef SVG_H
