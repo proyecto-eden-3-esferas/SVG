@@ -20,7 +20,8 @@ using namespace std;
 int main()
 {
 
-  twoport_t   tp1(100.0, 100.0, 200.0, 100.0, "resistor H", 44.0);
+  twoport_t   tp1( 100.0, 100.0, 200.0, 100.0, "resistor H",  44.0);
+  twoport_t   tpc1(100.0,  50.0, 200.0,  50.0, "resistor HC", 44.0);
   twoport_t   tp2(250.0, 150.0, 250.0,  25.0, "resistor 2", 44.0);
   twoport_t   tp3( 25.0,  25.0, 125.0, 125.0, "resistor 3", 44.0);
   capacitor_t            cp1(100.0, 150.0, 200.0, 150.0,         "C1", 44.0, 6.0);
@@ -36,6 +37,9 @@ int main()
   ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.2);
       add_svg(tp1, ofs);
+      add_svg(tpc1, ofs);
+      //tpc1.add_circle_to_svg(ofs, 22.0, 150.0, 50.0);
+      //tpc1.add_circle_to_svg(ofs, 22.0);
       add_svg(tp2, ofs);
       add_svg(tp3, ofs);
       add_svg(cp1, ofs);

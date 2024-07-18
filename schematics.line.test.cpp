@@ -29,7 +29,8 @@ int main()
 {
 
   cout << "Test twoline<>:\n";
-  line_t l1(100,25,300,25);
+  line_t l1( 100,25,300,25);
+  line_t l1c(100,75,300,75);
   cout << "Interpolate components of l1(-100,25,100,25) for several \'k\':\n";
   cout << "For \'k\' = 0.25, components are: " << l1.get_x(0.25) << ", " << l1.get_y(0.25) << '\n';
   cout << "For \'k\' = 0.66, components are: " << l1.get_x(0.66) << ", " << l1.get_y(0.66) << '\n';
@@ -57,13 +58,15 @@ int main()
 
   // Keep adding components to the SVG file (handle='ofs')
       add_svg(l1,   ofs);
+      add_svg(l1c,   ofs);
+      l1c.add_circle_to_svg(ofs,22.0);
+      //cout << "l1.xperim(0.0)=" << l1.xperim(0.0) << '\n';
       //add_svg(l2,   ofs);
       add_svg(l11,  ofs);
       add_svg(pll1, ofs);
     close_svg(ofs);
   ofs << "</body>\n</html>";
   ofs.close();
-
 
   return 0;
 }

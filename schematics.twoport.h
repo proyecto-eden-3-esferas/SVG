@@ -39,6 +39,7 @@ public:
   using twoline_t::get_xbeg, twoline_t::get_ybeg, twoline_t::get_xend, twoline_t::get_yend;
   using twoline_t::get_length, twoline_t::get_angle;
   using twoline_t::get_midx, twoline_t::get_midy;
+  using twoline_t::add_circle_to_svg_unclosed, twoline_t::add_circle_to_svg;
   FLOAT get_ulx() const {return get_xbeg() - half_width * ( get_yend() - get_ybeg()) / len;};
   FLOAT get_uly() const {return get_ybeg() + half_width * ( get_xend() - get_xbeg()) / len;};
   FLOAT get_llx() const {return get_xbeg() + half_width * ( get_yend() - get_ybeg()) / len;};
@@ -55,7 +56,7 @@ public:
   twoport() = default;
   twoport(float_t xb, float_t yb, float_t xe, float_t ye, std::string s, FLOAT w) :
   twoline_t(xb,yb,xe,ye), caption(s), half_width(w/2), len(get_length()) {};
-};
+}; // class twoport
 
 template<typename FLOAT>
 FLOAT twoport<FLOAT>::get_midbaseline_x() const {

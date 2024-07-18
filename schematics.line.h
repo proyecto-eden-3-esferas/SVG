@@ -7,6 +7,11 @@
 #include "schematics.angle.h"
 #endif
 
+#ifndef SVG_H
+#include "svg.h"
+#endif
+
+
 /* Classes oneline<FLOAT> and twoline<FLOAT> define
    one- and two-dimensional "lines"
  * They make use of static oneline::interpolate(BEG,END,K)
@@ -35,10 +40,11 @@ public:
  * An analogous 3-D threeline might be written
  */
 template <typename FLOAT = double>
-struct twoline {
+class twoline {
 public:
   typedef FLOAT float_t;
   typedef oneline<FLOAT> oneline_t;
+  typedef twoline<FLOAT> twoline_t;
   oneline_t x,y;
   float_t get_xbeg() const {return x.get_beg();};
   float_t get_ybeg() const {return y.get_beg();};
@@ -58,6 +64,26 @@ public:
   float_t yperim(float_t rela, // relative angle
                  float_t r = get_length() / 2,
                  float_t k = 0.5) const;
+  // Members for inserting a circle whose center defaults to (get_midx(), get_midy()):
+  template <typename OUT = std::ostream>
+  void add_circle_to_svg_unclosed(OUT& o, float_t r, float_t cx, float_t cy) const {
+    o << "<circle cx=\"" << cx << "\" cy=\"" << cy << "\" r=\"" << r << "\" "; };
+  template <typename OUT = std::ostream>
+  void add_circle_to_svg_unclosed(OUT& o, float_t r) const {
+    add_circle_to_svg_unclosed(o,            r, get_midx(), get_midy());};
+  template <typename OUT = std::ostream>
+  void add_circle_to_svg_unclosed(OUT& o) const {
+    add_circle_to_svg_unclosed(o, get_length(), get_midx(), get_midy());};
+  template <typename OUT = std::ostream>
+  //
+  void add_circle_to_svg(OUT& o, float_t r, float_t cx, float_t cy) const {
+    add_circle_to_svg_unclosed(o,r,cx,cy);
+    o << "/>";
+  };
+  template <typename OUT = std::ostream>
+  void add_circle_to_svg(OUT& o, float_t r) const { add_circle_to_svg(o,r,get_midx(),get_midy()); };
+  template <typename OUT = std::ostream>
+  void add_circle_to_svg(OUT& o) const {add_circle_to_svg(o,get_length(), get_midx(), get_midy());};
   //
   twoline(float_t xb, float_t yb, float_t xe, float_t ye) : x(xb,xe), y(yb,ye) {};
 };
@@ -85,9 +111,8 @@ FLOAT twoline<FLOAT>::yperim(FLOAT rela, FLOAT r, FLOAT k) const {
   return cy + r*sin(a);
 };
 
-#ifndef SVG_H
-#include "svg.h"
-#endif
+
+
 /* Partial specializations of add_svg_unclosed(TWOLINE&,OUT) */
 template<typename F = double, typename OUT = std::ostream>
 void add_svg_unclosed(const twoline<F>& cc, OUT& o = std::cout) {
