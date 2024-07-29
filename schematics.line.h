@@ -59,12 +59,18 @@ public:
   float_t get_midy() const {return (get_ybeg() + get_yend() ) / 2;};
   //
   float_t xperim(float_t rela, // relative angle
-                 float_t r = get_length() / 2,
+                 float_t r,
                  float_t k = 0.5) const;
   float_t yperim(float_t rela, // relative angle
-                 float_t r = get_length() / 2,
+                 float_t r,
                  float_t k = 0.5) const;
-  // Members for inserting a circle whose center defaults to (get_midx(), get_midy()):
+  float_t xperim(float_t rela) const {return xperim(rela, get_length() / 2, 0.5);};
+  float_t yperim(float_t rela) const {return yperim(rela, get_length() / 2, 0.5);};
+  /* Members add_circle_to_svg_unclosed() and add_circle_to_svg()
+   * insert a circle whose radius defaults to get_length() / 2 and
+   * whose center defaults to (get_midx(), get_midy()).
+   * This is useful for drawing voltage sources.
+   */
   template <typename OUT = std::ostream>
   void add_circle_to_svg_unclosed(OUT& o, float_t r, float_t cx, float_t cy) const {
     o << "<circle cx=\"" << cx << "\" cy=\"" << cy << "\" r=\"" << r << "\" "; };

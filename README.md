@@ -23,7 +23,8 @@
 
 ## General TODOs
 
-
+[ ] bool shape::is_in(X,Y)
+[ ] angle_addressable::svg_label_unclosed(OSTREAM&, STRINGVIEW)
 [x] Change return type of SVG functions from OUTSTREAM& to void.
 [x] Comment out `return o;`
     through `sed --in-place 's/^  return o;/  \/\/return o; \/\/ void return type/g' *.h *.cpp`

@@ -6,10 +6,7 @@
 
 
 /* class angle_addressable_base<>
-   provides trigonometric functions
-   in specializations for float, double and long double.
- * It uses radians, whereas its only child angle_addressable<>
-   uses degrees.
+ * provides trigonometric functions
  */
 
 template <typename FLOAT = double>
@@ -41,7 +38,6 @@ public:
 };
 
 /* angle_addressable<>
- * (0) All angles are in degrees, not radians as in parent class angle_addressable_base<FLOAT>
  * (1) xperim(ANGLE) and xperim(ANGLE) are the only pure vitual members,
        and return (x,y) given an angle
  * (2) contains some static member functions for trigonometry,
@@ -67,7 +63,7 @@ public:
   using angle_addressable_base_t::atan, angle_addressable_base_t::atan2;
   float_t cx, cy;
   //
-  static void normalize(float_t& a); // +- 360 to get 'a' into [0,360]
+  static void normalize(float_t& a);
   // Members for rotating a point around around this->(cx,cy)
   float_t distance(float_t x, float_t y) const { return sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy) );};
   float_t    angle(float_t x, float_t y) const { return atan2(y - cy,               x - cx);};
@@ -76,13 +72,8 @@ public:
   void rotate(float_t& x, float_t& y, float_t a) const;
   static float_t deg_to_rad(float_t d) {return (d / 180) * std::numbers::pi_v<float_t>;};
   static float_t rad_to_deg(float_t r) {return (r / std::numbers::pi_v<float_t>) * 180;};
-  static float_t  sin(float_t a) {return ::sin(deg_to_rad(a));};
-  static float_t  cos(float_t a) {return ::cos(deg_to_rad(a));};
-  static float_t atan(float_t x) {return             rad_to_deg(::atan(x));};
-  static float_t atan2(float_t y, float_t x) {return rad_to_deg(::atan2(y,x));};
-  //
-  virtual float_t xperim(float_t degs) const = 0;
-  virtual float_t yperim(float_t degs) const = 0;
+  virtual float_t xperim(float_t rads) const = 0;
+  virtual float_t yperim(float_t rads) const = 0;
   angle_addressable() = default;
   angle_addressable(float_t x, float_t y) : cx(x), cy(y) {};
 };
@@ -92,9 +83,9 @@ public:
 template <typename FLOAT>
 void angle_addressable<FLOAT>::normalize(FLOAT& a) {
   while( a < 0)
-    a +=     360;
-  while( a > 360)
-    a -=     360;
+    a +=     2*std::numbers::pi_v<FLOAT>;
+  while( a > 2*std::numbers::pi_v<FLOAT>)
+    a -=     2*std::numbers::pi_v<FLOAT>;
 };
 
 template <typename FLOAT>
