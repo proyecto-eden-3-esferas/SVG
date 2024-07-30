@@ -13,6 +13,10 @@
 #include "schematics.angle.h"
 #endif
 
+#ifndef SVG_H
+#include "svg.h"
+#endif
+
 //  Children of angle_addressable<>
 
 /* A 'circular' subhierarchy:
@@ -26,8 +30,11 @@ public:
   typedef FLOAT float_t;
   float_t r;
   using cir_t::cx, cir_t::cy;
-  virtual float_t xperim(float_t rads) const {return cx + r*cir_t::cos(rads);};
-  virtual float_t yperim(float_t rads) const {return cy + r*cir_t::sin(rads);};
+  using cir_t::sin, cir_t::cos;
+  using cir_t::atan, cir_t::atan2;
+  using cir_t::abs, cir_t::sqrt;
+  virtual float_t xperim(float_t degs) const {return cx + r * cos(degs);};
+  virtual float_t yperim(float_t degs) const {return cy + r * sin(degs);};
   circular(float_t ra, float_t x=0, float_t y=0) : cir_t(x,y), r(ra) {};
 };
 
@@ -38,10 +45,10 @@ public:
   typedef angle_addressable<FLOAT> cir_t;
   typedef FLOAT float_t;
   using cir_t::cx, cir_t::cy;
+  using cir_t::sin, cir_t::cos;
   float_t rx, ry;
-  virtual float_t xperim(float_t rads) const {return cx + rx*cir_t::cos(rads);};
-  virtual float_t yperim(float_t rads) const {return cy - ry*cir_t::sin(rads);};
-  //elliptical(float_t r_x, float_t r_y, float_t x=0, float_t y=0) : rx(r_x), ry(r_y), cx(x), cy(y) {};
+  virtual float_t xperim(float_t degs) const {return cx + rx * cos(degs);};
+  virtual float_t yperim(float_t degs) const {return cy + ry * sin(degs);};
   elliptical(float_t r_x, float_t r_y, float_t x=0, float_t y=0) : cir_t(x,y), rx(r_x), ry(r_y) {};
 };
 
@@ -53,33 +60,52 @@ public:
   typedef FLOAT float_t;
   float_t rx, ry;
   using cir_t::cx, cir_t::cy;
-  float_t trans_angle; // angle of upper right-hand vertex
+  using cir_t::sin, cir_t::cos;
+  using cir_t::atan, cir_t::atan2;
+  using cir_t::abs, cir_t::sqrt;
+  using cir_t::normalize;
+protected:
+  float_t trans_angle; // (positive) angle of upper right-hand vertex
   float_t long_radius; // length from the center to a vertex == sqrt(rx^2 + ry^2)
-  virtual float_t xperim(float_t rads) const;// {return rx*cir_t::cos(rads);};
-  virtual float_t yperim(float_t rads) const;// {return rx*cir_t::sin(rads);};
+public:
+  float_t get_trans_angle() const {return trans_angle;};
+  float_t get_long_radius() const {return long_radius;};
+  virtual float_t xperim(float_t degs) const;// {return rx*cos(degs);};
+  virtual float_t yperim(float_t degs) const;// {return rx*sin(degs);};
+  //
   rectangular(float_t xr, float_t yr, float_t _cx = 0, float_t _cy=0) :
   cir_t(_cx, _cy), rx(xr), ry(yr), trans_angle(atan(yr/xr)), long_radius(sqrt(xr*xr + yr*yr)) {};
 };
+/* Member functions rectangular::xperim(DEGS) and rectangular::xperim(DEGS)
+   first normalize the angle input parameter to the interval [0,360]
+   through angle_addressable::normalize(),
+ * then
+ */
 template <typename FLOAT>
-FLOAT rectangular<FLOAT>::xperim(FLOAT rads) const {
-  if(abs(rads) <= trans_angle || (rads - std::numbers::pi_v<FLOAT>) <= trans_angle)
+FLOAT rectangular<FLOAT>::xperim(FLOAT degs) const {
+  normalize(degs);
+  if( (degs <= trans_angle) || ( degs - 360 >= -trans_angle) )
     return cx + rx;
+  if( abs(degs - 180) <= trans_angle)
+    return cx - rx;
   else
-    return cx + long_radius*cir_t::cos(rads);
+    return cx + long_radius*cos(degs);
 };
 template <typename FLOAT>
-FLOAT rectangular<FLOAT>::yperim(FLOAT rads) const {
-  if(abs(rads) <= trans_angle  ||  (rads - std::numbers::pi_v<FLOAT>) <= trans_angle)
-    return cy + long_radius*cir_t::sin(rads);
+FLOAT rectangular<FLOAT>::yperim(FLOAT degs) const {
+  normalize(degs);
+  if(degs <= trans_angle  ||  (degs - 180) >= -trans_angle )
+    return cy + long_radius*sin(degs);
   else
-    return cy + ry;
+    if(degs <= 180)
+      return cy + ry;
+    else
+      return cy - ry;
 };
 
 
 // Partial specializations of add_svg_unclosed(ANGLE_ADDRESSABLE&,OUT&)
-#ifndef SVG_H
-#include "svg.h"
-#endif
+
 // First, specializations for angle-addressable components in "schematics.round.h"
 template<typename F = double, typename OUT = std::ostream>
 void add_svg_unclosed(const circular<F>& cc, OUT& o = std::cout) {

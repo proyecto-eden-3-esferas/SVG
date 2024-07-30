@@ -10,6 +10,12 @@
    in specializations for float, double and long double.
  * It uses radians, whereas its only child angle_addressable<>
    uses degrees.
+ * In trigonometric libraries, a normalize() function is required,
+   coded on some agreement as to what interval to normalize into.
+   For instance, to normalize 400 into [0,360], 360 should be subtracted from 400,
+   which yields 40, whereas to normalize -400,  360 should be added twice  to 400,
+   which yields 320.
+   The normalizing funcion in this library is 'angle_addressable<>::normalize(DEGS)'.
  */
 
 template <typename FLOAT = double>
@@ -20,6 +26,9 @@ public:
   static float_t  cos(float_t a) {return :: cos(a);};
   static float_t atan(float_t a) {return ::atan(a);};
   static float_t atan2(float_t a, float_t b) {return ::atan2(a,b);};
+  //
+  static float_t   abs(float_t dbl) {return ::fabs(dbl);};
+  static float_t  sqrt(float_t dbl) {return ::sqrt(dbl);};
 };
 
 template <>
@@ -29,6 +38,9 @@ public:
   static float  cos(float a) {return :: cosf(a);};
   static float atan(float a) {return ::atanf(a);};
   static float atan2(float a, float b) {return ::atan2f(a,b);};
+  //
+  static float_t   abs(float_t f) {return ::fabsf(f);};
+  static float_t  sqrt(float_t f) {return ::sqrtf(f);};
 };
 
 template <>
@@ -38,12 +50,15 @@ public:
   static long double  cos(long double a) {return :: cosl(a);};
   static long double atan(long double a) {return ::atanl(a);};
   static long double atan2(long double a, long double b) {return ::atan2l(a,b);};
+  //
+  static float_t   abs(float_t ld) {return ::fabsl(ld);};
+  static float_t  sqrt(float_t ld) {return ::sqrt(ld);};
 };
 
 /* angle_addressable<>
  * (0) All angles are in degrees, not radians as in parent class angle_addressable_base<FLOAT>
  * (1) xperim(ANGLE) and xperim(ANGLE) are the only pure vitual members,
-       and return (x,y) given an angle
+       and should return coordinates (x,y) given an angle
  * (2) contains some static member functions for trigonometry,
        which are defined differently in specializations for FLOAT = float or long double
        - distance(x,y) and angle(x,y)
@@ -53,8 +68,8 @@ public:
          and rotates them around (cx,cy) by ANGLE
        -
  * (3) its children have member variables cx,cy (for center of shape) and rx,ry for radius
-      save for circular<>, a circle, which only has 'r'
- * (4) angle_addressable<FLOAT> is often typedef'd as cir_t, as in
+      save for circular<>, a circle, which only has one radius variable: 'r'
+ * (4) angle_addressable<FLOAT> is often typedef'd as cir_t, as in:
          typedef angle_addressable<FLOAT> cir_t;
  *
  */
@@ -65,6 +80,7 @@ public:
   typedef angle_addressable_base<float_t> angle_addressable_base_t;
   using angle_addressable_base_t::sin,  angle_addressable_base_t::cos;
   using angle_addressable_base_t::atan, angle_addressable_base_t::atan2;
+  using angle_addressable_base_t::abs, angle_addressable_base_t::sqrt;
   float_t cx, cy;
   //
   static void normalize(float_t& a); // +- 360 to get 'a' into [0,360]

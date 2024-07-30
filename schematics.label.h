@@ -70,11 +70,14 @@ public:
   string_t text;
   FLOAT deg;
   text_anchor anchor;
+  FLOAT baseline_drop;
   //
-  label(FLOAT xx, FLOAT yy, string_t s, FLOAT dg = 0.0, text_anchor ta = text_anchor::middle)
-  : x(xx), y(yy), text(s), deg(dg), anchor(ta) {};
+  label(FLOAT xx, FLOAT yy, string_t s, FLOAT dg = 0.0, text_anchor ta = text_anchor::middle, FLOAT bld = 0.0)
+  : x(xx), y(yy), text(s), deg(dg), anchor(ta), baseline_drop(bld) {};
 };
-
+/* Class multilabel<FLOAT,CHAR> holds all the variables to print a multiline label in 2D
+ * It shares all member variables but 'text' with its analog class, 'label<FLOAT>'
+ */
 template<typename FLOAT = double,
          typename  CHAR = char,
          typename  CONT = std::vector<std::basic_string<CHAR> >
@@ -88,20 +91,22 @@ public:
   FLOAT x, y, r;
   FLOAT deg;
   text_anchor anchor;
+  FLOAT baseline_drop;
   /*
   void set_deg(FLOAT dg);
   void set_rad(FLOAT dg);
   */
-  multilabel(FLOAT xx, FLOAT yy, FLOAT rr,                   FLOAT dg = 0.0, text_anchor ta = text_anchor::middle)
-  : x(xx), y(yy), r(rr),           deg(dg), anchor(ta) {};
-  multilabel(FLOAT xx, FLOAT yy, FLOAT rr, const lines_t& l, FLOAT dg = 0.0, text_anchor ta = text_anchor::middle)
-  : x(xx), y(yy), r(rr), lines(l), deg(dg), anchor(ta) {};
+  multilabel(FLOAT xx, FLOAT yy, FLOAT rr,                   FLOAT dg = 0.0, text_anchor ta = text_anchor::middle, FLOAT bld = 0.0)
+  : x(xx), y(yy), r(rr),           deg(dg), anchor(ta), baseline_drop(bld) {};
+  multilabel(FLOAT xx, FLOAT yy, FLOAT rr, const lines_t& l, FLOAT dg = 0.0, text_anchor ta = text_anchor::middle, FLOAT bld = 0.0)
+  : x(xx), y(yy), r(rr), lines(l), deg(dg), anchor(ta), baseline_drop(bld) {};
 };
 
 // Using ::add_label_to_svg(X,Y,TEXT,DEGREES,TEXT_ANCHOR,OUT,BASELINE_DROP)
 template<typename FLOAT = double, typename OUT = std::ostream>
 void add_svg_unclosed(const label<FLOAT>& lbl, OUT& o = std::cout) {
-  add_label_to_svg_unclosed(lbl.x, lbl.y, lbl.text, lbl.deg, lbl.anchor, o, 0.0);
+  add_label_to_svg_unclosed(lbl.x, lbl.y, lbl.text,
+                            lbl.deg, lbl.anchor, o, lbl.baseline_drop);
 };
 template<typename FLOAT = double, typename OUT = std::ostream>
 void add_svg(const label<FLOAT>& lbl, OUT& o = std::cout) {
@@ -113,7 +118,7 @@ void add_svg(const multilabel<FLOAT>& ml, OUT& o = std::cout) {
   FLOAT step = (ml.r * 2.0) / (ml.lines.size() - 1);
   FLOAT offset = - ml.r;
   for(auto & str : ml.lines) {
-    add_label_to_svg(ml.x, ml.y, str, ml.deg, ml.anchor, o, offset);
+    add_label_to_svg(ml.x, ml.y, str, ml.deg, ml.anchor, o, offset + ml.baseline_drop);
     offset += step;
   }
 };

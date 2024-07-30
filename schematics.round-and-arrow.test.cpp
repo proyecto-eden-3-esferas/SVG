@@ -3,20 +3,6 @@
 #include "schematics.arrow.h"
 
 
-//#define DRAW_CIRCULAR_COMPONENT_PERIM
-#ifndef DRAW_CIRCULAR_COMPONENT_PERIM
-#define DRAW_RECTANGULAR_COMPONENT_PERIM
-#endif
-
-#undef DRAW_RECTANGULAR_COMPONENT_PERIM
-
-#ifndef DRAW_CIRCULAR_COMPONENT_PERIM
-#ifndef DRAW_RECTANGULAR_COMPONENT_PERIM
-#define DRAW_ELLIPTICAL_COMPONENT_PERIM
-#endif
-#endif
-
-
 #include <fstream>
 using namespace std;
 
@@ -32,16 +18,8 @@ typedef           twoline<float_type>                  line_t;
 int main()
 {
 
-  float_type a10(cir_t::deg_to_rad(10));
-  float_type a15(cir_t::deg_to_rad(15));
-  float_type a22(cir_t::deg_to_rad(22));
-  float_type a30(cir_t::deg_to_rad(30));
-  float_type a45(cir_t::deg_to_rad(45));
-  float_type a60(cir_t::deg_to_rad(60));
-  float_type a80(cir_t::deg_to_rad(80));
-
   cout << "Testing cir_t::normalize(ANGLE)...\n";
-  float_type aaa1 = - 3*a60;
+  float_type aaa1 = - 3*60;
   cir_t::normalize(aaa1);
   cout << "angle -180 becomes " << aaa1 << '\n';
   aaa1 = 1000;
@@ -52,88 +30,118 @@ int main()
   cout << "Test angle_addressable::get_{x|y}_rotated(x,y):\n";
   circular_component_t cc0(100,1000,1000);
   float_type x(1100), y(1000);
-  cout << "cc0.get_x_rotated(1100,1000, a45)= " << cc0.get_x_rotated(1100,1000, a45) << '\n';
-  cout << "cc0.get_y_rotated(1100,1000, a45)= " << cc0.get_y_rotated(1100,1000, a45) << '\n';
-  cc0.rotate(x,y,a45);
-  cout << "cc0.rotate(x,y,a45) makes x=" << x << ", and y=" << y << "\n\n";
+  cout << "cc0.get_x_rotated(1100,1000, 45)= " << cc0.get_x_rotated(1100,1000, 45) << '\n';
+  cout << "cc0.get_y_rotated(1100,1000, 45)= " << cc0.get_y_rotated(1100,1000, 45) << '\n';
+  cc0.rotate(x,y,45);
+  cout << "cc0.rotate(x,y,45) makes x=" << x << ", and y=" << y << "\n\n";
+
 
   cout << "Test circular<>:\n";
-
   circular_component_t cc1(25,50,50);
   cout << "circular<> cc1 of radius 100 has x and y at angle 45: ";
-  cout << cc1.xperim(a45) << ',' <<  cc1.yperim(a45) << '\n';
-#ifdef DRAW_CIRCULAR_COMPONENT_PERIM
-  line_t l10(cc1.xperim(a10), cc1.yperim(a10), cc1.xperim(a10) + 25, cc1.yperim(a10));
-  line_t l30(cc1.xperim(a30), cc1.yperim(a30), cc1.xperim(a30) + 25, cc1.yperim(a30));
-  line_t l45(cc1.xperim(a45), cc1.yperim(a45), cc1.xperim(a45) + 25, cc1.yperim(a45));
-  line_t l60(cc1.xperim(a60), cc1.yperim(a60), cc1.xperim(a60) + 25, cc1.yperim(a60));
-  line_t l80(cc1.xperim(a80), cc1.yperim(a80), cc1.xperim(a80) + 25, cc1.yperim(a80));
-#endif
+  cout << cc1.xperim(45) << ',' <<  cc1.yperim(45) << '\n';
+  line_t cl10(cc1.xperim(10), cc1.yperim(10), cc1.xperim(10) + 25, cc1.yperim(10));
+  line_t cl30(cc1.xperim(30), cc1.yperim(30), cc1.xperim(30) + 25, cc1.yperim(30));
+  line_t cl45(cc1.xperim(45), cc1.yperim(45), cc1.xperim(45) + 25, cc1.yperim(45));
+  line_t cl60(cc1.xperim(60), cc1.yperim(60), cc1.xperim(60) + 25, cc1.yperim(60));
+  line_t cl80(cc1.xperim(80), cc1.yperim(80), cc1.xperim(80) + 25, cc1.yperim(80));
+
 
   cout << "Test rectangular_components rc*\n";
   //rectangular_component_t rc1(30,20, 40,50), rc2(30,20, 42,52), rc3(30,20, 38,48);
   rectangular_component_t rc1(30,20, 40,50), rc2(30,20, 42,52), rc3(30,20, 38,48);
-  cout << "rc1.trans_angle: " << cir_t::rad_to_deg(rc1.trans_angle) << '\n';
-  cout << "rc2.trans_angle: " << cir_t::rad_to_deg(rc2.trans_angle) << '\n';
-  cout << "rc3.trans_angle: " << cir_t::rad_to_deg(rc3.trans_angle) << '\n';
+  cout << "rc1.get_trans_angle(): " << rc1.get_trans_angle() << '\n';
+  cout << "rc2.get_trans_angle(): " << rc2.get_trans_angle() << '\n';
+  cout << "rc3.get_trans_angle(): " << rc3.get_trans_angle() << '\n';
   cout << "Now test rectangular rc2(100,100) ::xperim(rads) and ::yperim(rads) for several rads (angles):\n";
-  cout << "a = 10: " << rc2.xperim(cir_t::deg_to_rad(10)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(10)) << '\n';
-  cout << "a = 30: " << rc2.xperim(cir_t::deg_to_rad(30)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(30)) << '\n';
-  cout << "a = 45: " << rc2.xperim(a45) << ',' <<  rc2.yperim(a45) << '\n';
-  cout << "a = 60: " << rc2.xperim(cir_t::deg_to_rad(60)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(60)) << '\n';
-  cout << "a = 80: " << rc2.xperim(cir_t::deg_to_rad(80)) << ',' <<  rc2.yperim(cir_t::deg_to_rad(80)) << '\n';
-#ifdef DRAW_RECTANGULAR_COMPONENT_PERIM
-  line_t l10(rc2.xperim(a10), rc2.yperim(a10), rc2.xperim(a10) + 25, rc2.yperim(a10));
-  line_t l30(rc2.xperim(a30), rc2.yperim(a30), rc2.xperim(a30) + 25, rc2.yperim(a30));
-  //line_t l45(rc2.xperim(a45), rc2.yperim(a45), rc2.xperim(a45) + 25, rc2.yperim(a45));
-  line_t l60(rc2.xperim(a60), rc2.yperim(a60), rc2.xperim(a60)     , rc2.yperim(a60) - 25);
-  line_t l80(rc2.xperim(a80), rc2.yperim(a80), rc2.xperim(a80)     , rc2.yperim(a80) - 25);
-#endif
+  cout << "a = 10: " << rc2.xperim(10) << ',' <<  rc2.yperim(10) << '\n';
+  cout << "a = 30: " << rc2.xperim(30) << ',' <<  rc2.yperim(30) << '\n';
+  cout << "a = 45: " << rc2.xperim(45) << ',' <<  rc2.yperim(45) << '\n';
+  cout << "a = 60: " << rc2.xperim(60) << ',' <<  rc2.yperim(60) << '\n';
+  cout << "a = 80: " << rc2.xperim(80) << ',' <<  rc2.yperim(80) << '\n';
+  line_t rl10(rc2.xperim(10), rc2.yperim(10), rc2.xperim(10) + 25, rc2.yperim(10));
+  line_t rl30(rc2.xperim(30), rc2.yperim(30), rc2.xperim(30) + 25, rc2.yperim(30));
+  //line_t rl45(rc2.xperim(45), rc2.yperim(45), rc2.xperim(45) + 25, rc2.yperim(45));
+  line_t rl60(rc2.xperim(60), rc2.yperim(60), rc2.xperim(60)     , rc2.yperim(60) + 25);
+  line_t rl80(rc2.xperim(80), rc2.yperim(80), rc2.xperim(80)     , rc2.yperim(80) + 25);
+
 
   elliptical_component_t ec2(40,25, 42,52);
-#ifdef DRAW_ELLIPTICAL_COMPONENT_PERIM
-  line_t l10(ec2.xperim(a10), ec2.yperim(a10), ec2.xperim(a10) + 25, ec2.yperim(a10));
-  line_t l30(ec2.xperim(a30), ec2.yperim(a30), ec2.xperim(a30) + 25, ec2.yperim(a30));
-  //line_t l45(ec2.xperim(a45), ec2.yperim(a45), ec2.xperim(a45) + 25, ec2.yperim(a45));
-  line_t l60(ec2.xperim(a60), ec2.yperim(a60), ec2.xperim(a60)     , ec2.yperim(a60) - 25);
-  line_t l80(ec2.xperim(a80), ec2.yperim(a80), ec2.xperim(a80)     , ec2.yperim(a80) - 25);
-#endif
+  line_t el10(ec2.xperim(10), ec2.yperim(10), ec2.xperim(10) + 25, ec2.yperim(10));
+  line_t el30(ec2.xperim(30), ec2.yperim(30), ec2.xperim(30) + 25, ec2.yperim(30));
+  //line_t el45(ec2.xperim(45), ec2.yperim(45), ec2.xperim(45) + 25, ec2.yperim(45));
+  line_t el60(ec2.xperim(60), ec2.yperim(60), ec2.xperim(60)     , ec2.yperim(60) + 25);
+  line_t el80(ec2.xperim(80), ec2.yperim(80), ec2.xperim(80)     , ec2.yperim(80) + 25);
 
-  slim_arrowhead_component_t  ah1(40, 100, 100,  a45, a22);
 
-  solid_arrowhead_component_t ah2(40, 120, 120, -a45, a15);
+  slim_arrowhead_component_t  ah1(40, 100, 100,  45, 22);
+  solid_arrowhead_component_t ah2(40, 120, 120, -45, 15);
   cout << "solid_arrowhead ah2 base is at: " << ah2.get_base_x() << ", " << ah2.get_base_y() << '\n';
 
 
 //  ic<float_type> ic1(50,50,5, 3,7);
 
-// open file "test-round-and-arrow.html" to hold an SVG element:
-  ofstream ofs("test-round-and-arrow.html");
-  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
-    open_svg(ofs, 500.0, 500.0, "black", "gray", 0.5);
-      add_svg(cc1, ofs);
-      add_svg(ec2, ofs);
-      add_svg(l10, ofs);
-      add_svg(l30, ofs);
-      add_svg(l60, ofs);
-      add_svg(ah1, ofs);
+// open file "test-circular.html" to hold an SVG circular element and more:
+  ofstream ofc("test-circular.html");
+  ofc << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics circular svg...</p>\n"; //<svg stroke=\"black\">\n  ";
+    open_svg(ofc, 500.0, 500.0, "black", "gray", 0.5);
+      add_svg(cc1, ofc);
+      add_svg(cl10, ofc);
+      add_svg(cl30, ofc);
+      add_svg(cl60, ofc);
+      add_svg(cl80, ofc);
+    close_svg(ofc);
+  ofc << "</body>\n</html>";
+  ofc.close();
+
+// open file "test-elliptical.html" to hold an SVG elliptical element and more:
+  ofstream ofe("test-elliptical.html");
+  ofe << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics elliptical svg...</p>\n"; //<svg stroke=\"black\">\n  ";
+    open_svg(ofe, 500.0, 500.0, "black", "gray", 0.5);
+      add_svg(ec2, ofe);
+      add_svg(el10, ofe);
+      add_svg(el30, ofe);
+      add_svg(el60, ofe);
+      add_svg(el80, ofe);
+    close_svg(ofe);
+  ofe << "</body>\n</html>";
+  ofe.close();
+
+// open file "test-rectangular.html" to hold an SVG rectangular element and more:
+  ofstream ofr("test-rectangular.html");
+  ofr << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics rectangular svg...</p>\n"; //<svg stroke=\"black\">\n  ";
+    open_svg(ofr, 500.0, 500.0, "black", "gray", 0.5);
+      add_svg(rc1,  ofr);
+      add_svg(rc3,  ofr);
+      add_svg(rc2,  ofr);
+      add_svg(rl10, ofr);
+      add_svg(rl30, ofr);
+      add_svg(rl60, ofr);
+      add_svg(rl80, ofr);
+    close_svg(ofr);
+  ofr << "</body>\n</html>";
+  ofr.close();
+
+// open file "test-arrowhead.html" to hold an SVG arrowhead element and more:
+  ofstream ofah("test-arrowhead.html");
+  ofah << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics arrowhead svg...</p>\n"; //<svg stroke=\"black\">\n  ";
+    open_svg(ofah, 500.0, 500.0, "black", "gray", 0.5);
+      add_svg(ah1, ofah);
 
       ah1.cx += 50; ah1.cy+=33;
-      ah1.rotate_by(a22);
-      add_svg(ah1, ofs);
+      ah1.rotate_by(22);
+      add_svg(ah1, ofah);
 
       ah1.cx += 50; ah1.cy+=33;
-      ah1.rotate_by(a22);
-      add_svg(ah1, ofs);
+      ah1.rotate_by(22);
+      add_svg(ah1, ofah);
 
-      add_svg(ah2, ofs);
-      //add_svg(l80, ofs);
+      add_svg(ah2, ofah);
+      //add_svg(l80, ofah);
 
-  // Keep adding components to the SVG file (handle='ofs')
-      add_svg(rc2,ofs);
-    close_svg(ofs);
-  ofs << "</body>\n</html>";
-  ofs.close();
+    close_svg(ofah);
+  ofah << "</body>\n</html>";
+  ofah.close();
 
 
   return 0;
