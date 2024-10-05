@@ -9,6 +9,8 @@
 
 - General TODOs
 
+- On `fill-opacity` for `<text>`
+
 - A Geometry Library
 
 - Diagrammes, Schematics and Electronics
@@ -23,6 +25,13 @@
 
 ## General TODOs
 
+[ ] write *schematics.grid.h* with class grid taking constructors:
+    ```
+    grid(X,Y, WIDTH, HEIGHT, SIDE)
+    grid(...)
+    ```
+
+[ ] What about bounding boxes?
 [ ] bool shape::is_in(X,Y)
 [ ] angle_addressable::svg_label_unclosed(OSTREAM&, STRINGVIEW)
 [x] Change return type of SVG functions from OUTSTREAM& to void.
@@ -106,6 +115,13 @@ No, as regards `block`'s, I want them to hold one std::string per port (ports ar
 [x] Inclusion of SVG Files (See longish section "Inclusion of SVG Files" below, in here file "README.md")
 
 
+### On `fill-opacity` for `<text>`
+
+Well, if `fill-opacity` is set too low, that is lower than 0.9 ~ 0.8, then glyphs in `<text>` elements,
+when filled with black, show gray.
+
+Also, figures are likely to be shown with a non-black filling,
+so the `<text ... >` element had better have attributes ` fill="black" fill-opacity="1.0"` added to
 
 
 ## A Geometry Library

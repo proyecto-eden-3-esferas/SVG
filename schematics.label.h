@@ -20,6 +20,7 @@ enum class text_anchor {start, middle, end};
  * Note that the order of input parameters places the most defaultable ones last
  * 'baseline_drop' should be half the height of letters x, a, m ... so that text looks natural
  */
+std::string svg_text_std_attrs(" fill=\"black\" fill-opacity=\"1.0\" stroke=\"none\"");
 template<typename FLOAT = double, typename CHAR=char, typename OUT = std::ostream>
 void add_label_to_svg_unclosed(FLOAT x, FLOAT y,
                       const std::basic_string<CHAR>& lbl,
@@ -27,7 +28,8 @@ void add_label_to_svg_unclosed(FLOAT x, FLOAT y,
                       FLOAT dg = 0,
                       text_anchor ta = text_anchor::middle,
                       OUT& o = std::cout,
-                      FLOAT baseline_drop = 0.0)
+                      FLOAT baseline_drop = 0.0,
+                      const std::basic_string<CHAR>& attrs = svg_text_std_attrs)
 {
   typedef angle_addressable<FLOAT> cir_t;
   x -= baseline_drop * cir_t::sin(dg);
@@ -41,7 +43,7 @@ void add_label_to_svg_unclosed(FLOAT x, FLOAT y,
     case text_anchor::end   : o << "end\" "; break;
     default                 : o << "start\" "; break;
   }
-  o << "transform=\"rotate(" << dg << ' ' << x << ',' << y << ")\">";
+  o << "transform=\"rotate(" << dg << ' ' << x << ',' << y << ")\" " << attrs << '>';
   o << lbl << "</text>\n";
 };
 template<typename FLOAT = double, typename CHAR=char, typename OUT = std::ostream>

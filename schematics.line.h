@@ -96,25 +96,26 @@ public:
 // Implementation of twoline members:
 template<typename FLOAT>
 FLOAT twoline<FLOAT>::get_length() const {
-  return sqrt( ( get_xend() - get_xbeg() ) *  ( get_xend() - get_xbeg() ) +
-               ( get_yend() - get_ybeg() ) *  ( get_yend() - get_ybeg() ) );
+  return angle_addressable<FLOAT>::sqrt
+  ( ( get_xend() - get_xbeg() ) *  ( get_xend() - get_xbeg() ) +
+    ( get_yend() - get_ybeg() ) *  ( get_yend() - get_ybeg() ) );
 };
 template<typename FLOAT>
 FLOAT twoline<FLOAT>::get_angle() const {
-  return atan2(get_yend() - get_ybeg(),
+  return angle_addressable<FLOAT>::atan2(get_yend() - get_ybeg(),
                get_xend() - get_xbeg());
 };
 template<typename FLOAT>
 FLOAT twoline<FLOAT>::xperim(FLOAT rela, FLOAT r, FLOAT k) const {
   FLOAT a = rela + get_angle();
   FLOAT cx = get_x(k);
-  return cx + r*cos(a);
+  return cx + r*angle_addressable<FLOAT>::cos(a);
 };
 template<typename FLOAT>
 FLOAT twoline<FLOAT>::yperim(FLOAT rela, FLOAT r, FLOAT k) const {
   FLOAT a = rela + get_angle();
   FLOAT cy = get_y(k);
-  return cy + r*sin(a);
+  return cy + r*angle_addressable<FLOAT>::sin(a);
 };
 
 
@@ -192,6 +193,5 @@ void add_svg_unclosed(const polygon<F,POINT,CONT>& plg, OUT& o = std::cout) {
   o << '\"';
   //return o; // void return type
 };
-
 
 #endif
