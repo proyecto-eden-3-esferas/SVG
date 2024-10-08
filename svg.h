@@ -7,6 +7,9 @@
  * Sometimes you want to define fill to, possibly inside specific svg shapes
  * You rarely want to define <svg stroke="black" fill="black"
    as the filling will hide a lot of detail
+ * TODO
+   - write and import a light html headers-only file for HTML/XML (light-html.h)
+   - implement adding attributes (class, id, stroke-width) to svg elements
  */
 
 #include <iostream>
