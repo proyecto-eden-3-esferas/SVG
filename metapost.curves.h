@@ -122,7 +122,8 @@ public:
   points_t points;
   points_t::iterator begin() {return points.begin();};
   points_t::iterator   end() {return points.  end();};
-  bool has_dirs;
+  bool has_dirs; // useful at all?
+  /* const */ bool is_closed;
   /* lastidx(IDX) returns the last valid index into points, while
    * preidx(IDX) and postidx(IDX) return previous and next index
      as if 'points' was a circular sequential container.
@@ -139,11 +140,7 @@ public:
      and then readjust the control points.
    */
   virtual void set_dir(int pre, int idx, int post); // Defined, yet DEPRECATED
-  virtual void set_dir(int idx) {
-    points[idx].dir = angle_addressable_base_t::atan2(
-      points[postidx(idx)].pt.second - points[preidx(idx)].pt.second,
-      points[postidx(idx)].pt.first  - points[preidx(idx)].pt.first);
-  };
+  virtual void set_dir(int idx);
   void set_closed_dirs() {
     for(int i=0; i < points.size(); ++i)
     set_dir(i);
@@ -151,25 +148,12 @@ public:
   // Members for setting dirs in an open spline:
   void set_inner_dirs() {
     for(int i=1; i < lastidx(); ++i)
-      //set_dir(i-1, i, i+1);
       set_dir(i);
   };
   /* set_open_first() and set_open_last()
    * correct by k according to 2nd and last but 1 segments */
-  virtual void set_open_first(F k) {
-    points[0].dir = angle_addressable_base_t::atan2(
-      points[1].pt.second - points[0].pt.second
- - k*(points[2].pt.second - points[1].pt.second),
-      points[1].pt.first  - points[0].pt.first)
- - k*(points[2].pt.first  - points[1].pt.first);
-  };
-  virtual void set_open_last (F k) {
-    points[lastidx()].dir = angle_addressable_base_t::atan2(
-      points[lastidx()].pt.second - points[lastidx() - 1].pt.second
- - k*(points[lastidx()-1].pt.second - points[lastidx() - 2].pt.second),
-      points[lastidx()  ].pt.first  - points[lastidx() - 1].pt.first)
- - k*(points[lastidx()-1].pt.first  - points[lastidx() - 2].pt.first);
-  };
+  virtual void set_open_first(F k);
+  virtual void set_open_last (F k);
   void set_open_dirs(F k = 0.33) {
     set_inner_dirs();
     set_open_first(k);
@@ -194,56 +178,34 @@ public:
     }
   };
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
-  void          to_svg_p(  std::ostream& o, int beg, int end)      const {
-    o << "M " << points[beg].pt.first << ' ' << points[beg].pt.second;
-    for(int i=beg; i < end; ++i) {
-      o << "C " << points[i].postpt.first << ' ' << points[i].postpt.second;
-      o << ", " << points[i+1].prept.first << ' ' << points[i+1].prept.second;
-      o << ", " << points[i+1].pt.first << ' ' << points[i+1].pt.second;
-    }
-  };
+  void to_svg_p(std::ostream& o, int beg, int end) const;
   /* close_svg_p(OSTREAM) adds the closing Bezier curve
      (from last point to first) to the unclosed p attribute in svg::path
      yet it does not close the p attribute as such (no closing quotes added)*/
-  void          close_svg_p(std::ostream& o) const {
-      o << " C " << points[lastidx()].postpt.first << ' ' << points[lastidx()].postpt.second;
-      o << ", "  << points[0].prept.first << ' ' << points[0].prept.second;
-      o << ", "  << points[0].pt.first << ' ' << points[0].pt.second;
-  };
+  void close_svg_p(std::ostream& o) const;
   void to_svg_p_closed(  std::ostream& o) const {
     to_svg_p(o, 0, lastidx());
     close_svg_p(o);
   };
-
-  void add_control_to_svg_as_circle(std::ostream& o, std::size_t idx, F r=5.0) const {
-    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-    o << "<circle cx=\"" << points[idx].prept.first  <<'\"';
-    o <<        " cy=\"" << points[idx].prept.second <<'\"';
-    o <<         " r=\"" << r <<"\"/>\n";
-    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-    o << "<circle cx=\"" << points[idx].postpt.first  <<'\"';
-    o <<        " cy=\"" << points[idx].postpt.second <<'\"';
-    o <<         " r=\"" << r <<"\"/>\n";
-  };
-  void add_control_to_svg_as_line(std::ostream& o, std::size_t idx) const {
-    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-    o << "<line x1=\"" << points[idx].prept.first  <<'\"';
-    o <<      " y1=\"" << points[idx].prept.second <<'\"';
-    o <<      " x2=\"" << points[idx].pt.first <<'\"';
-    o <<      " y2=\"" << points[idx].pt.second << "\"/>\n";
-    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-    o << "<line x1=\"" << points[idx].postpt.first  <<'\"';
-    o <<      " y1=\"" << points[idx].postpt.second <<'\"';
-    o <<      " x2=\"" << points[idx].pt.first <<'\"';
-    o <<      " y2=\"" << points[idx].pt.second << "\"/>\n";
-  };
-
+  /* Show both control points for a given on-line point
+   * as svg::circle's at the end of control svg::line's
+   */
+  void add_control_to_svg_as_circle(std::ostream& o,
+                                    std::size_t idx,
+                                    F r=5.0,
+                                    const std::string& attr = "class=\"bezier-control\"") const;
+  void add_control_to_svg_as_line(std::ostream& o,
+                                  std::size_t idx,
+                                  const std::string& attr = "class=\"bezier-control\"") const;
   // constructors:
-  mp_spline() = default;
-  mp_spline(std::initializer_list<pair_t> il)               : points(il), has_dirs(false) {};
-  mp_spline(std::initializer_list<mp_spline<F>::point>  il) : points(il), has_dirs( true) {};
+  mp_spline() : is_closed(false) {};
+  mp_spline(std::initializer_list<pair_t> il,               bool clsd=false)
+  : points(il), has_dirs(false), is_closed(clsd) {};
+  mp_spline(std::initializer_list<mp_spline<F>::point>  il, bool clsd=false)
+  : points(il), has_dirs( true), is_closed(clsd) {};
   template <typename CONTAINER>
-  mp_spline(const CONTAINER& c) : points(c.begin(), c.end()), has_dirs(true) {};
+  mp_spline(const CONTAINER& c,                             bool clsd=false)
+  : points(c.begin(), c.end()), has_dirs(true), is_closed(clsd) {};
 }; // class mp_spline<>
 
 
@@ -262,5 +224,92 @@ void mp_spline<F>::set_dir(int pre, int idx, int post) { // DEPRECATED
   std::cout << ", resulting in \'dir\'=" << 180 * points[idx].dir / std::numbers::pi_v<F> << std::endl;
 #endif
 };
+
+template <typename F>
+void mp_spline<F>::set_dir(int idx) {
+  points[idx].dir = angle_addressable_base_t::atan2(
+    points[postidx(idx)].pt.second - points[preidx(idx)].pt.second,
+    points[postidx(idx)].pt.first  - points[preidx(idx)].pt.first);
+};
+
+/* set_open_first() and set_open_last()
+ * correct by k according to 2nd and last but 1 segments */
+template <typename F>
+void mp_spline<F>::set_open_first(F k) {
+  points[0].dir = angle_addressable_base_t::atan2(
+    points[1].pt.second - points[0].pt.second
+ - k*(points[2].pt.second - points[1].pt.second),
+    points[1].pt.first  - points[0].pt.first)
+ - k*(points[2].pt.first  - points[1].pt.first);
+};
+template <typename F>
+void mp_spline<F>::set_open_last (F k) {
+  points[lastidx()].dir = angle_addressable_base_t::atan2(
+    points[lastidx()].pt.second - points[lastidx() - 1].pt.second
+ - k*(points[lastidx()-1].pt.second - points[lastidx() - 2].pt.second),
+    points[lastidx()  ].pt.first  - points[lastidx() - 1].pt.first)
+ - k*(points[lastidx()-1].pt.first  - points[lastidx() - 2].pt.first);
+};
+
+// Add curves from points[beg] to points[end] inside svg::path::p attribute:
+template <typename F>
+void mp_spline<F>::to_svg_p(std::ostream& o, int beg, int end) const {
+  o << "M " << points[beg].pt.first << ' ' << points[beg].pt.second;
+  for(int i=beg; i < end; ++i) {
+    o << "C " << points[i].postpt.first << ' ' << points[i].postpt.second;
+    o << ", " << points[i+1].prept.first << ' ' << points[i+1].prept.second;
+    o << ", " << points[i+1].pt.first << ' ' << points[i+1].pt.second;
+  }
+};
+
+template <typename F>
+void mp_spline<F>::close_svg_p(std::ostream& o) const {
+  o << " C " << points[lastidx()].postpt.first << ' ' << points[lastidx()].postpt.second;
+  o << ", "  << points[0].prept.first << ' ' << points[0].prept.second;
+  o << ", "  << points[0].pt.first << ' ' << points[0].pt.second;
+};
+
+template <typename F>
+void mp_spline<F>::add_control_to_svg_as_circle(std::ostream& o,
+                                    std::size_t idx,
+                                    F r,
+                                    const std::string& attr) const
+  {
+    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+    o << "<circle ";
+    if(attr.length() > 0)
+      o << attr << ' ';
+    o << "cx=\"" << points[idx].prept.first  <<'\"';
+    o <<        " cy=\"" << points[idx].prept.second <<'\"';
+    o <<         " r=\"" << r <<"\"/>\n";
+    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+    o << "<circle ";
+    if(attr.length() > 0)
+      o << attr << ' ';
+    o <<        "cx=\"" << points[idx].postpt.first  <<'\"';
+    o <<        " cy=\"" << points[idx].postpt.second <<'\"';
+    o <<         " r=\"" << r <<"\"/>\n";
+  };
+template <typename F>
+void mp_spline<F>::add_control_to_svg_as_line(std::ostream& o,
+                                  std::size_t idx,
+                                  const std::string& attr) const {
+    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+    o << "<line ";
+    if(attr.length() > 0)
+      o << attr << ' ';
+    o << "x1=\"" << points[idx].prept.first  <<'\"';
+    o <<      " y1=\"" << points[idx].prept.second <<'\"';
+    o <<      " x2=\"" << points[idx].pt.first <<'\"';
+    o <<      " y2=\"" << points[idx].pt.second << "\"/>\n";
+    o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+    o << "<line ";
+    if(attr.length() > 0)
+      o << attr << ' ';
+    o << "x1=\"" << points[idx].postpt.first  <<'\"';
+    o <<      " y1=\"" << points[idx].postpt.second <<'\"';
+    o <<      " x2=\"" << points[idx].pt.first <<'\"';
+    o <<      " y2=\"" << points[idx].pt.second << "\"/>\n";
+  };
 
 #endif
