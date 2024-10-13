@@ -6,6 +6,8 @@ Gplusplus =     c++ -std=c++23
 save_to_github:
 	git push svg main
 
+schematics.angle.test: schematics.angle.test.cpp schematics.angle.h
+	c++ -std=c++23 $<  -o $@
 schematics.label: schematics.label.test.cpp schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.rectangle: schematics.rectangle.test.cpp schematics.rectangle.h svg.h
@@ -36,14 +38,15 @@ schematics.sq_polyline-and-block: schematics.sq_polyline-and-block.test.cpp sche
 
 schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h schematics.fet.h schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
-
+metapost.curves.test: metapost.curves.test.cpp metapost.curves.h schematics.angle.h
+	c++ -std=c++23 $<  -o $@
 
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
 %.o: %.cpp
 	g++ -c -std=c++17 $<
 
-EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline
+EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline metapost.curves.test
 
 clean_executables:
 	$(RM) $(EXECUTABLES)
