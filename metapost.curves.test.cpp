@@ -1,6 +1,8 @@
-#define DEBUG
+//#define DEBUG
 #include "metapost.curves.h"
+#ifndef SVG_H
 #include "svg.h"
+#endif
 
 typedef double float_type;
   typedef mp_spline<float_type> mp_spline_t;
@@ -71,7 +73,7 @@ int main() {
 
   ofstream mpcurve("mpcurve.html");
   mpcurve << "<!DOCTYPE html>\n<html>\n<body>\n";
-  mpcurve << "<p>Here goes some line schematics svg...</p>\n";
+  mpcurve << "\nDraw list of points \'mps11\' as an closed path:\n";
 
   open_svg(mpcurve, 200.0, 200.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve);
@@ -84,6 +86,20 @@ int main() {
     }
   close_svg(mpcurve);
 
+  mpcurve << "\nNow draw the same list of points as an open path:\n";
+  open_svg(mpcurve, 200.0, 200.0, "black", "gray", 0.5);
+    open_svg_path_p(mpcurve);
+      mps11.set_open_dirs();
+      //mps11.to_svg_p(mpcurve);
+      mps11.to_svg_p_open(mpcurve);
+    close_svg_path(mpcurve);
+    for(int i=0; i < mps11.points.size(); ++i) {
+      mps11.add_control_to_svg_as_circle(mpcurve,i,2.0);
+      mps11.add_control_to_svg_as_line(  mpcurve,i);
+    }
+  close_svg(mpcurve);
+
+  mpcurve << "\n</body>\n</html>";
   mpcurve.close();
 
   return 0;

@@ -123,41 +123,58 @@ public:
   points_t::iterator begin() {return points.begin();};
   points_t::iterator   end() {return points.  end();};
   bool has_dirs; // useful at all?
-  /* const */ bool is_closed;
+protected:
+  /* const */ bool closed;
   /* lastidx(IDX) returns the last valid index into points, while
-   * preidx(IDX) and postidx(IDX) return previous and next index
-     as if 'points' was a circular sequential container.
+   * closed_preidx(IDX) and closed_postidx(IDX) return previous and next index
+     for a closed path, i.e. as if 'points' were a circular sequential container.
    *  */
   F lastidx()    const {return points.size() - 1;}
-  F preidx( F i) const {if(i > 0) return i-1;
+  F closed_preidx( F i) const {if(i > 0) return i-1;
                         else return lastidx();};
-  F postidx(F i) const {if(i < lastidx()) return i+1;
+  F closed_postidx(F i) const {if(i < lastidx()) return i+1;
                         else return 0;};
-  /* The all-important member function set_dir(IDX).
-   * It could be specialized by taking more points (before and after)
-     into account.
+public:
+  bool is_closed() const {return closed;}
+  bool is_open  () const {return !closed;}
+  virtual void set_open  () {closed=false;}
+  virtual void set_closed() {closed=true;}
+  /* The all-important virtual member function set_dir(IDX).
+   * (set_dir(int pre, int idx, int post) is defined but deprecated)
+   * It could be virtual-ly specialized by taking more points (before and after)
+     into account. In that case, open paths should
+     have their start and end points' directions defined
    * If not satisfied, the user or client might set the dir's manually
      and then readjust the control points.
    */
-  virtual void set_dir(int pre, int idx, int post); // Defined, yet DEPRECATED
-  virtual void set_dir(int idx);
-  void set_closed_dirs() {
-    for(int i=0; i < points.size(); ++i)
-    set_dir(i);
-  };
-  // Members for setting dirs in an open spline:
-  void set_inner_dirs() {
-    for(int i=1; i < lastidx(); ++i)
-      set_dir(i);
-  };
+protected:
   /* set_open_first() and set_open_last()
    * correct by k according to 2nd and last but 1 segments */
   virtual void set_open_first(F k);
   virtual void set_open_last (F k);
+  /* set_dir3(IDX) assumes a closed path,
+   * so it should not be called on terminal points,
+   * that is start and finish points of an open path.
+   * set_dir5(IDX,K) works on all on-line points on a closed path
+   * and on points not next to a terminal on-line point.
+   */
+  virtual void set_dir3(int idx);
+  virtual void set_dir5(int idx, F k=0.33); // INCOMPLETE IMPLEMENTATION
+  // virtual void set_dir3(int idx, F k);
+public:
+  void set_closed_dirs() {
+    for(int i=0; i < points.size(); ++i)
+    set_dir3(i);
+  };
+  // Members for setting dirs in an open spline:
+  void set_inner_dirs() {
+    for(int i=1; i < lastidx(); ++i)
+      set_dir3(i);
+  };
   void set_open_dirs(F k = 0.33) {
-    set_inner_dirs();
     set_open_first(k);
     set_open_last (k);
+    set_inner_dirs();
   };
   /* To set the controls on every point in 'points'
    * you can rely on a fixed distance (from on-line point to its controls)
@@ -177,8 +194,11 @@ public:
       points[i].set_post(post_control_dist(i,k));
     }
   };
+protected:
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
   void to_svg_p(std::ostream& o, int beg, int end) const;
+public:
+  void to_svg_p_open(    std::ostream& o) const {to_svg_p(o,0, lastidx());};
   /* close_svg_p(OSTREAM) adds the closing Bezier curve
      (from last point to first) to the unclosed p attribute in svg::path
      yet it does not close the p attribute as such (no closing quotes added)*/
@@ -198,38 +218,32 @@ public:
                                   std::size_t idx,
                                   const std::string& attr = "class=\"bezier-control\"") const;
   // constructors:
-  mp_spline() : is_closed(false) {};
+  mp_spline() : closed(false) {};
   mp_spline(std::initializer_list<pair_t> il,               bool clsd=false)
-  : points(il), has_dirs(false), is_closed(clsd) {};
+  : points(il), has_dirs(false), closed(clsd) {};
   mp_spline(std::initializer_list<mp_spline<F>::point>  il, bool clsd=false)
-  : points(il), has_dirs( true), is_closed(clsd) {};
+  : points(il), has_dirs( true), closed(clsd) {};
   template <typename CONTAINER>
   mp_spline(const CONTAINER& c,                             bool clsd=false)
-  : points(c.begin(), c.end()), has_dirs(true), is_closed(clsd) {};
+  : points(c.begin(), c.end()), has_dirs(true), closed(clsd) {};
 }; // class mp_spline<>
 
+/* Implementations of mp_spline<FLOAT> member functions */
 
 template <typename F>
-void mp_spline<F>::set_dir(int pre, int idx, int post) { // DEPRECATED
-  F preangle = angle_addressable_base_t::atan2(
-                 points[idx].pt.second - points[pre].pt.second,
-                 points[idx].pt.first  - points[pre].pt.first);
-  F postangle = angle_addressable_base_t::atan2(
-                 points[post].pt.second  - points[idx].pt.second,
-                 points[post].pt.first   - points[idx].pt.first);
-  points[idx].dir = (preangle + postangle) / 2;
-#ifdef DEBUG
-  std::cout << "for idx=" << idx << " preangle=" << 180 * preangle / std::numbers::pi_v<F>;
-  std::cout << ", and postangle=" << 180 * postangle / std::numbers::pi_v<F>;
-  std::cout << ", resulting in \'dir\'=" << 180 * points[idx].dir / std::numbers::pi_v<F> << std::endl;
-#endif
-};
-
-template <typename F>
-void mp_spline<F>::set_dir(int idx) {
+void mp_spline<F>::set_dir3(int idx) {
   points[idx].dir = angle_addressable_base_t::atan2(
-    points[postidx(idx)].pt.second - points[preidx(idx)].pt.second,
-    points[postidx(idx)].pt.first  - points[preidx(idx)].pt.first);
+    points[closed_postidx(idx)].pt.second - points[closed_preidx(idx)].pt.second,
+    points[closed_postidx(idx)].pt.first  - points[closed_preidx(idx)].pt.first);
+};
+template <typename F>
+void mp_spline<F>::set_dir5(int idx, F k) {
+  points[idx].dir = angle_addressable_base_t::atan2(
+    points[closed_postidx(idx)].pt.second - points[closed_preidx(idx)].pt.second
+    /* ADD CORRECTION */,
+    points[closed_postidx(idx)].pt.first  - points[closed_preidx(idx)].pt.first)
+    /* ADD CORRECTION */
+    ;
 };
 
 /* set_open_first() and set_open_last()

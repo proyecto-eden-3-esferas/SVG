@@ -1,9 +1,43 @@
 <!DOCTYPE html>
 <html>
 <body>
-<p>Here goes some line schematics svg...</p>
+
+Draw list of points 'mps11' as an closed path:
     <svg width="200" height="200" stroke="black" fill="gray" fill-opacity="0.5">
       <path d="M 100 100C 104.743 98.4189, 115.149 98.7873, 120 100C 124.851 101.213, 140 105, 140 110C 140 115, 125 120, 120 120C 115 120, 115 110, 110 110C 105 110, 105 120, 100 120C 95 120, 90 115, 90 110 C 90 105, 95.2566 101.581, 100 100"/>
+      <circle class="bezier-control" cx="95.2566" cy="101.581" r="2"/>
+      <circle class="bezier-control" cx="104.743" cy="98.4189" r="2"/>
+      <line class="bezier-control" x1="95.2566" y1="101.581" x2="100" y2="100"/>
+      <line class="bezier-control" x1="104.743" y1="98.4189" x2="100" y2="100"/>
+      <circle class="bezier-control" cx="115.149" cy="98.7873" r="2"/>
+      <circle class="bezier-control" cx="124.851" cy="101.213" r="2"/>
+      <line class="bezier-control" x1="115.149" y1="98.7873" x2="120" y2="100"/>
+      <line class="bezier-control" x1="124.851" y1="101.213" x2="120" y2="100"/>
+      <circle class="bezier-control" cx="140" cy="105" r="2"/>
+      <circle class="bezier-control" cx="140" cy="115" r="2"/>
+      <line class="bezier-control" x1="140" y1="105" x2="140" y2="110"/>
+      <line class="bezier-control" x1="140" y1="115" x2="140" y2="110"/>
+      <circle class="bezier-control" cx="125" cy="120" r="2"/>
+      <circle class="bezier-control" cx="115" cy="120" r="2"/>
+      <line class="bezier-control" x1="125" y1="120" x2="120" y2="120"/>
+      <line class="bezier-control" x1="115" y1="120" x2="120" y2="120"/>
+      <circle class="bezier-control" cx="115" cy="110" r="2"/>
+      <circle class="bezier-control" cx="105" cy="110" r="2"/>
+      <line class="bezier-control" x1="115" y1="110" x2="110" y2="110"/>
+      <line class="bezier-control" x1="105" y1="110" x2="110" y2="110"/>
+      <circle class="bezier-control" cx="105" cy="120" r="2"/>
+      <circle class="bezier-control" cx="95" cy="120" r="2"/>
+      <line class="bezier-control" x1="105" y1="120" x2="100" y2="120"/>
+      <line class="bezier-control" x1="95" y1="120" x2="100" y2="120"/>
+      <circle class="bezier-control" cx="90" cy="115" r="2"/>
+      <circle class="bezier-control" cx="90" cy="105" r="2"/>
+      <line class="bezier-control" x1="90" y1="115" x2="90" y2="110"/>
+      <line class="bezier-control" x1="90" y1="105" x2="90" y2="110"/>
+    </svg>
+
+Now draw the same list of points as an open path:
+    <svg width="200" height="200" stroke="black" fill="gray" fill-opacity="0.5">
+      <path d="M 100 100C 104.743 98.4189, 115.149 98.7873, 120 100C 124.851 101.213, 140 105, 140 110C 140 115, 125 120, 120 120C 115 120, 115 110, 110 110C 105 110, 105 120, 100 120C 95 120, 90 115, 90 110"/>
       <circle class="bezier-control" cx="95.2566" cy="101.581" r="2"/>
       <circle class="bezier-control" cx="104.743" cy="98.4189" r="2"/>
       <line class="bezier-control" x1="95.2566" y1="101.581" x2="100" y2="100"/>
