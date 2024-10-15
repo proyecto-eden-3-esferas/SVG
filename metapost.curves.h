@@ -3,10 +3,16 @@
 
 /* The MetaPost model of curves makes it easier to draw natural objects
    such as rocks, plants, animals, anatomy, landscapes...
- * The prefix "mp_" stands for MetaPost, but I may not implement Hobby’s Algorithm here.
+ * In this model, a curve if fitted through a set of points.
+   Additionally, some restrictions may be set as to
+   - the direction (angle to the X-axis) of the curve at a given point
+   - how taught or straightened out ("tension" in MetaPost parlance) the curve is at a given point
+     (in my model I call it "distance" from a point to its two control points)
+ * Thus I have defined a curve class called mp_spline<>
+ * The prefix "mp_" does stand for MetaPost, but I may not implement Hobby’s Algorithm here.
  * All angles in radians. For conversions use:
-   angle_addressable_base<F>::deg_to_rad(ANGLE), and
-   angle_addressable_base<F>::rad_to_def(ANGLE)
+   geometry_2D<F>::deg_to_rad(ANGLE), and
+   geometry_2D<F>::rad_to_def(ANGLE)
  *
  * Key characteristics
    (1) A curve is defined through on-line points (points on the line).
@@ -40,33 +46,7 @@
 #include <vector>
 
 
-/* class base_mp_point has no member variables
-   only static member function(s):
-   (1) static void set_control_of(F dr, F dist, const pair_t& pt, pair_t& ctrl):
-       it takes a source point (pt), a "direction" (angle to the X-axis),
-       an in/out point "ctrl" (non-const reference) and a "distance",
-       and sets the in/out point so that the line from pt to ctrl
-       is at an angle dir to the X-axis and is dist[ance] units long.
-       NOTE: an analogous (member) function has been defined in angle_addressable_base<F>
-             in header "schematics.angle.h"
-
-   (2) ...
- */
-template <typename F = double>
-class base_mp_point {
-public:
-  typedef std::pair<F,F> pair_t;
-  typedef angle_addressable_base<F> angle_addressable_base_t;
-  static void set_control_of(F dr, F dist, const pair_t& pt, pair_t& ctrl) {
-    ctrl.first  = pt.first  + dist*angle_addressable_base_t::cos(dr);
-    ctrl.second = pt.second + dist*angle_addressable_base_t::sin(dr);
-  };
-};
-
-// Partial specializations of points as references remain: UNIMPLEMENTED
-
-
-/* A spline from points.
+/* A spline from points à la MetaPost
  * The way to preceed, once the on-line points are loaded, is
  * first to set the dir[ection] (angle to the X-axis) on all its points
  * then to define both control points (or just one in the case of terminal points)
@@ -77,32 +57,27 @@ class mp_spline {
 public:
   /* Define inner class 'point'.
    * An 'mp_spline' object has a sequential container of such points */
-  class point : public base_mp_point<F> {
+  class point {
   public:
-    typedef base_mp_point<F> base_t;
+    typedef geometry_2D<F> geom_t;
     typedef std::pair<F,F> pair_t;
     typedef             F   dir_t;
-    using base_t::set_control_of;
-    /*
-    using angle_addressable_base<F>::set_angle_dist_from_of;
-    would make a neat drop-in substitute but fails to compile
-    because angle_addressable_base<F>’ is not a parent.
-    So you have to code:
-      typedef angle_addressable_base<F> geom_t;
-    Then you can call geom_t::set_angle_dist_from_of(ARGS)
-    instead of set_control_of(ARGS) and make do without ugly ::base_mp_point<F>
-    */
     pair_t pt, prept, postpt; // on-line point plus its 2 control points
     dir_t  dir;
   protected:
-    void set_control(      F dist, pair_t& ctrl) const {set_control_of(dir, dist, pt, ctrl);};
-    void set_control(F dr, F dist, pair_t& ctrl) const {set_control_of( dr, dist, pt, ctrl);};
-    void set_pre( F dr, F dist) {set_control_of( dr + std::numbers::pi_v<F>, dist, pt, prept);};
-    void set_post(F dr, F dist) {set_control_of( dr, dist, pt, postpt);};
+    void set_control(      F dist, pair_t& ctrl) const {
+      geom_t::set_angle_dist_from_of(dir, dist, pt, ctrl);};
+    void set_control(F dr, F dist, pair_t& ctrl) const {
+      geom_t::set_angle_dist_from_of( dr, dist, pt, ctrl);};
+    void set_pre( F dr, F dist) {
+      geom_t::set_angle_dist_from_of( dr + std::numbers::pi_v<F>, dist, pt, prept);};
+    void set_post(F dr, F dist) {geom_t::set_angle_dist_from_of( dr, dist, pt, postpt);};
   public:
     void set_dir(F dr) {dir=dr;};
-    void set_pre(       F dist) {set_control_of(dir + std::numbers::pi_v<F>, dist, pt, prept);};
-    void set_post(      F dist) {set_control_of(dir, dist, pt, postpt);};
+    void set_pre(       F dist) {
+      geom_t::set_angle_dist_from_of(dir + std::numbers::pi_v<F>, dist, pt, prept);};
+    void set_post(      F dist) {
+      geom_t::set_angle_dist_from_of(dir, dist, pt, postpt);};
     // Constructor(s):
     point(const point& p) = default;
     point(const pair_t& p, dir_t d=0.0) : pt(p),     dir(d) {};
@@ -118,7 +93,7 @@ public:
   typedef std::pair<F,F> pair_t;
   typedef point point_t;
   typedef std::vector<point_t> points_t;
-  typedef angle_addressable_base<F> angle_addressable_base_t;
+  typedef geometry_2D<F> geom_t;
   points_t points;
   points_t::iterator begin() {return points.begin();};
   points_t::iterator   end() {return points.  end();};
@@ -131,16 +106,17 @@ protected:
    *  */
   F lastidx()    const {return points.size() - 1;}
   F closed_preidx( F i) const {if(i > 0) return i-1;
-                        else return lastidx();};
+                               else return lastidx();};
+  F closed_prepreidx(F i)   const {return closed_preidx(closed_preidx(i));};
   F closed_postidx(F i) const {if(i < lastidx()) return i+1;
-                        else return 0;};
+                               else return 0;};
+  F closed_postpostidx(F i) const {return closed_postidx(closed_postidx(i));};
 public:
-  bool is_closed() const {return closed;}
+  bool is_closed() const {return  closed;}
   bool is_open  () const {return !closed;}
   virtual void set_open  () {closed=false;}
   virtual void set_closed() {closed=true;}
   /* The all-important virtual member function set_dir(IDX).
-   * (set_dir(int pre, int idx, int post) is defined but deprecated)
    * It could be virtual-ly specialized by taking more points (before and after)
      into account. In that case, open paths should
      have their start and end points' directions defined
@@ -148,10 +124,11 @@ public:
      and then readjust the control points.
    */
 protected:
-  /* set_open_first() and set_open_last()
-   * correct by k according to 2nd and last but 1 segments */
-  virtual void set_open_first(F k);
-  virtual void set_open_last (F k);
+  /* set_dir_open_first() and set_dir_open_last()
+   * set the first and last points in an open path,
+   * and correct by k according to 2nd and last but 1 segments */
+  virtual void set_dir_open_first(F k);
+  virtual void set_dir_open_last (F k);
   /* set_dir3(IDX) assumes a closed path,
    * so it should not be called on terminal points,
    * that is start and finish points of an open path.
@@ -159,41 +136,42 @@ protected:
    * and on points not next to a terminal on-line point.
    */
   virtual void set_dir3(int idx);
-  virtual void set_dir5(int idx, F k=0.33); // INCOMPLETE IMPLEMENTATION
-  // virtual void set_dir3(int idx, F k);
+  virtual void set_dir5(int idx, F k=0.22);
+  virtual void set_dir2nd        () {}; // as yet UNIMPLEMENTED
+  virtual void set_dir_last_but_1() {}; // as yet UNIMPLEMENTED
 public:
   void set_closed_dirs() {
     for(int i=0; i < points.size(); ++i)
-    set_dir3(i);
+      set_dir5(i);
   };
   // Members for setting dirs in an open spline:
   void set_inner_dirs() {
-    for(int i=1; i < lastidx(); ++i)
-      set_dir3(i);
+    for(int i=2; i < lastidx() -1 ; ++i)
+      set_dir5(i);
+    set_dir3(            1); // should take points[0        ].dir into account, though
+    set_dir3(lastidx() - 1); // should take points[lastidx()].dir into account, though
   };
   void set_open_dirs(F k = 0.33) {
-    set_open_first(k);
-    set_open_last (k);
+    set_dir_open_first(k);
+    set_dir_open_last (k);
     set_inner_dirs();
   };
   /* To set the controls on every point in 'points'
    * you can rely on a fixed distance (from on-line point to its controls)
    * or let some member function estimate a distance (for each point)
    */
-  void set_controls(F dist) {
-    for(point& p : points) {
-      p.set_pre( dist);
-      p.set_post(dist);
-    }
-  };
+  void set_controls(F dist);
+  /* Distance from on-line point to its control is k * distance(pt, next-point)
+   * Functions: set_{pre_|post_}by_adjacent_distance([IDX, ] K)
+   */
+  void set_pre_by_adjacent_distance(int idx, F k=0.4);
+  void set_post_by_adjacent_distance(int idx, F k=0.4);
+  void set_by_adjacent_distance(int idx, F k=0.4);
+  void set_by_adjacent_distance(F k=0.4);
+  //
   virtual F  pre_control_dist(int IDX, F k=0.2) const {return 0.5;}; // UNIMPLEMENTED
   virtual F post_control_dist(int IDX, F k=0.2) const {return 0.5;}; // UNIMPLEMENTED
-  void set_controls_by_factor(F k=0.2) {
-    for(int i = 0; i < points.size(); ++i) {
-      points[i].set_pre(  pre_control_dist(i,k));
-      points[i].set_post(post_control_dist(i,k));
-    }
-  };
+  void set_controls_by_factor(F k=0.2);
 protected:
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
   void to_svg_p(std::ostream& o, int beg, int end) const;
@@ -232,37 +210,85 @@ public:
 
 template <typename F>
 void mp_spline<F>::set_dir3(int idx) {
-  points[idx].dir = angle_addressable_base_t::atan2(
+  points[idx].dir = geom_t::atan2(
     points[closed_postidx(idx)].pt.second - points[closed_preidx(idx)].pt.second,
     points[closed_postidx(idx)].pt.first  - points[closed_preidx(idx)].pt.first);
 };
 template <typename F>
 void mp_spline<F>::set_dir5(int idx, F k) {
-  points[idx].dir = angle_addressable_base_t::atan2(
+  points[idx].dir = geom_t::atan2(
     points[closed_postidx(idx)].pt.second - points[closed_preidx(idx)].pt.second
-    /* ADD CORRECTION */,
-    points[closed_postidx(idx)].pt.first  - points[closed_preidx(idx)].pt.first)
-    /* ADD CORRECTION */
-    ;
+- k*(points[closed_preidx(idx)].pt.second - points[closed_prepreidx(idx)].pt.second)
++ k*(points[closed_postidx(idx)].pt.second - points[closed_postpostidx(idx)].pt.second),
+    points[closed_postidx(idx)].pt.first  - points[closed_preidx(idx)].pt.first
+- k*(points[closed_preidx(idx)].pt.first - points[closed_prepreidx(idx)].pt.first)
++ k*(points[closed_postidx(idx)].pt.first - points[closed_postpostidx(idx)].pt.first)
+  );
 };
 
-/* set_open_first() and set_open_last()
+/* set_dir_open_first() and set_dir_open_last()
  * correct by k according to 2nd and last but 1 segments */
 template <typename F>
-void mp_spline<F>::set_open_first(F k) {
-  points[0].dir = angle_addressable_base_t::atan2(
+void mp_spline<F>::set_dir_open_first(F k) {
+  points[0].dir = geom_t::atan2(
     points[1].pt.second - points[0].pt.second
  - k*(points[2].pt.second - points[1].pt.second),
     points[1].pt.first  - points[0].pt.first)
  - k*(points[2].pt.first  - points[1].pt.first);
 };
 template <typename F>
-void mp_spline<F>::set_open_last (F k) {
-  points[lastidx()].dir = angle_addressable_base_t::atan2(
+void mp_spline<F>::set_dir_open_last (F k) {
+  points[lastidx()].dir = geom_t::atan2(
     points[lastidx()].pt.second - points[lastidx() - 1].pt.second
  - k*(points[lastidx()-1].pt.second - points[lastidx() - 2].pt.second),
     points[lastidx()  ].pt.first  - points[lastidx() - 1].pt.first)
  - k*(points[lastidx()-1].pt.first  - points[lastidx() - 2].pt.first);
+};
+
+
+template <typename F>
+void mp_spline<F>::set_controls(F dist) {
+  for(point& p : points) {
+    p.set_pre( dist);
+    p.set_post(dist);
+  }
+};
+/* Distance from on-line point to its control is k * distance(pt, next-point)
+ * Functions: set_{pre_|post_}by_adjacent_distance([IDX, ] K)
+ */
+template <typename F>
+void mp_spline<F>::set_pre_by_adjacent_distance(int idx, F k) {
+  points[idx].set_pre(k * geom_t::distance(points[idx].pt.first,
+                                           points[idx].pt.second,
+                                           points[closed_preidx(idx)].pt.first,
+                                           points[closed_preidx(idx)].pt.second));
+};
+template <typename F>
+void mp_spline<F>::set_post_by_adjacent_distance(int idx, F k) {
+  points[idx].set_post(k * geom_t::distance(points[idx].pt.first,
+                                            points[idx].pt.second,
+                                            points[closed_postidx(idx)].pt.first,
+                                            points[closed_postidx(idx)].pt.second));
+};
+template <typename F>
+void mp_spline<F>::set_by_adjacent_distance(int idx, F k) {
+  set_pre_by_adjacent_distance(idx,k);
+  set_post_by_adjacent_distance(idx,k);
+};
+template <typename F>
+void mp_spline<F>::set_by_adjacent_distance(F k) {
+  for(int i=0; i < points.size(); ++i) {
+    set_pre_by_adjacent_distance( i,k);
+    set_post_by_adjacent_distance(i,k);
+  }
+};
+
+template <typename F>
+void mp_spline<F>::set_controls_by_factor(F k) {
+  for(int i = 0; i < points.size(); ++i) {
+    points[i].set_pre(  pre_control_dist(i,k));
+    points[i].set_post(post_control_dist(i,k));
+  }
 };
 
 // Add curves from points[beg] to points[end] inside svg::path::p attribute:

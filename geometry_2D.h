@@ -103,6 +103,6 @@ public:
     to.first  = from.first  + dist*cos(a);
     to.second = from.second + dist*sin(a);
   };
-};
+}; // class geometry_2D<FLOAT>
 
 #endif
