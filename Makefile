@@ -38,15 +38,25 @@ schematics.sq_polyline-and-block: schematics.sq_polyline-and-block.test.cpp sche
 
 schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h schematics.fet.h schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
-metapost.curves.test: metapost.curves.test.cpp metapost.curves.h schematics.angle.h
+
+mp_spline.test: mp_spline.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h
 	c++ -std=c++23 $<  -o $@
+mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h schematics.angle.h
+	date
+	c++ -c -std=c++23 $< -o $@
+	date
+# "mp_spline.sep.test.cpp" should be generated through substitution on "mp_spline.test.cpp"
+mp_spline.sep.test:    mp_spline.test.o mp_spline.o
+	c++ -std=c++23 mp_spline.test.o mp_spline.o -o $@
 
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
 %.o: %.cpp
-	g++ -c -std=c++17 $<
+	date
+	g++ -DSEPARATE_COMPILATION -c -std=c++23 $<
+	date
 
-EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline metapost.curves.test
+EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline mp_spline.test
 
 clean_executables:
 	$(RM) $(EXECUTABLES)
