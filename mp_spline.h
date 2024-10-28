@@ -40,8 +40,10 @@
  */
 
 /* TODO
- * line and circle elements should bear class or id attributes for easy styling
- * maybe also path elements should bear class or id attributes for easy styling
+ * Line and circle elements should bear class or id attributes for easy styling
+ * Maybe also path elements should bear class or id attributes for easy styling
+ * Members set_dir_second() and set_dir_last_but_1()
+   should take points[0].dir and points[lastidx()].dir into account
  * distance of a control point to its on-line point should be proportional
    to distance to adjacent (next or previous) point
  * virtual F  pre_control_dist(int IDX, F k=0.2) const
@@ -113,22 +115,25 @@ public:
   typedef point point_t;
   typedef std::vector<point_t> points_t;
   typedef geometry_2D<F> geom_t;
+  typedef std::size_t size_t;
   points_t points;
   points_t::iterator begin() {return points.begin();};
   points_t::iterator   end() {return points.  end();};
 protected:
-  /* lastidx(IDX) returns the last valid index into points, while
+  /* Some members taking and returning an index.
+   * lastidx(IDX) returns the last valid index into points, while
    * closed_preidx(IDX) and closed_postidx(IDX) return previous and next index
      for a closed path, i.e. as if 'points' were a circular sequential container.
    *  */
-  F lastidx()    const {return points.size() - 1;}
-  F closed_preidx( F i) const {if(i > 0) return i-1;
+  size_t lastidx()    const {return points.size() - 1;}
+  size_t closed_preidx( size_t i) const {if(i > 0) return i-1;
                                else return lastidx();};
-  F closed_prepreidx(F i)   const {return closed_preidx(closed_preidx(i));};
-  F closed_postidx(F i) const {if(i < lastidx()) return i+1;
+  size_t closed_prepreidx(size_t i)   const {return closed_preidx(closed_preidx(i));};
+  size_t closed_postidx(size_t i) const {if(i < lastidx()) return i+1;
                                else return 0;};
-  F closed_postpostidx(F i) const {return closed_postidx(closed_postidx(i));};
-  /* In my model, the hardest task is to set the dir's on each mp_spline<>::point.
+  size_t closed_postpostidx(size_t i) const {return closed_postidx(closed_postidx(i));};
+  /* Members dealing with setting the 'dir' on each point in 'points'
+   * The hardest task.
    * The all-important virtual member function set_dir(IDX).
    * It could be virtual-ly specialized by taking more points (before and after)
      into account. In that case, open paths should
@@ -139,7 +144,11 @@ protected:
 protected:
   /* set_dir_open_first() and set_dir_open_last()
      set the first and last points in an open path,
-     and correct by k according to 2nd and last but 1 segments */
+     and correct by k according to 2nd and last but 1 segments.
+   * The alternative would be to set the dir of 1st and last like this:
+       points[0].dir         = dir_1st;
+       points[lastidx()].dir = dir_last;
+   */
   virtual void set_dir_open_first(F k);
   virtual void set_dir_open_last (F k);
   /* set_dir3(IDX) assumes a non-terminal
@@ -150,25 +159,15 @@ protected:
    */
   virtual void set_dir3(int idx);
   virtual void set_dir5(int idx, F k=0.22);
+  //
   virtual void set_dir_second    () {set_dir3(1);};             // TO BE REFINED
   virtual void set_dir_last_but_1() {set_dir3(lastidx() - 1);}; // TO BE REFINED
 public:
-  void set_closed_dirs() {
-    for(int i=0; i < points.size(); ++i)
-      set_dir5(i);
-  };
+  void set_closed_dirs();
   // Members for setting dirs in an open spline:
-  void set_inner_dirs() { // only on open paths
-    for(int i=2; i < lastidx() -1 ; ++i)
-      set_dir5(i);
-    set_dir_second();
-    set_dir_last_but_1();
-  };
-  void set_open_dirs(F k = 0.33) {
-    set_dir_open_first(k);
-    set_dir_open_last (k);
-    set_inner_dirs();
-  };
+  void set_inner_dirs(); // only on open paths
+  void set_open_dirs(F k = 0.25);
+  void set_open_dirs(F dir_1st, F dir_last);
   /* To set the controls on every point in 'points'
    * you can rely on a fixed distance (from on-line point to its controls)
    * or let some member function estimate a distance (for each point)
@@ -176,15 +175,14 @@ public:
   void set_controls_distance(F dist);
   /* Distance from on-line point to its control is k * distance(pt, next-point)
    * Functions: set_[pre_|post_]by_adjacent_distance([IDX, ] K)
+   * rely on {pre|post}_control_dist(int IDX, F k=0.2)
    */
+  virtual F  pre_control_dist(int IDX, F k=1.0) const;
+  virtual F post_control_dist(int IDX, F k=1.0) const;
   void set_pre_by_adjacent_distance( int idx, F k=0.4);
   void set_post_by_adjacent_distance(int idx, F k=0.4);
   void set_by_adjacent_distance(     int idx, F k=0.4);
   void set_by_adjacent_distance(              F k=0.4);
-  //
-  virtual F  pre_control_dist(int IDX, F k=0.2) const {return 0.5;}; // UNIMPLEMENTED
-  virtual F post_control_dist(int IDX, F k=0.2) const {return 0.5;}; // UNIMPLEMENTED
-  void set_controls_by_factor(F k=0.2);
 protected:
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
   void to_svg_p(std::ostream& o, int beg, int end) const;
@@ -205,9 +203,23 @@ public:
                                     std::size_t idx,
                                     F r=5.0,
                                     const std::string& attr = "class=\"bezier-control\"") const;
+  void add_control_to_svg_as_circle(std::ostream& o,
+                                    F r=5.0,
+                                    const std::string& attr = "class=\"bezier-control\"") const;
+  //
   void add_control_to_svg_as_line(std::ostream& o,
                                   std::size_t idx,
                                   const std::string& attr = "class=\"bezier-control\"") const;
+  void add_control_to_svg_as_line(std::ostream& o,
+                                  const std::string& attr = "class=\"bezier-control\"") const;
+  //
+  void add_online_to_svg_as_circle(std::ostream& o,
+                                   std::size_t idx,
+                                   F r=10.0,
+                                   const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
+  void add_online_to_svg_as_circle(std::ostream& o,
+                                   F r=10.0,
+                                   const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
   // constructors:
   mp_spline() {};
   /* Unaccountably, this fails to separate compile:

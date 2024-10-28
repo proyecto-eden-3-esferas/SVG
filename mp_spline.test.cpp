@@ -45,16 +45,6 @@ int main() {
   cout << "atan2( -1, +1) = " << 180 * atan2(-1,+1) / pi << "\n\n";
 #endif
 
-  vector<pair_t> vpair1({pair_t({100,100}), pair_t({120,100.0}), pair_t({140.0,110.0}),
-                         pair_t({120.0,120.0}), pair_t({110.0,110.0}), pair_t({100.0,120.0})
-                       , pair_t({ 90.0,110.0})
-  });
-
-#ifdef PRINT_TO_COUT
-  cout << "Print all pairs (x,y):\n";
-  for(auto item : vpair1) {cout << item << std::endl;}
-#endif
-
 #ifdef TEST_SET_DIR5
   vector<point_t> vpoint1({point_t( 50,350),
                            point_t( 50,50),
@@ -79,7 +69,6 @@ int main() {
 #endif
 
   mp_spline<double> mps1, mps11(vpoint1);
-  // mp_spline<double> mps1(vpair1);
 
 #ifdef PRINT_TO_COUT
   cout << "Print all points in \'mps11\':\n";
@@ -99,7 +88,7 @@ int main() {
   //mps11.set_controls_distance(33.0);
   mps11.set_by_adjacent_distance(0.15);
 #else
-  mps11.set_controls_distance(5.0);
+  mps11.set_by_adjacent_distance(0.4);
 #endif
 
 #ifdef PRINT_TO_COUT
@@ -110,34 +99,56 @@ int main() {
   ofstream mpcurve("mpcurve.html");
   mpcurve << "<!DOCTYPE html>\n<html>\n<body>\n";
   mpcurve << "\n<p>Draw list of points \'mps11\' as a closed path:</p>\n";
-
   open_svg(mpcurve, 400.0, 400.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve);
       //mps11.to_svg_p(mpcurve);
       mps11.to_svg_p_closed(mpcurve);
     close_svg_path(mpcurve);
-#ifndef TEST_SET_DIR5
-    for(int i=0; i < mps11.points.size(); ++i) {
-      mps11.add_control_to_svg_as_circle(mpcurve,i,2.0);
-      mps11.add_control_to_svg_as_line(  mpcurve,i);
-    }
-#endif
+    mps11.add_control_to_svg_as_circle(mpcurve,2.0);
+    mps11.add_control_to_svg_as_line(  mpcurve);
+    mps11.add_online_to_svg_as_circle( mpcurve,5.0);
   close_svg(mpcurve);
+
+  // Now write the same to "mpcurve_closed_svg"
+  ofstream mpcurve_closed_svg("mpcurve-closed.svg");
+  open_svg(mpcurve_closed_svg, 400.0, 400.0, "black", "gray", 0.5);
+    open_svg_path_p(mpcurve_closed_svg);
+      //mps11.to_svg_p(mpcurve_closed_svg);
+      mps11.to_svg_p_closed(mpcurve_closed_svg);
+    close_svg_path(mpcurve_closed_svg);
+    mps11.add_control_to_svg_as_circle(mpcurve_closed_svg,2.0);
+    mps11.add_control_to_svg_as_line(  mpcurve_closed_svg);
+    mps11.add_online_to_svg_as_circle( mpcurve_closed_svg,5.0);
+  close_svg(mpcurve_closed_svg);
+  mpcurve_closed_svg.close();
 
   mpcurve << "\n<p>Now draw the same list of points as an open path:</p>\n";
   open_svg(mpcurve, 400.0, 400.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve);
       mps11.set_open_dirs();
+      mps11.set_by_adjacent_distance(0.4);
       //mps11.to_svg_p(mpcurve);
       mps11.to_svg_p_open(mpcurve);
     close_svg_path(mpcurve);
-#ifndef TEST_SET_DIR5
-    for(int i=0; i < mps11.points.size(); ++i) {
-      mps11.add_control_to_svg_as_circle(mpcurve,i,2.0);
-      mps11.add_control_to_svg_as_line(  mpcurve,i);
-    }
-#endif
+    mps11.add_control_to_svg_as_circle(mpcurve,2.0);
+    mps11.add_control_to_svg_as_line(  mpcurve);
+    mps11.add_online_to_svg_as_circle( mpcurve,5.0);
   close_svg(mpcurve);
+
+  ofstream mpcurve_open_svg("mpcurve-open.svg");
+  // Now write the same to "mpcurve_open_svg"
+  open_svg(mpcurve_open_svg, 400.0, 400.0, "black", "gray", 0.5);
+    open_svg_path_p(mpcurve_open_svg);
+      mps11.set_open_dirs();
+      mps11.set_by_adjacent_distance(0.4);
+      //mps11.to_svg_p(mpcurve_open_svg);
+      mps11.to_svg_p_open(mpcurve_open_svg);
+    close_svg_path(mpcurve_open_svg);
+    mps11.add_control_to_svg_as_circle(mpcurve_open_svg,2.0);
+    mps11.add_control_to_svg_as_line(  mpcurve_open_svg);
+    mps11.add_online_to_svg_as_circle( mpcurve_open_svg,5.0);
+  close_svg(mpcurve_open_svg);
+  mpcurve_open_svg.close();
 
   mpcurve << "\n</body>\n</html>";
   mpcurve.close();
