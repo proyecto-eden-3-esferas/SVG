@@ -49,7 +49,7 @@ void mp_spline<F>::set_dir_open_last (F k) {
 
 
 template <typename F>
-void mp_spline<F>::set_controls(F dist) {
+void mp_spline<F>::set_controls_distance(F dist) {
   for(point& p : points) {
     p.set_pre( dist);
     p.set_post(dist);
@@ -153,6 +153,5 @@ void mp_spline<F>::add_control_to_svg_as_line(std::ostream& o,
   o <<      " x2=\"" << points[idx].pt.first <<'\"';
   o <<      " y2=\"" << points[idx].pt.second << "\"/>\n";
 };
-
 
 #endif

@@ -10,7 +10,21 @@
 #include "svg.h"
 #endif
 
+#include  <fstream>
+#include <iostream>
+
+#ifdef PRINT_TO_COUT
+#ifndef PRINT_PAIR_H
+/* Include global functions for printing:
+   (1) a plain std::pair, and
+   (2) a mp_spline::point */
+#include "print-pair.h"
+#endif
+#endif
+
+
 #define TEST_SET_DIR5
+
 
 typedef double float_type;
   typedef mp_spline<float_type> mp_spline_t;
@@ -20,39 +34,27 @@ typedef double float_type;
 
 const float_type pi(std::numbers::pi_v<float_type>);
 
-#include  <fstream>
-#include <iostream>
-
-/* Define global functions for printing:
-   (1) a plain std::pair, and
-   (2) a mp_spline::point */
-template <typename F, typename S>
-std::ostream& operator<<(std::ostream& o, const typename std::pair<F,S>& p) {
-  o << '(' << p.first << ',' << p.second << ')';
-  return o;
-};
-template <typename F = double>
-std::ostream& operator<<(std::ostream& o, const typename mp_spline<F>::point& p) {
-  o << '(' <<  p.pt.first << ',' << p.pt.second << ','
-           << (p.dir  / std::numbers::pi_v<float_t>) * 180  << ')'
-    << " with controls: " << p.prept << " and " << p.postpt;
-  return o;
-};
 
 using namespace std;
 
 int main() {
 
+#ifdef PRINT_TO_COUT
   cout << "atan2( -1, -1) = " << 180 * atan2(-1,-1) / pi << "\n";
   cout << "atan2( +1, -1) = " << 180 * atan2(+1,-1) / pi << "\n";
   cout << "atan2( -1, +1) = " << 180 * atan2(-1,+1) / pi << "\n\n";
+#endif
 
   vector<pair_t> vpair1({pair_t({100,100}), pair_t({120,100.0}), pair_t({140.0,110.0}),
                          pair_t({120.0,120.0}), pair_t({110.0,110.0}), pair_t({100.0,120.0})
                        , pair_t({ 90.0,110.0})
   });
+
+#ifdef PRINT_TO_COUT
   cout << "Print all pairs (x,y):\n";
   for(auto item : vpair1) {cout << item << std::endl;}
+#endif
+
 #ifdef TEST_SET_DIR5
   vector<point_t> vpoint1({point_t( 50,350),
                            point_t( 50,50),
@@ -70,29 +72,40 @@ int main() {
                          , point_t( 90.0,110.0)
   });
 #endif
+
+#ifdef PRINT_TO_COUT
   cout << "Print all points (x,y,dir):\n";
   for(auto item : vpoint1) {cout << item << std::endl;}
+#endif
 
   mp_spline<double> mps1, mps11(vpoint1);
   // mp_spline<double> mps1(vpair1);
 
+#ifdef PRINT_TO_COUT
   cout << "Print all points in \'mps11\':\n";
   for ( auto item : mps11) { cout << item << std::endl;}
+#endif
 
   mps11.set_open_dirs();
+
+#ifdef PRINT_TO_COUT
   cout << "Print all points in \'mps11\' after setting its dirs as open:\n";
   for ( auto item : mps11) { cout << item << std::endl;}
+#endif
 
 
   mps11.set_closed_dirs();
 #ifdef TEST_SET_DIR5
-  //mps11.set_controls(33.0);
+  //mps11.set_controls_distance(33.0);
   mps11.set_by_adjacent_distance(0.15);
 #else
-  mps11.set_controls(5.0);
+  mps11.set_controls_distance(5.0);
 #endif
+
+#ifdef PRINT_TO_COUT
   cout << "Print all points in \'mps11\' after setting its dirs as closed:\n";
   for ( auto item : mps11) { cout << item << std::endl;}
+#endif
 
   ofstream mpcurve("mpcurve.html");
   mpcurve << "<!DOCTYPE html>\n<html>\n<body>\n";

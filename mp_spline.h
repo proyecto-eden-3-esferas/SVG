@@ -9,6 +9,11 @@
    - how taught or straightened out ("tension" in MetaPost parlance) the curve is at a given point
      (in my model I call it "distance" from a point to its two control points)
  * Thus I have defined a curve class called mp_spline<>
+ * The way to use a mp_spline object--or its "lifecycle"-- is
+   (1) load points
+   (2) set dirs
+   (3) set tension (distance from on-line points to its one/two control points)
+   (4) output into SVG, PostScript, etc.
  * The prefix "mp_" does stand for MetaPost, but I may not implement Hobby’s Algorithm here.
  * All angles in radians. For conversions use:
    geometry_2D<F>::deg_to_rad(ANGLE), and
@@ -18,16 +23,20 @@
    (1) A curve is defined through on-line points (points on the line).
        Another kind of points (found in Bezier curves)
        is control points, which direct the drawing of the line.
-   (2) On-line points are either terminal (begin and end) or middle points
+   (2) On-line points are either terminal (begin and end) or middle points.
+       All points in a closed path are middle points.
+       One might also consider "next-points", that is second and last-but-one points in open paths.
    (3) For a smooth curve, a point on a line has a specific direction,
        that is, the curve passes through the point at an angle to the X-axis
    (4) A composite curve or spline is a list of on-line points,
        supplemented with control points
-   (5) Internally, an on-line point has one or two control points
-       so that the containing curve may be translated into cubir Bezier curves.
+   (5) The fact that each on-line point is couple to one or two control points
+       enables translating chains of such points into cubir Bezier curves.
+
  * MetaPost uses Hobby’s Algorithm, whose aim is to fit a curve to a set of points smoothly and in a controlled manner.
  * A MetaPost primer is to be found at: https://proyecto-eden-3-esferas.github.io/metapost.html
    For MetaPost curves go to: https://proyecto-eden-3-esferas.github.io/metapost.curves.html
+
  */
 
 /* TODO
@@ -35,7 +44,10 @@
  * maybe also path elements should bear class or id attributes for easy styling
  * distance of a control point to its on-line point should be proportional
    to distance to adjacent (next or previous) point
- *
+ * virtual F  pre_control_dist(int IDX, F k=0.2) const
+   should return k*geom_t*distance(points[IDX], points[IDX - 1])
+ * virtual F  post_control_dist(int IDX, F k=0.2) const
+   should return k*geom_t*distance(points[IDX], points[IDX + 1])
  */
 #ifndef SCHEMATICS_ANGLE_H
 #include "schematics.angle.h"
@@ -80,8 +92,8 @@ public:
     void set_control(F dr, F dist, pair_t& ctrl) const {
       geom_t::set_angle_dist_from_of( dr, dist, pt, ctrl);};
     void set_control(      F dist, pair_t& ctrl) const {set_control(dir,dist,ctrl);};
-    void set_pre( F dr, F dist) {set_control(dr + std::numbers::pi_v<F>,dist,prept);}
-    void set_post(F dr, F dist) {set_control(dr                        ,dist,postpt);}
+    void set_pre( F dr, F dist) {set_control(dr  + std::numbers::pi_v<F>,dist,prept);};
+    void set_post(F dr, F dist) {set_control(dr                         ,dist,postpt);};
   public:
     void set_pre(       F dist) {set_pre(dir,dist);};
     void set_post(      F dist) {set_post(dir,dist);};
@@ -161,14 +173,14 @@ public:
    * you can rely on a fixed distance (from on-line point to its controls)
    * or let some member function estimate a distance (for each point)
    */
-  void set_controls(F dist);
+  void set_controls_distance(F dist);
   /* Distance from on-line point to its control is k * distance(pt, next-point)
-   * Functions: set_{pre_|post_}by_adjacent_distance([IDX, ] K)
+   * Functions: set_[pre_|post_]by_adjacent_distance([IDX, ] K)
    */
-  void set_pre_by_adjacent_distance(int idx, F k=0.4);
+  void set_pre_by_adjacent_distance( int idx, F k=0.4);
   void set_post_by_adjacent_distance(int idx, F k=0.4);
-  void set_by_adjacent_distance(int idx, F k=0.4);
-  void set_by_adjacent_distance(F k=0.4);
+  void set_by_adjacent_distance(     int idx, F k=0.4);
+  void set_by_adjacent_distance(              F k=0.4);
   //
   virtual F  pre_control_dist(int IDX, F k=0.2) const {return 0.5;}; // UNIMPLEMENTED
   virtual F post_control_dist(int IDX, F k=0.2) const {return 0.5;}; // UNIMPLEMENTED

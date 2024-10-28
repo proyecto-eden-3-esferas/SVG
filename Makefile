@@ -41,30 +41,55 @@ schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h sc
 
 mp_spline.test: mp_spline.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h
 	c++ -std=c++23 $<  -o $@
+mp_spline.%.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h
+	c++ -std=c++23 $<  -o $@
+# Infix "print-to-cout" causes compilation (of file containing main()) under switch PRINT_TO_COUT:
+mp_spline.print-to-cout.test:   mp_spline.test.cpp   mp_spline.h mp_spline.cpp schematics.angle.h
+	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
+mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h
+	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
+
 mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h schematics.angle.h
 	date
 	c++ -c -std=c++23 $< -o $@
 	date
+
 # "mp_spline.sep.test.cpp" should be generated through substitution on "mp_spline.test.cpp"
-mp_spline.sep.test:    mp_spline.test.o mp_spline.o
-	c++ -std=c++23 mp_spline.test.o mp_spline.o -o $@
+mp_spline.sep.test:                    mp_spline.test.o mp_spline.o
+	c++ -std=c++23                 mp_spline.test.o   mp_spline.o -o $@
+mp_spline.%.sep.test:                  mp_spline.%.test.o mp_spline.o
+	c++ -std=c++23                 mp_spline.%.test.o mp_spline.o -o $@
+mp_spline.%.sep.print-to-cout.test:    mp_spline.%.print-to-cout.test.o mp_spline.o
+	c++ -std=c++23 -DPRINT_TO_COUT mp_spline.%.print-to-cout.test.o mp_spline.o -o $@
+
+pair-as-2D-point.test: pair-as-2D-point.test.cpp pair-as-2D-point.h print-pair.h
+	c++ -std=c++23 $< -o $@
 
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
+
+# Pass macro DSEPARATE_COMPILATION when compiling object files:
+%.print-to-cout.test.o: %.test.cpp
 %.o: %.cpp
 	date
-	g++ -DSEPARATE_COMPILATION -c -std=c++23 $<
+	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
 	date
 
-EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline mp_spline.test
+
+EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline
+
+EXECUTABLES_TEST = mp_spline.test mp_spline.sep.test pair-as-2D-point.test
+
+#HTMLS =
 
 clean_executables:
+	$(RM) a.out *.test
 	$(RM) $(EXECUTABLES)
 clean_all_but_html:
 	$(RM) a.out *.test *.o
 	$(RM) $(EXECUTABLES)
 
 clean_all:
-	$(RM) test.html test-arc.html
+	#$(RM) $(HTMLS)
 	$(RM) a.out *.test *.o
 	$(RM) $(EXECUTABLES)
