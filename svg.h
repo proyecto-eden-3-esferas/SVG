@@ -12,6 +12,7 @@
    - implement adding attributes (class, id, stroke-width) to svg elements
  */
 
+#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -37,9 +38,13 @@ void open_svg(OUT& o, F w = 200.0, F h = 200.0,
 }
 
 template<typename F = double, typename OUT = std::ostream>
-void open_svg_path_p(OUT& o) {
+void open_svg_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  o << "<path d=\"";
+  o << std::fixed << std::setprecision(decimals);
+  if(attrs.length() > 0)
+    o << "<path " << attrs << " d=\"";
+  else
+    o << "<path d=\"";
   //return o; // void return type
 };
 template<typename OUT = std::ostream>
@@ -64,12 +69,25 @@ void close_svg(OUT& o) {
 template<typename T, typename F = double, typename OUT = std::ostream>
 void add_svg_unclosed(const T& t, OUT& o = std::cout) {o << "UNDEFINED WHATEVER!!!\n";};
 template<typename OUT = std::ostream>
-void close_standalone_tag(OUT& o = std::cout) {o << "/>\n";};
+void close_standalone_tag(OUT& o = std::cout, const std::string& attrs = "") {
+  if(attrs.length() > 0)
+    o << ' ' << attrs << ' ';
+  o << "/>\n";
+};
 template<typename T, typename F = double, typename OUT = std::ostream>
 void add_svg(const T& t, OUT& o = std::cout) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   add_svg_unclosed(t,o);
   close_standalone_tag(o);
+};
+
+template<typename F = double, typename OUT = std::ostream>
+void add_circle_to_svg(OUT& o, F x, F y, F r, int decimals = 2, const std::string& attr="") {
+  o << "<circle ";
+  if(attr.length() > 0)
+    o << attr << ' ';
+  o << std::fixed << std::setprecision(decimals);
+  o << "cx=\"" << x << "\" cy=\"" << y <<  "\" r=\"" << r <<"\"/>\n";
 };
 
 

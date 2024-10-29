@@ -1,0 +1,33 @@
+    <svg width="400" height="400" stroke="black" fill="gray" fill-opacity="0.5">
+      <path d="M 50.00 350.00C 20.28 316.21, 30.53 90.57, 50.00 50.00C 56.49 36.48, 135.94 44.79, 150.00 50.00C 164.06 55.21, 235.94 55.21, 250.00 50.00C 264.06 44.79, 343.51 36.48, 350.00 50.00C 369.47 90.57, 379.72 316.21, 350.00 350.00 C 320.28 383.79, 79.72 383.79, 50.00 350.00"/>
+      <circle class="bezier-control" cx="79.72" cy="383.79" r="2.00"/>
+      <circle class="bezier-control" cx="20.28" cy="316.21" r="2.00"/>
+      <circle class="bezier-control" cx="30.53" cy="90.57" r="2.00"/>
+      <circle class="bezier-control" cx="56.49" cy="36.48" r="2.00"/>
+      <circle class="bezier-control" cx="135.94" cy="44.79" r="2.00"/>
+      <circle class="bezier-control" cx="164.06" cy="55.21" r="2.00"/>
+      <circle class="bezier-control" cx="235.94" cy="55.21" r="2.00"/>
+      <circle class="bezier-control" cx="264.06" cy="44.79" r="2.00"/>
+      <circle class="bezier-control" cx="343.51" cy="36.48" r="2.00"/>
+      <circle class="bezier-control" cx="369.47" cy="90.57" r="2.00"/>
+      <circle class="bezier-control" cx="379.72" cy="316.21" r="2.00"/>
+      <circle class="bezier-control" cx="320.28" cy="383.79" r="2.00"/>
+      <line class="bezier-control" x1="79.72" y1="383.79" x2="50.00" y2="350.00"/>
+      <line class="bezier-control" x1="20.28" y1="316.21" x2="50.00" y2="350.00"/>
+      <line class="bezier-control" x1="30.53" y1="90.57" x2="50.00" y2="50.00"/>
+      <line class="bezier-control" x1="56.49" y1="36.48" x2="50.00" y2="50.00"/>
+      <line class="bezier-control" x1="135.94" y1="44.79" x2="150.00" y2="50.00"/>
+      <line class="bezier-control" x1="164.06" y1="55.21" x2="150.00" y2="50.00"/>
+      <line class="bezier-control" x1="235.94" y1="55.21" x2="250.00" y2="50.00"/>
+      <line class="bezier-control" x1="264.06" y1="44.79" x2="250.00" y2="50.00"/>
+      <line class="bezier-control" x1="343.51" y1="36.48" x2="350.00" y2="50.00"/>
+      <line class="bezier-control" x1="369.47" y1="90.57" x2="350.00" y2="50.00"/>
+      <line class="bezier-control" x1="379.72" y1="316.21" x2="350.00" y2="350.00"/>
+      <line class="bezier-control" x1="320.28" y1="383.79" x2="350.00" y2="350.00"/>
+      <circle s="" class="on-line-point" fill="black" cx="50.00" cy="350.00" r="5.00"/>
+      <circle s="" class="on-line-point" fill="black" cx="50.00" cy="50.00" r="5.00"/>
+      <circle s="" class="on-line-point" fill="black" cx="150.00" cy="50.00" r="5.00"/>
+      <circle s="" class="on-line-point" fill="black" cx="250.00" cy="50.00" r="5.00"/>
+      <circle s="" class="on-line-point" fill="black" cx="350.00" cy="50.00" r="5.00"/>
+      <circle s="" class="on-line-point" fill="black" cx="350.00" cy="350.00" r="5.00"/>
+    </svg>

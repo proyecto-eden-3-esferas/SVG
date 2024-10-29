@@ -104,7 +104,7 @@ int main() {
       //mps11.to_svg_p(mpcurve);
       mps11.to_svg_p_closed(mpcurve);
     close_svg_path(mpcurve);
-    mps11.add_control_to_svg_as_circle(mpcurve,2.0);
+    mps11.add_controls_to_svg_as_circles(mpcurve,2.0);
     mps11.add_control_to_svg_as_line(  mpcurve);
     mps11.add_online_to_svg_as_circle( mpcurve,5.0);
   close_svg(mpcurve);
@@ -116,35 +116,35 @@ int main() {
       //mps11.to_svg_p(mpcurve_closed_svg);
       mps11.to_svg_p_closed(mpcurve_closed_svg);
     close_svg_path(mpcurve_closed_svg);
-    mps11.add_control_to_svg_as_circle(mpcurve_closed_svg,2.0);
+    mps11.add_controls_to_svg_as_circles(mpcurve_closed_svg,2.0);
     mps11.add_control_to_svg_as_line(  mpcurve_closed_svg);
     mps11.add_online_to_svg_as_circle( mpcurve_closed_svg,5.0);
   close_svg(mpcurve_closed_svg);
   mpcurve_closed_svg.close();
 
   mpcurve << "\n<p>Now draw the same list of points as an open path:</p>\n";
-  open_svg(mpcurve, 400.0, 400.0, "black", "gray", 0.5);
+  open_svg(mpcurve, 400.0, 600.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve);
       mps11.set_open_dirs();
       mps11.set_by_adjacent_distance(0.4);
       //mps11.to_svg_p(mpcurve);
       mps11.to_svg_p_open(mpcurve);
     close_svg_path(mpcurve);
-    mps11.add_control_to_svg_as_circle(mpcurve,2.0);
+    mps11.add_controls_to_svg_as_circles(mpcurve,2.0);
     mps11.add_control_to_svg_as_line(  mpcurve);
     mps11.add_online_to_svg_as_circle( mpcurve,5.0);
   close_svg(mpcurve);
 
   ofstream mpcurve_open_svg("mpcurve-open.svg");
   // Now write the same to "mpcurve_open_svg"
-  open_svg(mpcurve_open_svg, 400.0, 400.0, "black", "gray", 0.5);
+  open_svg(mpcurve_open_svg, 400.0, 600.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve_open_svg);
       mps11.set_open_dirs();
       mps11.set_by_adjacent_distance(0.4);
       //mps11.to_svg_p(mpcurve_open_svg);
       mps11.to_svg_p_open(mpcurve_open_svg);
     close_svg_path(mpcurve_open_svg);
-    mps11.add_control_to_svg_as_circle(mpcurve_open_svg,2.0);
+    mps11.add_controls_to_svg_as_circles(mpcurve_open_svg,2.0);
     mps11.add_control_to_svg_as_line(  mpcurve_open_svg);
     mps11.add_online_to_svg_as_circle( mpcurve_open_svg,5.0);
   close_svg(mpcurve_open_svg);

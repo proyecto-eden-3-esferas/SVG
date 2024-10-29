@@ -83,23 +83,33 @@ void mp_spline<F>::set_controls_distance(F dist) {
     p.set_post(dist);
   }
 };
-/* Distance from on-line point to its control is k * distance(pt, next-point)
- * Functions: set_{pre_|post_}by_adjacent_distance([IDX, ] K)
- */
+
+// Return distance from points(IDX) to previous and next points:
+template <typename F>
+F mp_spline<F>::dist_to_prev(int idx) const {
+  return geom_t::distance(points[idx].pt.first,
+                          points[idx].pt.second,
+                          points[closed_preidx(idx)].pt.first,
+                          points[closed_preidx(idx)].pt.second);
+}
+template <typename F>
+F mp_spline<F>::dist_to_next(int idx) const {
+  return geom_t::distance(points[idx].pt.first,
+                          points[idx].pt.second,
+                          points[closed_postidx(idx)].pt.first,
+                          points[closed_postidx(idx)].pt.second);
+}
+
+// Distance from on-line point to its control is k * distance(pt, {next-point|next-point})
 template <typename F>
 F mp_spline<F>::pre_control_dist(int idx, F k) const {
-  return k * geom_t::distance(points[idx].pt.first,
-                              points[idx].pt.second,
-                              points[closed_preidx(idx)].pt.first,
-                              points[closed_preidx(idx)].pt.second);
+  return k * dist_to_prev(idx);
 }
 template <typename F>
 F mp_spline<F>::post_control_dist(int idx, F k) const {
-  return k * geom_t::distance(points[idx].pt.first,
-                              points[idx].pt.second,
-                              points[closed_postidx(idx)].pt.first,
-                              points[closed_postidx(idx)].pt.second);
+  return k * dist_to_next(idx);
 }
+
 template <typename F>
 void mp_spline<F>::set_pre_by_adjacent_distance(int idx, F k) {
   points[idx].set_pre(pre_control_dist(idx,k));
@@ -110,7 +120,7 @@ void mp_spline<F>::set_post_by_adjacent_distance(int idx, F k) {
 };
 template <typename F>
 void mp_spline<F>::set_by_adjacent_distance(int idx, F k) {
-  set_pre_by_adjacent_distance(idx,k);
+  set_pre_by_adjacent_distance( idx,k);
   set_post_by_adjacent_distance(idx,k);
 };
 template <typename F>
@@ -121,15 +131,18 @@ void mp_spline<F>::set_by_adjacent_distance(F k) {
   }
 };
 
+template <typename F>
+void mp_spline<F>::to_svg_p(std::ostream& o, int idx) const {
+  o << "C " << points[idx].postpt.first << ' ' << points[idx].postpt.second;
+  o << ", " << points[idx+1].prept.first << ' ' << points[idx+1].prept.second;
+  o << ", " << points[idx+1].pt.first << ' ' << points[idx+1].pt.second;
+};
 // Add curves from points[beg] to points[end] inside svg::path::p attribute:
 template <typename F>
 void mp_spline<F>::to_svg_p(std::ostream& o, int beg, int end) const {
   o << "M " << points[beg].pt.first << ' ' << points[beg].pt.second;
-  for(int i=beg; i < end; ++i) {
-    o << "C " << points[i].postpt.first << ' ' << points[i].postpt.second;
-    o << ", " << points[i+1].prept.first << ' ' << points[i+1].prept.second;
-    o << ", " << points[i+1].pt.first << ' ' << points[i+1].pt.second;
-  }
+  for(int i=beg; i < end; ++i)
+    to_svg_p(o,i);
 };
 
 template <typename F>
@@ -140,33 +153,23 @@ void mp_spline<F>::close_svg_p(std::ostream& o) const {
 };
 
 template <typename F>
-void mp_spline<F>::add_control_to_svg_as_circle(std::ostream& o,
+void mp_spline<F>::add_controls_to_svg_as_circles(std::ostream& o,
                                     std::size_t idx,
                                     F r,
                                     const std::string& attr) const
 {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  o << "<circle ";
-  if(attr.length() > 0)
-    o << attr << ' ';
-  o << "cx=\"" << points[idx].prept.first  <<'\"';
-  o <<        " cy=\"" << points[idx].prept.second <<'\"';
-  o <<         " r=\"" << r <<"\"/>\n";
+  add_circle_to_svg(o, points[idx].prept.first, points[idx].prept.second, r, 2, attr);
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  o << "<circle ";
-  if(attr.length() > 0)
-    o << attr << ' ';
-  o <<        "cx=\"" << points[idx].postpt.first  <<'\"';
-  o <<        " cy=\"" << points[idx].postpt.second <<'\"';
-  o <<         " r=\"" << r <<"\"/>\n";
+  add_circle_to_svg(o, points[idx].postpt.first, points[idx].postpt.second, r, 2, attr);
 };
 template <typename F>
-void mp_spline<F>::add_control_to_svg_as_circle(std::ostream& o,
+void mp_spline<F>::add_controls_to_svg_as_circles(std::ostream& o,
                                     F r,
                                     const std::string& attr) const
 {
   for(int i = 0; i < points.size(); ++i)
-    add_control_to_svg_as_circle(o,i,r,attr);
+    add_controls_to_svg_as_circles(o,i,r,attr);
 };
 
 template <typename F>
@@ -204,12 +207,7 @@ void mp_spline<F>::add_online_to_svg_as_circle(std::ostream& o,
                                     const std::string& attr) const
 {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  o << "<circle ";
-  if(attr.length() > 0)
-    o << attr << ' ';
-  o << "cx=\"" << points[idx].pt.first  <<'\"';
-  o <<        " cy=\"" << points[idx].pt.second <<'\"';
-  o <<         " r=\"" << r <<"\"/>\n";
+  add_circle_to_svg(o, points[idx].pt.first, points[idx].pt.second, r, 2, attr);
 };
 template <typename F>
 void mp_spline<F>::add_online_to_svg_as_circle(std::ostream& o,

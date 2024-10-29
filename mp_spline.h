@@ -47,9 +47,9 @@
  * distance of a control point to its on-line point should be proportional
    to distance to adjacent (next or previous) point
  * virtual F  pre_control_dist(int IDX, F k=0.2) const
-   should return k*geom_t*distance(points[IDX], points[IDX - 1])
+   should return k*geom_t::distance(points[IDX], points[IDX - 1])
  * virtual F  post_control_dist(int IDX, F k=0.2) const
-   should return k*geom_t*distance(points[IDX], points[IDX + 1])
+   should return k*geom_t::distance(points[IDX], points[IDX + 1])
  */
 #ifndef SCHEMATICS_ANGLE_H
 #include "schematics.angle.h"
@@ -89,13 +89,13 @@ public:
     typedef std::pair<F,F> pair_t;
     typedef             F   dir_t;
     pair_t pt, prept, postpt; // on-line point plus its 2 control points
-    dir_t  dir;
+    dir_t  dir; // angle of resulting Bezier curve at on-line point 'pt'
   protected:
     void set_control(F dr, F dist, pair_t& ctrl) const {
       geom_t::set_angle_dist_from_of( dr, dist, pt, ctrl);};
-    void set_control(      F dist, pair_t& ctrl) const {set_control(dir,dist,ctrl);};
-    void set_pre( F dr, F dist) {set_control(dr  + std::numbers::pi_v<F>,dist,prept);};
-    void set_post(F dr, F dist) {set_control(dr                         ,dist,postpt);};
+    //void set_control(      F dist, pair_t& ctrl) const {set_control(dir,dist,ctrl);};
+    void set_pre(    F dr, F dist) {set_control(dr  + std::numbers::pi_v<F>,dist,prept);};
+    void set_post(   F dr, F dist) {set_control(dr                         ,dist,postpt);};
   public:
     void set_pre(       F dist) {set_pre(dir,dist);};
     void set_post(      F dist) {set_post(dir,dist);};
@@ -144,7 +144,7 @@ protected:
 protected:
   /* set_dir_open_first() and set_dir_open_last()
      set the first and last points in an open path,
-     and correct by k according to 2nd and last but 1 segments.
+     and correct them by k according to 2nd and last-but-1 segments.
    * The alternative would be to set the dir of 1st and last like this:
        points[0].dir         = dir_1st;
        points[lastidx()].dir = dir_last;
@@ -169,13 +169,23 @@ public:
   void set_open_dirs(F k = 0.25);
   void set_open_dirs(F dir_1st, F dir_last);
   /* To set the controls on every point in 'points'
-   * you can rely on a fixed distance (from on-line point to its controls)
-   * or let some member function estimate a distance (for each point)
+     you can rely on a fixed distance (from on-line point to its controls)
    */
   void set_controls_distance(F dist);
-  /* Distance from on-line point to its control is k * distance(pt, next-point)
+  /* Admitedly, 'set_controls_distance(F dist)' is crude,
+     and the alternative is to let some member choose
+     a suitable distance (for each point).
+   * First, we need two functions returning the distance to adjacent points:*/
+  F      dist_to_prev(int IDX) const;
+  F      dist_to_next(int IDX) const;
+  /* Distance from on-line point to its control defaults to:
+       k * distance(pt, {next|prev}-point)
+     but users are invited to overload it in derived classes
+     with code that might take into account angles between segments etc.
+   * Const functions: pre_control_dist(IDX,K) and post_control_dist(IDX,K)
+     return a suitable distance from an on-line point to its respective controls
    * Functions: set_[pre_|post_]by_adjacent_distance([IDX, ] K)
-   * rely on {pre|post}_control_dist(int IDX, F k=0.2)
+     rely on {pre|post}_control_dist(int IDX, F k=0.2)
    */
   virtual F  pre_control_dist(int IDX, F k=1.0) const;
   virtual F post_control_dist(int IDX, F k=1.0) const;
@@ -184,6 +194,7 @@ public:
   void set_by_adjacent_distance(     int idx, F k=0.4);
   void set_by_adjacent_distance(              F k=0.4);
 protected:
+  void to_svg_p(std::ostream& o, int idx)          const;
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
   void to_svg_p(std::ostream& o, int beg, int end) const;
 public:
@@ -199,22 +210,19 @@ public:
   /* Show both control points for a given on-line point
    * as svg::circle's at the end of control svg::line's
    */
-  void add_control_to_svg_as_circle(std::ostream& o,
-                                    std::size_t idx,
+  void add_controls_to_svg_as_circles(std::ostream& o, std::size_t idx,
                                     F r=5.0,
                                     const std::string& attr = "class=\"bezier-control\"") const;
-  void add_control_to_svg_as_circle(std::ostream& o,
+  void add_controls_to_svg_as_circles(std::ostream& o,
                                     F r=5.0,
                                     const std::string& attr = "class=\"bezier-control\"") const;
   //
-  void add_control_to_svg_as_line(std::ostream& o,
-                                  std::size_t idx,
+  void add_control_to_svg_as_line(std::ostream& o, std::size_t idx,
                                   const std::string& attr = "class=\"bezier-control\"") const;
   void add_control_to_svg_as_line(std::ostream& o,
                                   const std::string& attr = "class=\"bezier-control\"") const;
   //
-  void add_online_to_svg_as_circle(std::ostream& o,
-                                   std::size_t idx,
+  void add_online_to_svg_as_circle(std::ostream& o, std::size_t idx,
                                    F r=10.0,
                                    const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
   void add_online_to_svg_as_circle(std::ostream& o,

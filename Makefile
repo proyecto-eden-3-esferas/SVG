@@ -39,17 +39,17 @@ schematics.sq_polyline-and-block: schematics.sq_polyline-and-block.test.cpp sche
 schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h schematics.fet.h schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
 
-mp_spline.test: mp_spline.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h
+mp_spline.test:   mp_spline.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h
 	c++ -std=c++23 $<  -o $@
-mp_spline.%.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h
+mp_spline.%.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h
 	c++ -std=c++23 $<  -o $@
 # Infix "print-to-cout" causes compilation (of file containing main()) under switch PRINT_TO_COUT:
-mp_spline.print-to-cout.test:   mp_spline.test.cpp   mp_spline.h mp_spline.cpp schematics.angle.h
+mp_spline.print-to-cout.test:   mp_spline.test.cpp   mp_spline.h mp_spline.cpp schematics.angle.h svg.h
 	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
-mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h
+mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h
 	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
 
-mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h schematics.angle.h
+mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h  schematics.angle.h svg.h
 	date
 	c++ -c -std=c++23 $< -o $@
 	date
