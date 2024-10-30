@@ -131,8 +131,8 @@ protected:
      for a closed path, i.e. as if 'points' were a circular sequential container.
    *  */
   size_t lastidx()    const {return points.size() - 1;}
-  size_t closed_preidx( size_t i) const {if(i > 0) return i-1;
-                               else return lastidx();};
+  size_t closed_preidx(size_t i) const {if(i > 0) return i-1;
+                                        else return lastidx();};
   size_t closed_prepreidx(size_t i)   const {return closed_preidx(closed_preidx(i));};
   size_t closed_postidx(size_t i) const {if(i < lastidx()) return i+1;
                                else return 0;};
@@ -158,12 +158,13 @@ protected:
   virtual void set_dir_open_last (F k);
   /* set_dir3(IDX) assumes a non-terminal
      (neither 1st nor last on an open path) point.
+     and sets points[IDX].dir = angle_to_X(points[IDX - 1], points[IDX + 1])
    * set_dir5(IDX,K) works on all on-line points on a closed path
      and on points not next to a terminal on-line point.
    * Postfixes "3" and "5" refer to how many points are taken into account.
    */
-  virtual void set_dir3(int idx);
-  virtual void set_dir5(int idx, F k=0.22);
+  virtual void set_dir3(size_t idx);
+  virtual void set_dir5(size_t idx, F k=0.22);
   //
   virtual void set_dir_second    () {set_dir3(1);};             // TO BE REFINED
   virtual void set_dir_last_but_1() {set_dir3(lastidx() - 1);}; // TO BE REFINED
@@ -181,38 +182,29 @@ public:
      and the alternative is to let some member choose
      a suitable distance (for each point).
    * First, we need two functions returning the distance to adjacent points:*/
-  F      dist_to_prev(int IDX) const;
-  F      dist_to_next(int IDX) const;
+  F      dist_to_prev(size_t IDX) const;
+  F      dist_to_next(size_t IDX) const;
   /* Distance from on-line point to its control defaults to:
        k * distance(pt, {next|prev}-point)
      but users are invited to overload it in derived classes
      with code that might take into account angles between segments etc.
-   * Const functions: pre_control_dist(IDX,K) and post_control_dist(IDX,K)
-     return a suitable distance from an on-line point to its respective controls
-   * Functions: set_[pre_|post_]by_adjacent_distance([IDX, ] K)
-     rely on {pre|post}_control_dist(int IDX, F k=0.2)
    */
-  virtual F  pre_control_dist(int IDX, F k=1.0) const;
-  virtual F post_control_dist(int IDX, F k=1.0) const;
-  void set_pre_by_adjacent_distance( int idx, F k=0.4);
-  void set_post_by_adjacent_distance(int idx, F k=0.4);
-  void set_by_adjacent_distance(     int idx, F k=0.4);
-  void set_by_adjacent_distance(              F k=0.4);
+  virtual void set_pre_by_adjacent_distance( size_t idx, F k=0.4);
+  virtual void set_post_by_adjacent_distance(size_t idx, F k=0.4);
+  void set_by_adjacent_distance(             size_t idx, F k=0.4);
+  void set_by_adjacent_distance(                         F k=0.4);
   /* Members for printing to an SVG out-stream */
 protected:
-  void to_svg_p(std::ostream& o, int idx)          const;
+  void to_svg_p(std::ostream& o, size_t idx)          const;
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
-  void to_svg_p(std::ostream& o, int beg, int end) const;
+  void to_svg_p(std::ostream& o, size_t beg, size_t end) const;
 public:
   void to_svg_p_open(    std::ostream& o) const {to_svg_p(o,0, lastidx());};
   /* close_svg_p(OSTREAM) adds the closing Bezier curve
      (from last point to first) to the unclosed p attribute in svg::path
      yet it does not close the p attribute as such (no closing quotes added)*/
   void close_svg_p(std::ostream& o) const;
-  void to_svg_p_closed(  std::ostream& o) const {
-    to_svg_p(o, 0, lastidx());
-    close_svg_p(o);
-  };
+  void to_svg_p_closed(  std::ostream& o) const;
   /* Show both control points for a given on-line point
    * as svg::circle's at the end of control svg::line's
    * Argument 'decs' sets the number of decimal digits

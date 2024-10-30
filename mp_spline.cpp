@@ -44,13 +44,13 @@ void mp_spline<F>::set_dir_open_last(F k) {
 };
 
 template <typename F>
-void mp_spline<F>::set_dir3(int idx) {
+void mp_spline<F>::set_dir3(std::size_t idx) {
   points[idx].dir = geom_t::atan2(
     points[closed_postidx(idx)].pt.second - points[closed_preidx(idx)].pt.second,
     points[closed_postidx(idx)].pt.first  - points[closed_preidx(idx)].pt.first);
 };
 template <typename F>
-void mp_spline<F>::set_dir5(int idx, F k) {
+void mp_spline<F>::set_dir5(std::size_t idx, F k) {
   points[idx].dir = geom_t::atan2(
     points[closed_postidx(idx)].pt.second - points[closed_preidx(idx)].pt.second
 - k*(points[closed_preidx(idx)].pt.second - points[closed_prepreidx(idx)].pt.second)
@@ -96,40 +96,30 @@ void mp_spline<F>::set_controls_distance(F dist) {
 
 // Return distance from points(IDX) to previous and next points:
 template <typename F>
-F mp_spline<F>::dist_to_prev(int idx) const {
+F mp_spline<F>::dist_to_prev(std::size_t idx) const {
   return geom_t::distance(points[idx].pt.first,
                           points[idx].pt.second,
                           points[closed_preidx(idx)].pt.first,
                           points[closed_preidx(idx)].pt.second);
 }
 template <typename F>
-F mp_spline<F>::dist_to_next(int idx) const {
+F mp_spline<F>::dist_to_next(std::size_t idx) const {
   return geom_t::distance(points[idx].pt.first,
                           points[idx].pt.second,
                           points[closed_postidx(idx)].pt.first,
                           points[closed_postidx(idx)].pt.second);
 }
 
-// Distance from on-line point to its control is k * distance(pt, {next-point|next-point})
 template <typename F>
-F mp_spline<F>::pre_control_dist(int idx, F k) const {
-  return k * dist_to_prev(idx);
-}
-template <typename F>
-F mp_spline<F>::post_control_dist(int idx, F k) const {
-  return k * dist_to_next(idx);
-}
-
-template <typename F>
-void mp_spline<F>::set_pre_by_adjacent_distance(int idx, F k) {
-  points[idx].set_pre(pre_control_dist(idx,k));
+void mp_spline<F>::set_pre_by_adjacent_distance(std::size_t idx, F k) {
+  points[idx].set_pre(k * dist_to_prev(idx));
 };
 template <typename F>
-void mp_spline<F>::set_post_by_adjacent_distance(int idx, F k) {
-  points[idx].set_post(post_control_dist(idx,k));
+void mp_spline<F>::set_post_by_adjacent_distance(std::size_t idx, F k) {
+  points[idx].set_post(k * dist_to_next(idx));
 };
 template <typename F>
-void mp_spline<F>::set_by_adjacent_distance(int idx, F k) {
+void mp_spline<F>::set_by_adjacent_distance(std::size_t idx, F k) {
   set_pre_by_adjacent_distance( idx,k);
   set_post_by_adjacent_distance(idx,k);
 };
@@ -142,14 +132,14 @@ void mp_spline<F>::set_by_adjacent_distance(F k) {
 };
 
 template <typename F>
-void mp_spline<F>::to_svg_p(std::ostream& o, int idx) const {
+void mp_spline<F>::to_svg_p(std::ostream& o, std::size_t idx) const {
   o << "C " << points[idx].postpt.first << ' ' << points[idx].postpt.second;
   o << ", " << points[idx+1].prept.first << ' ' << points[idx+1].prept.second;
   o << ", " << points[idx+1].pt.first << ' ' << points[idx+1].pt.second;
 };
 // Add curves from points[beg] to points[end] inside svg::path::p attribute:
 template <typename F>
-void mp_spline<F>::to_svg_p(std::ostream& o, int beg, int end) const {
+void mp_spline<F>::to_svg_p(std::ostream& o, std::size_t beg, std::size_t end) const {
   o << "M " << points[beg].pt.first << ' ' << points[beg].pt.second;
   for(int i=beg; i < end; ++i)
     to_svg_p(o,i);
@@ -160,6 +150,11 @@ void mp_spline<F>::close_svg_p(std::ostream& o) const {
   o << " C " << points[lastidx()].postpt.first << ' ' << points[lastidx()].postpt.second;
   o << ", "  << points[0].prept.first << ' ' << points[0].prept.second;
   o << ", "  << points[0].pt.first << ' ' << points[0].pt.second;
+};
+template <typename F>
+void mp_spline<F>::to_svg_p_closed(  std::ostream& o) const {
+  to_svg_p(o, 0, lastidx());
+  close_svg_p(o);
 };
 
 
