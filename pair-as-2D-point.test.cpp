@@ -18,5 +18,8 @@ int main()
   p2 += p3;
   cout << p2 << endl;
 
+  cout << "p2.second = " << p2.second;
+  cout << ", whereas for a given height (or depth) 1000, its invert is " << get_y_invert(p2,1000) << endl;
+
   return 0;
 }

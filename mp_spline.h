@@ -40,16 +40,13 @@
  */
 
 /* TODO
- * Line and circle elements should bear class or id attributes for easy styling
- * Maybe also path elements should bear class or id attributes for easy styling
  * Members set_dir_second() and set_dir_last_but_1()
    should take points[0].dir and points[lastidx()].dir into account
- * distance of a control point to its on-line point should be proportional
-   to distance to adjacent (next or previous) point
- * virtual F  pre_control_dist(int IDX, F k=0.2) const
-   should return k*geom_t::distance(points[IDX], points[IDX - 1])
- * virtual F  post_control_dist(int IDX, F k=0.2) const
-   should return k*geom_t::distance(points[IDX], points[IDX + 1])
+ * As SVG "inverts" the Y coordinate, given height h,
+   a points Y coordinate (y) should be transformed to h - y:
+     y = h - y
+   That change should be effected when writing to an SVG out-file.
+   In file "svg.h", or in "pair-as-2D-point.h" ...
  */
 #ifndef SCHEMATICS_ANGLE_H
 #include "schematics.angle.h"
@@ -99,6 +96,12 @@ public:
   public:
     void set_pre(       F dist) {set_pre(dir,dist);};
     void set_post(      F dist) {set_post(dir,dist);};
+    //
+    void y_invert(F depth) {
+      pt.second = depth - pt.second;
+      prept.second = depth - prept.second;
+      postpt.second = depth - postpt.second;
+    };
     // Constructor(s):
     point(const point& p) = default;
     point(const pair_t& p, dir_t d=0.0) : pt(p),     dir(d) {};
@@ -119,6 +122,8 @@ public:
   points_t points;
   points_t::iterator begin() {return points.begin();};
   points_t::iterator   end() {return points.  end();};
+  // change y-coordinate in all points in 'points': y = depth - y:
+  void y_invert(F depth);
 protected:
   /* Some members taking and returning an index.
    * lastidx(IDX) returns the last valid index into points, while
@@ -165,9 +170,9 @@ protected:
 public:
   void set_closed_dirs();
   // Members for setting dirs in an open spline:
-  void set_inner_dirs(); // only on open paths
-  void set_open_dirs(F k = 0.25);
-  void set_open_dirs(F dir_1st, F dir_last);
+  void set_inner_dirs(F k=0.22); // only on open paths
+  void set_open_dirs_by_k(F k = 0.25, F kends = 0.25);
+  void set_open_dirs_by_angle(F dir_1st, F dir_last);
   /* To set the controls on every point in 'points'
      you can rely on a fixed distance (from on-line point to its controls)
    */
@@ -193,6 +198,7 @@ public:
   void set_post_by_adjacent_distance(int idx, F k=0.4);
   void set_by_adjacent_distance(     int idx, F k=0.4);
   void set_by_adjacent_distance(              F k=0.4);
+  /* Members for printing to an SVG out-stream */
 protected:
   void to_svg_p(std::ostream& o, int idx)          const;
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
@@ -209,24 +215,21 @@ public:
   };
   /* Show both control points for a given on-line point
    * as svg::circle's at the end of control svg::line's
+   * Argument 'decs' sets the number of decimal digits
    */
-  void add_controls_to_svg_as_circles(std::ostream& o, std::size_t idx,
-                                    F r=5.0,
+  void add_controls_to_svg_as_circles(std::ostream& o, std::size_t idx, F r=5.0,
+                                      const std::string& attr = "class=\"bezier-control\"") const;
+  void add_controls_to_svg_as_circles(std::ostream& o,                  F r=5.0,
+                                      const std::string& attr = "class=\"bezier-control\"") const;
+  //
+  void add_controls_to_svg_as_lines(std::ostream& o,   std::size_t idx,
                                     const std::string& attr = "class=\"bezier-control\"") const;
-  void add_controls_to_svg_as_circles(std::ostream& o,
-                                    F r=5.0,
+  void add_controls_to_svg_as_lines(std::ostream& o,
                                     const std::string& attr = "class=\"bezier-control\"") const;
   //
-  void add_control_to_svg_as_line(std::ostream& o, std::size_t idx,
-                                  const std::string& attr = "class=\"bezier-control\"") const;
-  void add_control_to_svg_as_line(std::ostream& o,
-                                  const std::string& attr = "class=\"bezier-control\"") const;
-  //
-  void add_online_to_svg_as_circle(std::ostream& o, std::size_t idx,
-                                   F r=10.0,
+  void add_online_to_svg_as_circle(std::ostream& o,    std::size_t idx, F r=10.0,
                                    const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
-  void add_online_to_svg_as_circle(std::ostream& o,
-                                   F r=10.0,
+  void add_online_to_svg_as_circle(std::ostream& o,                     F r=10.0,
                                    const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
   // constructors:
   mp_spline() {};

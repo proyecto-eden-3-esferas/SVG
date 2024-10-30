@@ -6,9 +6,19 @@
 #include "mp_spline.h"
 #endif
 
+#ifndef PAIR_AS_POINT_2D_H
+//#include "pair-as-2D-point.h"
+#endif
+
 /* Implementations of mp_spline<FLOAT>::point member functions: NONE */
 
 /* Implementations of mp_spline<FLOAT> member functions */
+
+template <typename F>
+void mp_spline<F>::y_invert(F depth) {
+    for(point & p : points)
+      p.y_invert(depth);
+  };
 
 /* set_dir_open_first() and set_dir_open_last()
  * correct by k according to 2nd and last but 1 segments */
@@ -57,20 +67,20 @@ void mp_spline<F>::set_closed_dirs() {
     set_dir5(i);
 };
 template <typename F>
-void mp_spline<F>::set_inner_dirs() { // only on open paths
+void mp_spline<F>::set_inner_dirs(F k) { // only on open paths
   for(int i=2; i < lastidx() -1 ; ++i)
-    set_dir5(i);
+    set_dir5(i,k);
   set_dir_second();
   set_dir_last_but_1();
 };
 template <typename F>
-void mp_spline<F>::set_open_dirs(F k) {
-  set_dir_open_first(k);
-  set_dir_open_last (k);
-  set_inner_dirs();
+void mp_spline<F>::set_open_dirs_by_k(F k, F kends) {
+  set_dir_open_first(kends);
+  set_dir_open_last (kends);
+  set_inner_dirs(k);
 };
 template <typename F>
-void mp_spline<F>::set_open_dirs(F dir_1st, F dir_last) {
+void mp_spline<F>::set_open_dirs_by_angle(F dir_1st, F dir_last) {
   points[0]        .dir = dir_1st;
   points[lastidx()].dir = dir_last;
   set_inner_dirs();
@@ -152,6 +162,7 @@ void mp_spline<F>::close_svg_p(std::ostream& o) const {
   o << ", "  << points[0].pt.first << ' ' << points[0].pt.second;
 };
 
+
 template <typename F>
 void mp_spline<F>::add_controls_to_svg_as_circles(std::ostream& o,
                                     std::size_t idx,
@@ -159,9 +170,9 @@ void mp_spline<F>::add_controls_to_svg_as_circles(std::ostream& o,
                                     const std::string& attr) const
 {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  add_circle_to_svg(o, points[idx].prept.first, points[idx].prept.second, r, 2, attr);
+  add_circle_to_svg(o, points[idx].prept.first, points[idx].prept.second, r, attr);
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  add_circle_to_svg(o, points[idx].postpt.first, points[idx].postpt.second, r, 2, attr);
+  add_circle_to_svg(o, points[idx].postpt.first, points[idx].postpt.second, r, attr);
 };
 template <typename F>
 void mp_spline<F>::add_controls_to_svg_as_circles(std::ostream& o,
@@ -173,31 +184,25 @@ void mp_spline<F>::add_controls_to_svg_as_circles(std::ostream& o,
 };
 
 template <typename F>
-void mp_spline<F>::add_control_to_svg_as_line(std::ostream& o,
+void mp_spline<F>::add_controls_to_svg_as_lines(std::ostream& o,
                                               std::size_t idx,
                                               const std::string& attr) const {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  o << "<line ";
-  if(attr.length() > 0)
-    o << attr << ' ';
-  o << "x1=\"" << points[idx].prept.first  <<'\"';
-  o <<      " y1=\"" << points[idx].prept.second <<'\"';
-  o <<      " x2=\"" << points[idx].pt.first <<'\"';
-  o <<      " y2=\"" << points[idx].pt.second << "\"/>\n";
+  add_line_to_svg(o, points[idx].prept.first,
+                     points[idx].prept.second,
+                     points[idx].pt.first,
+                     points[idx].pt.second, attr);
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  o << "<line ";
-  if(attr.length() > 0)
-    o << attr << ' ';
-  o << "x1=\"" << points[idx].postpt.first  <<'\"';
-  o <<      " y1=\"" << points[idx].postpt.second <<'\"';
-  o <<      " x2=\"" << points[idx].pt.first <<'\"';
-  o <<      " y2=\"" << points[idx].pt.second << "\"/>\n";
+  add_line_to_svg(o, points[idx].postpt.first,
+                     points[idx].postpt.second,
+                     points[idx].pt.first,
+                     points[idx].pt.second, attr);
 };
 template <typename F>
-void mp_spline<F>::add_control_to_svg_as_line(std::ostream& o,
+void mp_spline<F>::add_controls_to_svg_as_lines(std::ostream& o,
                                               const std::string& attr) const {
   for(int i = 0; i < points.size(); ++i)
-    add_control_to_svg_as_line(o,i,attr);
+    add_controls_to_svg_as_lines(o,i,attr);
 };
 
 template <typename F>
@@ -207,7 +212,7 @@ void mp_spline<F>::add_online_to_svg_as_circle(std::ostream& o,
                                     const std::string& attr) const
 {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
-  add_circle_to_svg(o, points[idx].pt.first, points[idx].pt.second, r, 2, attr);
+  add_circle_to_svg(o, points[idx].pt.first, points[idx].pt.second, r, attr);
 };
 template <typename F>
 void mp_spline<F>::add_online_to_svg_as_circle(std::ostream& o,
