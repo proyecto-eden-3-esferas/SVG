@@ -40,20 +40,36 @@
  */
 
 /* TODO
- * Members set_dir_second() and set_dir_last_but_1()
-   should take points[0].dir and points[lastidx()].dir into account
- * As SVG "inverts" the Y coordinate, given height h,
-   a points Y coordinate (y) should be transformed to h - y:
+ [ ] Add a CONTAINER template parameter to mp_spline<>
+ [ ] Members set_dir_second() and set_dir_last_but_1()
+     should take points[0].dir and points[lastidx()].dir into account
+ [ ] As SVG "inverts" the Y coordinate, given height h,
+     a points Y coordinate (y) should be transformed to h - y:
      y = h - y
-   That change should be effected when writing to an SVG out-file.
-   In file "svg.h", or in "pair-as-2D-point.h" ...
+     That change should be effected when writing to an SVG out-file.
+     In file "svg.h", or in "pair-as-2D-point.h" ...
+ [ ] A generalized
+     <typename FUNCTION_OBJ>
+     mp_spline<>::point::transform(FUNCTION_OBJ fo)
+     and then
+     <typename FUNCTION_OBJ>
+     mp_spline<>::transform(FUNCTION_OBJ fo) {
+       for (point& p : points)
+         fo(p);
+     }
+     Such function objects should keep control points and on-line points aligned.
  */
-#ifndef SCHEMATICS_ANGLE_H
-#include "schematics.angle.h"
+
+#ifndef GEOMETRY_2D
+#include "geometry_2D.h"
 #endif
 
 #ifndef SVG_H
 #include "svg.h"
+#endif
+
+#ifndef PAIR_AS_POINT_2D_H
+#include "pair-as-2D-point.h" // transform(pair<F,F>, a, b, c, d, s, t)
 #endif
 
 #include <initializer_list>
@@ -75,48 +91,16 @@
    (4) members for printing control points as Bezier curves
  *
  */
-template <typename F = double>
+
+#ifndef MP_POINT_H
+#include "mp_point.h"
+#endif
+template <typename F = double, typename POINT = mp_point<F>, typename CONTAINER=std::vector<POINT> >
 class mp_spline {
 public:
-  /* Inner class 'point'.
-   * Each point holds an on-line point (pt), a dir[ection] or angle (dir), and its two control points (prept and postpt) */
-  class point {
-  public:
-    typedef geometry_2D<F> geom_t;
-    typedef std::pair<F,F> pair_t;
-    typedef             F   dir_t;
-    pair_t pt, prept, postpt; // on-line point plus its 2 control points
-    dir_t  dir; // angle of resulting Bezier curve at on-line point 'pt'
-  protected:
-    void set_control(F dr, F dist, pair_t& ctrl) const {
-      geom_t::set_angle_dist_from_of( dr, dist, pt, ctrl);};
-    //void set_control(      F dist, pair_t& ctrl) const {set_control(dir,dist,ctrl);};
-    void set_pre(    F dr, F dist) {set_control(dr  + std::numbers::pi_v<F>,dist,prept);};
-    void set_post(   F dr, F dist) {set_control(dr                         ,dist,postpt);};
-  public:
-    void set_pre(       F dist) {set_pre(dir,dist);};
-    void set_post(      F dist) {set_post(dir,dist);};
-    //
-    void y_invert(F depth) {
-      pt.second = depth - pt.second;
-      prept.second = depth - prept.second;
-      postpt.second = depth - postpt.second;
-    };
-    // Constructor(s):
-    point(const point& p) = default;
-    point(const pair_t& p, dir_t d=0.0) : pt(p),     dir(d) {};
-    point(F x, F y,        dir_t d=0.0) : pt({x,y}), dir(d) {};
-    point(const pair_t& p, const pair_t& pr, const pair_t& po, dir_t d=0.0)
-    : pt(p),     prept(pr), postpt(po), dir(d)
-    {};
-    point(F x, F y,        const pair_t& pr, const pair_t& po, dir_t d=0.0)
-    : pt({x,y}), prept(pr), postpt(po), dir(d)
-    {};
-  }; // inner class point<>
-public:
-  typedef std::pair<F,F> pair_t;
-  typedef point point_t;
-  typedef std::vector<point_t> points_t;
+  //typedef std::pair<F,F> pair_t;
+  typedef POINT point_t;
+  typedef CONTAINER points_t;
   typedef geometry_2D<F> geom_t;
   typedef std::size_t size_t;
   points_t points;
@@ -188,6 +172,9 @@ public:
        k * distance(pt, {next|prev}-point)
      but users are invited to overload it in derived classes
      with code that might take into account angles between segments etc.
+   * Furthermore, by tweaking the k factor for an individual point
+     a client may change the shape of the curve through the said point.
+     (The larger k is, the larger the radius of curvature at a point.)
    */
   virtual void set_pre_by_adjacent_distance( size_t idx, F k=0.4);
   virtual void set_post_by_adjacent_distance(size_t idx, F k=0.4);
@@ -229,9 +216,9 @@ public:
       mp_spline(std::initializer_list<pair_t> il) : points(il) {};
      even though mp_spline::point has a constructor that takes a std::pair<F,F>
   */
-  mp_spline(std::initializer_list<mp_spline<F>::point>  il) : points(il) {};
-  template <typename CONTAINER>
-  mp_spline(const CONTAINER& c) : points(c.begin(), c.end()) {};
+  mp_spline(std::initializer_list<point_t>  il) : points(il) {};
+  template <typename CONT>
+  mp_spline(const CONT& c) : points(c.begin(), c.end()) {};
 }; // class mp_spline<>
 
 #endif

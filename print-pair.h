@@ -38,20 +38,5 @@ std::ostream& operator<<(std::ostream& o, const typename std::pair<F,S>& p) {
   o << p.second << ')';
   return o;
 };
-template <typename F = double>
-std::ostream& operator<<(std::ostream& o, const typename mp_spline<F>::point& p) {
-  o << std::fixed << std::setprecision(SETPRECISION);
-  o <<'(' <<  p.pt.first << ',';
-#ifndef NO_SPACE_AFTER_COMMA
-  o << ' ';
-#endif
-  o << p.pt.second << ',';
-#ifndef NO_SPACE_AFTER_COMMA
-  o << ' ';
-#endif
-  o << (p.dir  / std::numbers::pi_v<float_t>) * 180  << ')'
-    << " with controls: " << p.prept << " and " << p.postpt;
-  return o;
-};
 
 #endif

@@ -14,12 +14,20 @@
 #include <iostream>
 
 #ifdef PRINT_TO_COUT
+
 #ifndef PRINT_PAIR_H
 /* Include global functions for printing:
-   (1) a plain std::pair, and
-   (2) a mp_spline::point */
+   a plain std::pair, and
+*/
 #include "print-pair.h"
 #endif
+#ifndef PRINT_MP_POINT_H
+/* Include global functions for printing:
+   a plain std::pair, and
+*/
+#include "print-mp_point.h"
+#endif
+
 #endif
 
 
@@ -28,9 +36,7 @@
 
 typedef double float_type;
   typedef mp_spline<float_type> mp_spline_t;
-    typedef mp_spline_t::point point_t;
-    typedef mp_spline_t::pair_t pair_t;
-  typedef angle_addressable_base<float_type> angle_addressable_base_t;
+    typedef mp_spline_t::point_t point_t;
 
 const float_type pi(std::numbers::pi_v<float_type>);
 
@@ -68,7 +74,7 @@ int main() {
   for(auto item : vpoint1) {cout << item << std::endl;}
 #endif
 
-  mp_spline<double> mps1, mps11(vpoint1);
+  mp_spline<float_type> mps11(vpoint1);
 
 #ifdef PRINT_TO_COUT
   cout << "Print all points in \'mps11\':\n";
@@ -76,7 +82,6 @@ int main() {
 #endif
 
   mps11.set_open_dirs_by_k();
-
 #ifdef PRINT_TO_COUT
   cout << "Print all points in \'mps11\' after setting its dirs as open:\n";
   for ( auto item : mps11) { cout << item << std::endl;}

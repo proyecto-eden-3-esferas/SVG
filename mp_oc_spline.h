@@ -6,6 +6,11 @@
  * Another possibility is to derive
    - a class mp_o_spline<> (open),   with no fill colour; and
    - a class mp_c_spline<> (closed), with a fill colour.
+ * TODO
+   [ ] set_open() and set_closed() should take parameters like
+       - extremes' dir
+       - k
+       and set both dir's and tensions
  *
  */
 template <typename F = double>

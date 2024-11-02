@@ -43,20 +43,28 @@ pair-as-2D-point.test: pair-as-2D-point.test.cpp pair-as-2D-point.h print-pair.h
 
 
 # mp_spline<> headers-only
-mp_spline.test:   mp_spline.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h
+mp_spline.test:   mp_spline.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
 	c++ -std=c++23 $<  -o $@
-mp_spline.%.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h
+mp_spline.%.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
 	c++ -std=c++23 $<  -o $@
 # Infix "print-to-cout" causes compilation (of file containing main()) under switch PRINT_TO_COUT:
-mp_spline.print-to-cout.test:   mp_spline.test.cpp   mp_spline.h mp_spline.cpp schematics.angle.h svg.h
+mp_spline.print-to-cout.test:   mp_spline.test.cpp   mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
 	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
-mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h
+mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
 	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
 
 # mp_spline<> separate compilation
-mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h  schematics.angle.h svg.h
+mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h svg.h geometry_2D.h pair-as-2D-point.h  mp_point.h# schematics.angle.h
 	date
 	c++ -c -std=c++23 $< -o $@
+	date
+mp_spline.test.o:   mp_spline.test.cpp   mp_spline.h svg.h print-pair.h
+	date
+	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
+	date
+mp_spline.%.test.o: mp_spline.%.test.cpp mp_spline.h svg.h print-pair.h
+	date
+	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
 	date
 
 # "mp_spline.sep.test.cpp" should be generated from "mp_spline.test.cpp" + macro SEPARATE_COMPILATION
