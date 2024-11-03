@@ -38,6 +38,7 @@ public:
      defined in "pair-as-2D-point.h"
    * Non linear transformations might be achieved through function objects.
    */
+  void change_dir(F angle);
   void transform(F scl_x, F scl_y, F sk_x, F sk_y, F dx, F dy);
   void scale(F k);
   void scale(F kx, F ky);

@@ -30,6 +30,12 @@ std::pair<F,F>& operator+=(std::pair<F,F>& pt, const std::pair<FF,FF>& const_pt)
  *
 */
 template <typename F, typename D>
+void transform(std::pair<F,F>& p, D scl_x, D scl_y, D sk_x, D sk_y, D dx, D dy) {
+  F x(p.first), y(p.second);
+  p.first  = scl_x*x + sk_x*y + dx;
+  p.second = scl_y*y + sk_y*x + dy;
+};
+template <typename F, typename D>
 F get_y_invert(const std::pair<F,F>& pt, D depth=0)  {return depth - pt.second;};
 template <typename F, typename D>
 void y_invert(std::pair<F,F>& pt, D depth=0) {pt.second = depth - pt.second;};

@@ -89,6 +89,8 @@ public:
   //
   static float_t distance(float_t x1, float_t y1, float_t x2, float_t y2) {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) );};
+  static float_t distance(const pair_t& p1, const pair_t& p2) {
+    return distance(p1.first, p1.second, p2.first, p2.second); }
   static float_t    angle(float_t x1, float_t y1, float_t x2, float_t y2) {
     return atan2(y2 - y1, x2 - x1);};
   static float_t deg_to_rad(float_t d) {return (d / 180) * std::numbers::pi_v<float_t>;};

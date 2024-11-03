@@ -21,6 +21,15 @@ template <typename F>
 void mp_point<F>::set_pre(       F dist) {set_pre(dir,dist);};
 template <typename F>
 void mp_point<F>::set_post(      F dist) {set_post(dir,dist);};
+
+template <typename F>
+void mp_point<F>::change_dir(F angle) {
+  F pred( geom_t::distance(pt,prept));
+  F postd(geom_t::distance(pt,postpt));
+  dir = angle;
+  set_pre( pred);
+  set_post(postd);
+};
   /* Transformations
    * Linear transformations are based on the PostScript 6-parameter model
      (Only the parameters are rearranged:
