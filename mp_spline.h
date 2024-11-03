@@ -5,16 +5,17 @@
    such as rocks, plants, animals, anatomy, landscapes...
  * In this model, a curve is fitted through a set of points.
    Additionally, some restrictions may be set as to
-   - the direction (angle to the X-axis) of the curve at a given point
+   - the direction ('dir' or angle to the X-axis) of the curve at a given point
    - how taught or straightened out ("tension" in MetaPost parlance) the curve is at a given point
-     (in my model I call it "distance" from a point to its two control points)
+     (in my model I call it distance from a point to its two control points)
  * Thus I have defined a curve class called mp_spline<>
  * The way to use a mp_spline object--or its "lifecycle"-- is
    (1) load points
    (2) set dirs
    (3) set tension (distance from on-line points to its one/two control points)
    (4) output into SVG, PostScript, etc.
- * The prefix "mp_" does stand for MetaPost, but I may not implement Hobby’s Algorithm here.
+ * The prefix "mp_" does stand for MetaPost,
+   but I am not implementing the full Hobby’s Algorithm here.
  * All angles in radians. For conversions use:
    geometry_2D<F>::deg_to_rad(ANGLE), and
    geometry_2D<F>::rad_to_def(ANGLE)
@@ -26,22 +27,19 @@
    (2) On-line points are either terminal (begin and end) or middle points.
        All points in a closed path are middle points.
        One might also consider "next-points", that is second and last-but-one points in open paths.
-   (3) For a smooth curve, a point on a line has a specific direction,
+   (3) For a smooth curve, a point on a line has a specific direction ('dir'),
        that is, the curve passes through the point at an angle to the X-axis
    (4) A composite curve or spline is a list of on-line points,
-       supplemented with control points
-   (5) The fact that each on-line point is couple to one or two control points
+       each supplemented with two control points
+   (5) The fact that each on-line point is coupled to one or two control points
        enables translating chains of such points into cubir Bezier curves.
-
- * MetaPost uses Hobby’s Algorithm, whose aim is to fit a curve to a set of points smoothly and in a controlled manner.
  * A MetaPost primer is to be found at: https://proyecto-eden-3-esferas.github.io/metapost.html
    For MetaPost curves go to: https://proyecto-eden-3-esferas.github.io/metapost.curves.html
 
  */
 
 /* TODO
- [ ] Add a CONTAINER template parameter to mp_spline<>
- [ ] Members set_dir_second() and set_dir_last_but_1()
+ [ ] Members set_dir_open_second() and set_dir_open_last_but_1()
      should take points[0].dir and points[lastidx()].dir into account
  [ ] As SVG "inverts" the Y coordinate, given height h,
      a points Y coordinate (y) should be transformed to h - y:
@@ -77,28 +75,15 @@
 #include <utility>
 #include <vector>
 
-
-/* A spline from points à la MetaPost
- * The way to preceed, once the on-line points are loaded, is
-   first to set the dir[ection] (angle to the X-axis) on all its points
-   then to define both control points (or just one in the case of terminal points)
-   at each spline point.
- * Main parts:
-   (1) an inner mp_spline<>::point class and a container of points
-   (2) members for setting dir's (angles to the X-axis at each point)
-   (3) members for setting control points based on desired distance
-       from an on-line point to its control points
-   (4) members for printing control points as Bezier curves
- *
- */
-
-#ifndef MP_POINT_H
+#ifdef SEPARATE_COMPILATION
 #include "mp_point.h"
+#else
+#include "mp_point.cpp"
 #endif
+
 template <typename F = double, typename POINT = mp_point<F>, typename CONTAINER=std::vector<POINT> >
 class mp_spline {
 public:
-  //typedef std::pair<F,F> pair_t;
   typedef POINT point_t;
   typedef CONTAINER points_t;
   typedef geometry_2D<F> geom_t;
@@ -106,6 +91,8 @@ public:
   points_t points;
   points_t::iterator begin() {return points.begin();};
   points_t::iterator   end() {return points.  end();};
+        point_t& operator[] (size_t idx)      ;
+  const point_t& operator[] (size_t idx) const;
   // change y-coordinate in all points in 'points': y = depth - y:
   void y_invert(F depth);
 protected:
@@ -122,24 +109,20 @@ protected:
                                else return 0;};
   size_t closed_postpostidx(size_t i) const {return closed_postidx(closed_postidx(i));};
   /* Members dealing with setting the 'dir' on each point in 'points'
-   * The hardest task.
-   * The all-important virtual member function set_dir(IDX).
-   * It could be virtual-ly specialized by taking more points (before and after)
-     into account. In that case, open paths should
-     have their start and end points' directions defined
-   * If not satisfied, the user or client might set the dir's manually
-     and then readjust the control points.
+   * This is by far hardest task.
+   * If not satisfied, the user or client is encouraged to
+     set the dir's manually and then readjust the control points.
    */
 protected:
-  /* set_dir_open_first() and set_dir_open_last()
+  /* set_dir_open_first_by_k() and set_dir_open_last_k()
      set the first and last points in an open path,
      and correct them by k according to 2nd and last-but-1 segments.
    * The alternative would be to set the dir of 1st and last like this:
        points[0].dir         = dir_1st;
        points[lastidx()].dir = dir_last;
    */
-  virtual void set_dir_open_first(F k);
-  virtual void set_dir_open_last (F k);
+  virtual void set_dir_open_first_by_k(F k);
+  virtual void set_dir_open_last_k (F k);
   /* set_dir3(IDX) assumes a non-terminal
      (neither 1st nor last on an open path) point.
      and sets points[IDX].dir = angle_to_X(points[IDX - 1], points[IDX + 1])
@@ -150,17 +133,21 @@ protected:
   virtual void set_dir3(size_t idx);
   virtual void set_dir5(size_t idx, F k=0.22);
   //
-  virtual void set_dir_second    () {set_dir3(1);};             // TO BE REFINED
-  virtual void set_dir_last_but_1() {set_dir3(lastidx() - 1);}; // TO BE REFINED
+  virtual void set_dir_open_second    () {set_dir3(1);};             // TO BE REFINED
+  virtual void set_dir_open_last_but_1() {set_dir3(lastidx() - 1);}; // TO BE REFINED
 public:
   void set_closed_dirs();
   // Members for setting dirs in an open spline:
   void set_inner_dirs(F k=0.22); // only on open paths
+  /* You may set dir's in an open path by factor k and kends,
+     where k is forwarded to set_inner_dirs(), and
+     kends is forwarded into set_dir_open_{first|last}(),
+   * or you may set the fist and last angle */
   void set_open_dirs_by_k(F k = 0.25, F kends = 0.25);
-  void set_open_dirs_by_angle(F dir_1st, F dir_last);
+  void set_open_dirs_by_angle(F dir_1st, F dir_last, F k = 0.25);
   /* To set the controls on every point in 'points'
-     you can rely on a fixed distance (from on-line point to its controls)
-   */
+     you can rely on a fixed distance (from on-line point to its controls).
+     Too corse, hence DEPRECATED */
   void set_controls_distance(F dist);
   /* Admitedly, 'set_controls_distance(F dist)' is crude,
      and the alternative is to let some member choose

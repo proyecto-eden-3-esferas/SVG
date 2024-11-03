@@ -2,9 +2,13 @@
 
 #ifdef SEPARATE_COMPILATION
 #include "mp_spline.h"
+#include "mp_point.h"
 #else
 #include "mp_spline.cpp"
+#include "mp_point.cpp"
 #endif
+
+
 
 #ifndef SVG_H
 #include "svg.h"
