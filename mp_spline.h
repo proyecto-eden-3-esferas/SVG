@@ -81,7 +81,9 @@
 #include "mp_point.cpp"
 #endif
 
-template <typename F = double, typename POINT = mp_point<F>, typename CONTAINER=std::vector<POINT> >
+template <typename F = double,
+          typename POINT = mp_point<F>,
+          typename CONTAINER=std::vector<POINT> >
 class mp_spline {
 public:
   typedef POINT point_t;
@@ -89,10 +91,18 @@ public:
   typedef geometry_2D<F> geom_t;
   typedef std::size_t size_t;
   points_t points;
-  points_t::iterator begin() {return points.begin();};
-  points_t::iterator   end() {return points.  end();};
+  bool    is_closed{false};
+  bool     dirs_set{false};
+  bool controls_set{false};
+  //
+  points_t::iterator begin() {dirs_set=false; controls_set=false; return points.begin();};
+  points_t::iterator   end() {dirs_set=false; controls_set=false; return points.end();};
+  points_t::const_iterator cbegin() const {return points.cbegin();};
+  points_t::const_iterator   cend() const {return points.  cend();};
         point_t& operator[] (size_t idx)      ;
   const point_t& operator[] (size_t idx) const;
+  size_t size() const {return points.size() ;};
+  bool  empty() const {return points.empty();}
   // change y-coordinate in all points in 'points': y = depth - y:
   void y_invert(F depth);
 protected:
@@ -101,12 +111,12 @@ protected:
    * closed_preidx(IDX) and closed_postidx(IDX) return previous and next index
      for a closed path, i.e. as if 'points' were a circular sequential container.
    *  */
-  size_t lastidx()    const {return points.size() - 1;}
-  size_t closed_preidx(size_t i) const {if(i > 0) return i-1;
-                                        else return lastidx();};
+  size_t lastidx()                    const {return points.size() - 1;}
+  size_t closed_preidx(size_t i)      const {if(i > 0) return i-1;
+                                             else return lastidx();};
   size_t closed_prepreidx(size_t i)   const {return closed_preidx(closed_preidx(i));};
-  size_t closed_postidx(size_t i) const {if(i < lastidx()) return i+1;
-                               else return 0;};
+  size_t closed_postidx(size_t i)     const {if(i < lastidx()) return i+1;
+                                             else return 0;};
   size_t closed_postpostidx(size_t i) const {return closed_postidx(closed_postidx(i));};
   /* Members dealing with setting the 'dir' on each point in 'points'
    * This is by far hardest task.
@@ -114,44 +124,40 @@ protected:
      set the dir's manually and then readjust the control points.
    */
 protected:
-  /* set_dir_open_first_by_k() and set_dir_open_last_k()
+  /* set_dir_open_first_by_k() and set_dir_open_last_by_k()
      set the first and last points in an open path,
      and correct them by k according to 2nd and last-but-1 segments.
-   * The alternative would be to set the dir of 1st and last like this:
-       points[0].dir         = dir_1st;
-       points[lastidx()].dir = dir_last;
    */
   virtual void set_dir_open_first_by_k(F k);
-  virtual void set_dir_open_last_k (F k);
+  virtual void set_dir_open_last_by_k (F k);
+  virtual void set_dir_open_second    () {set_dir3(1);};             // TO BE REFINED
+  virtual void set_dir_open_last_but_1() {set_dir3(lastidx() - 1);}; // TO BE REFINED
   /* set_dir3(IDX) assumes a non-terminal
      (neither 1st nor last on an open path) point.
      and sets points[IDX].dir = angle_to_X(points[IDX - 1], points[IDX + 1])
    * set_dir5(IDX,K) works on all on-line points on a closed path
-     and on points not next to a terminal on-line point.
+     and on points not next to a terminal on-line point (all but four).
    * Postfixes "3" and "5" refer to how many points are taken into account.
    */
   virtual void set_dir3(size_t idx);
-  virtual void set_dir5(size_t idx, F k=0.22);
+  virtual void set_dir5(size_t idx, F k=0.3);
   //
-  virtual void set_dir_open_second    () {set_dir3(1);};             // TO BE REFINED
-  virtual void set_dir_open_last_but_1() {set_dir3(lastidx() - 1);}; // TO BE REFINED
 public:
-  void set_closed_dirs();
+  void set_closed_dirs(F k=0.3);
   // Members for setting dirs in an open spline:
-  void set_inner_dirs(F k=0.22); // only on open paths
+  void set_inner_dirs(F k=0.3); // only on open paths
   /* You may set dir's in an open path by factor k and kends,
      where k is forwarded to set_inner_dirs(), and
      kends is forwarded into set_dir_open_{first|last}(),
    * or you may set the fist and last angle */
-  void set_open_dirs_by_k(F k = 0.25, F kends = 0.25);
-  void set_open_dirs_by_angle(F dir_1st, F dir_last, F k = 0.25);
+  void set_open_dirs_by_k_kends(                        F k = 0.25, F kends = 0.25);
+  void set_open_dirs_by_angles_k(F dir_1st, F dir_last, F k = 0.25);
   /* To set the controls on every point in 'points'
-     you can rely on a fixed distance (from on-line point to its controls).
-     Too corse, hence DEPRECATED */
-  void set_controls_distance(F dist);
-  /* Admitedly, 'set_controls_distance(F dist)' is crude,
-     and the alternative is to let some member choose
-     a suitable distance (for each point).
+     you can rely on a fixed distance (from on-line point to its controls). */
+  void set_controls_by_distance_open(  F dist); // Too coarse, hence DEPRECATED
+  void set_controls_by_distance_closed(F dist); // Too coarse, hence DEPRECATED
+  /* The alternative to 'set_controls_by_distance_{open|closed}(DIST)'
+     is to let some member choose a suitable distance (for each point).
    * First, we need two functions returning the distance to adjacent points:*/
   F      dist_to_prev(size_t IDX) const;
   F      dist_to_next(size_t IDX) const;
@@ -163,10 +169,11 @@ public:
      a client may change the shape of the curve through the said point.
      (The larger k is, the larger the radius of curvature at a point.)
    */
-  virtual void set_pre_by_adjacent_distance( size_t idx, F k=0.4);
-  virtual void set_post_by_adjacent_distance(size_t idx, F k=0.4);
-  void set_by_adjacent_distance(             size_t idx, F k=0.4);
-  void set_by_adjacent_distance(                         F k=0.4);
+  virtual void set_pre_control_by_adjacent_distance( size_t idx, F k=0.4);
+  virtual void set_post_control_by_adjacent_distance(size_t idx, F k=0.4);
+  void set_control_by_adjacent_distance(             size_t idx, F k=0.4);
+  void set_controls_by_adjacent_distance_closed(                 F k=0.4);
+  void set_controls_by_adjacent_distance_open(                   F k=0.4);
   /* Members for printing to an SVG out-stream */
 protected:
   void to_svg_p(std::ostream& o, size_t idx)          const;
@@ -177,12 +184,11 @@ public:
   /* close_svg_p(OSTREAM) adds the closing Bezier curve
      (from last point to first) to the unclosed p attribute in svg::path
      yet it does not close the p attribute as such (no closing quotes added)*/
-  void close_svg_p(std::ostream& o) const;
   void to_svg_p_closed(  std::ostream& o) const;
+  void close_svg_p(std::ostream& o) const; // adds Bézier from last to first;
+                                           // use only on closed paths
   /* Show both control points for a given on-line point
-   * as svg::circle's at the end of control svg::line's
-   * Argument 'decs' sets the number of decimal digits
-   */
+   * as svg::circle's at the end of control svg::line's */
   void add_controls_to_svg_as_circles(std::ostream& o, std::size_t idx, F r=5.0,
                                       const std::string& attr = "class=\"bezier-control\"") const;
   void add_controls_to_svg_as_circles(std::ostream& o,                  F r=5.0,
@@ -197,15 +203,52 @@ public:
                                    const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
   void add_online_to_svg_as_circle(std::ostream& o,                     F r=10.0,
                                    const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
-  // constructors:
+  // constructors that may only cause the points to be loaded:
   mp_spline() {};
-  /* Unaccountably, this fails to separate compile:
-      mp_spline(std::initializer_list<pair_t> il) : points(il) {};
-     even though mp_spline::point has a constructor that takes a std::pair<F,F>
-  */
   mp_spline(std::initializer_list<point_t>  il) : points(il) {};
   template <typename CONT>
   mp_spline(const CONT& c) : points(c.begin(), c.end()) {};
+  /* Some constructors are provided which besides loading the points,
+   * also set the spline as open or clsoed, set dir's and set controls
+   * A contructor taking 4/3 float parameters constructs an open  line, whereas
+   * a contructor taking 2/1 float parameters constructs a closed line
+   */
+  mp_spline(std::initializer_list<point_t>  il, F dir1st, F dirLast, F kdir, F kctrls);
+  mp_spline(std::initializer_list<point_t>  il, F kends,             F kdir, F kctrls);
+  mp_spline(std::initializer_list<point_t>  il,                      F kdir, F kctrls);
+  // The same three as above, only points get loaded from a container of type CONT
+  template <typename CONT>
+  mp_spline(const CONT& c, F dir1st, F dirLast, F kdir, F kctrls)
+  : points(c.begin(), c.end()), is_closed(false), dirs_set(true), controls_set(true) {
+    set_open_dirs_by_angles_k(             dir1st, dirLast, kdir);
+    set_controls_by_adjacent_distance_open(kctrls);
+  };
+  template <typename CONT>
+  mp_spline(const CONT& c, F kends,              F kdir, F kctrls)
+  : points(c.begin(), c.end()), is_closed(false), dirs_set(true), controls_set(true) {
+    set_open_dirs_by_k_kends(              kdir, kends);
+    set_controls_by_adjacent_distance_open(kctrls);
+  };
+  template <typename CONT>
+  mp_spline(const CONT& c,                       F kdir, F kctrls)
+  : points(c.begin(), c.end()), is_closed(true), dirs_set(true), controls_set(true) {
+    set_closed_dirs(                         kdir  );
+    set_controls_by_adjacent_distance_closed(kctrls);
+  };
+  /*
+  template <typename CONT>
+  mp_spline(const CONT& c)
+  : points(c.begin(), c.end()) {
+
+  };
+  */
+  // constructors which load the points, set dir's and set controls (closed):
+  // NOTE: their {bodies}; are the same
+  /*
+  mp_spline(std::initializer_list<point_t>  il) : points(il) {};
+  template <typename CONT>
+  mp_spline(const CONT& c) : points(c.begin(), c.end()) {};
+  */
 }; // class mp_spline<>
 
 #endif

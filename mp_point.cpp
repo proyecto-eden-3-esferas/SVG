@@ -30,6 +30,14 @@ void mp_point<F>::change_dir(F angle) {
   set_pre( pred);
   set_post(postd);
 };
+template <typename F>
+void mp_point<F>::rotate(F delta_angle) {
+  F pred( geom_t::distance(pt,prept));
+  F postd(geom_t::distance(pt,postpt));
+  dir += delta_angle;
+  set_pre( pred);
+  set_post(postd);
+};
   /* Transformations
    * Linear transformations are based on the PostScript 6-parameter model
      (Only the parameters are rearranged:

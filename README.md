@@ -25,6 +25,17 @@
 
 ## General TODOs
 
+[ ] watch manipulators (after inclusion of `iomanip`) for number of decimals:
+    ```
+    o << std::fixed << std::setprecision(SETPRECISION);
+    ```
+    as found in:
+    - *print-pair.h*
+    - *print-mp_point.h*
+    - *svg.h*
+
+    Remove most or all occurrances. You may leave just those in *svg.h*
+
 [x] Change return type of SVG functions from OUTSTREAM& to void.
 [x] Comment out `return o;`
     through `sed --in-place 's/^  return o;/  \/\/return o; \/\/ void return type/g' *.h *.cpp`

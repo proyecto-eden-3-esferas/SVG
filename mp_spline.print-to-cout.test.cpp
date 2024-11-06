@@ -12,10 +12,28 @@
 #include "svg.h"
 #endif
 
-#include "mp_spline_open.h"
-
 #include  <fstream>
 #include <iostream>
+
+#ifdef PRINT_TO_COUT
+
+#ifndef PRINT_PAIR_H
+/* Include global functions for printing:
+   a plain std::pair, and
+*/
+#include "print-pair.h"
+#endif
+#ifndef PRINT_MP_POINT_H
+/* Include global functions for printing:
+   a plain std::pair, and
+*/
+#include "print-mp_point.h"
+#endif
+
+#endif
+
+
+#define TEST_SET_DIR5
 
 
 typedef double float_type;
@@ -29,7 +47,13 @@ using namespace std;
 
 int main() {
 
+#ifdef PRINT_TO_COUT
+  cout << "atan2( -1, -1) = " << 180 * atan2(-1,-1) / pi << "\n";
+  cout << "atan2( +1, -1) = " << 180 * atan2(+1,-1) / pi << "\n";
+  cout << "atan2( -1, +1) = " << 180 * atan2(-1,+1) / pi << "\n\n";
+#endif
 
+#ifdef TEST_SET_DIR5
   vector<point_t> vpoint1({point_t( 50,350),
                            point_t( 50,50),
                            point_t(150,50),
@@ -38,13 +62,46 @@ int main() {
                            point_t(350,350)
   });
 
-  mp_spline<     float_type> mps11( vpoint1);
+#else
+  vector<point_t> vpoint1({point_t(100,100), point_t(120.0,100.0), point_t(140.0,110.0),
+                           point_t(120.0,120.0),
+                           point_t(115.0,115.0),
+                           point_t(100.0,120.0)
+                         , point_t( 90.0,110.0)
+  });
+#endif
 
-  // mp_spline_open<float_type> mpso11(vpoint1);
+#ifdef PRINT_TO_COUT
+  cout << "Print all points (x,y,dir):\n";
+  for(auto item : vpoint1) {cout << item << std::endl;}
+#endif
+
+  mp_spline<float_type> mps11(vpoint1);
+
+#ifdef PRINT_TO_COUT
+  cout << "Print all points in \'mps11\':\n";
+  for ( auto item : mps11) { cout << item << std::endl;}
+#endif
+
+  mps11.set_open_dirs_by_k();
+#ifdef PRINT_TO_COUT
+  cout << "Print all points in \'mps11\' after setting its dirs as open:\n";
+  for ( auto item : mps11) { cout << item << std::endl;}
+#endif
+
 
   mps11.set_closed_dirs();
+#ifdef TEST_SET_DIR5
+  //mps11.set_controls_distance(33.0);
+  mps11.set_by_adjacent_distance(0.15);
+#else
+  mps11.set_by_adjacent_distance(0.4);
+#endif
 
-  mps11.set_controls_by_adjacent_distance_closed(0.15);
+#ifdef PRINT_TO_COUT
+  cout << "Print all points in \'mps11\' after setting its dirs as closed:\n";
+  for ( auto item : mps11) { cout << item << std::endl;}
+#endif
 
   mps11.y_invert(600);
 
@@ -58,7 +115,7 @@ int main() {
     close_svg_path(mpcurve);
     mps11.add_controls_to_svg_as_circles(mpcurve,2.0);
     mps11.add_controls_to_svg_as_lines(  mpcurve);
-    mps11.add_online_to_svg_as_circle(   mpcurve,5.0);
+    mps11.add_online_to_svg_as_circle( mpcurve,5.0);
   close_svg(mpcurve);
 
   // Now write the same to "mpcurve_closed_svg"
@@ -77,8 +134,8 @@ int main() {
   mpcurve << "\n<p>Now draw the same list of points as an open path:</p>\n";
   open_svg(mpcurve, 400.0, 600.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve);
-      mps11.set_open_dirs_by_k_kends();
-      mps11.set_controls_by_adjacent_distance_open(0.4);
+      mps11.set_open_dirs_by_k();
+      mps11.set_by_adjacent_distance(0.4);
       //mps11.to_svg_p(mpcurve);
       mps11.to_svg_p_open(mpcurve);
     close_svg_path(mpcurve);
@@ -91,8 +148,9 @@ int main() {
   // Now write the same to "mpcurve_open_svg"
   open_svg(mpcurve_open_svg, 400.0, 600.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve_open_svg);
-      //mps11.set_open_dirs_by_k_kends();
-      //mps11.set_by_adjacent_distance(0.4);
+      mps11.set_open_dirs_by_k();
+      mps11.set_by_adjacent_distance(0.4);
+      //mps11.to_svg_p(mpcurve_open_svg);
       mps11.to_svg_p_open(mpcurve_open_svg);
     close_svg_path(mpcurve_open_svg);
     mps11.add_controls_to_svg_as_circles(mpcurve_open_svg,2.0);

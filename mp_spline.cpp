@@ -32,7 +32,7 @@ void mp_spline<F,POINT,CONTAINER>::y_invert(F depth) {
     p.y_invert(depth);
 };
 
-/* set_dir_open_first_by_k() and set_dir_open_last_k()
+/* set_dir_open_first_by_k() and set_dir_open_last_by_k()
  * correct by k according to 2nd and last but 1 segments */
 template <typename F, typename POINT, typename CONTAINER>
 void mp_spline<F,POINT,CONTAINER>::set_dir_open_first_by_k(F k) {
@@ -45,7 +45,7 @@ void mp_spline<F,POINT,CONTAINER>::set_dir_open_first_by_k(F k) {
   points[0].dir = dir - k*(dir2nd - dir);
 };
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_dir_open_last_k(F k) {
+void mp_spline<F,POINT,CONTAINER>::set_dir_open_last_by_k(F k) {
   F dirLast = geom_t::atan2(
     points[lastidx()].pt.second - points[lastidx() - 1].pt.second,
     points[lastidx()].pt.first  - points[lastidx() - 1].pt.first);
@@ -74,9 +74,10 @@ void mp_spline<F,POINT,CONTAINER>::set_dir5(std::size_t idx, F k) {
 };
 
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_closed_dirs() {
+void mp_spline<F,POINT,CONTAINER>::set_closed_dirs(F k) {
   for(int i=0; i < points.size(); ++i)
-    set_dir5(i);
+    set_dir5(i,k);
+  dirs_set = true;
 };
 template <typename F, typename POINT, typename CONTAINER>
 void mp_spline<F,POINT,CONTAINER>::set_inner_dirs(F k) { // only on open paths
@@ -86,24 +87,38 @@ void mp_spline<F,POINT,CONTAINER>::set_inner_dirs(F k) { // only on open paths
   set_dir_open_last_but_1();
 };
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_open_dirs_by_k(F k, F kends) {
+void mp_spline<F,POINT,CONTAINER>::set_open_dirs_by_k_kends(F k, F kends) {
   set_dir_open_first_by_k(kends);
-  set_dir_open_last_k (kends);
+  set_dir_open_last_by_k (kends);
   set_inner_dirs(k);
+  dirs_set = true;
 };
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_open_dirs_by_angle(F dir_1st, F dir_last, F k) {
+void mp_spline<F,POINT,CONTAINER>::set_open_dirs_by_angles_k(F dir_1st, F dir_last, F k) {
   points[0]        .dir = dir_1st;
   points[lastidx()].dir = dir_last;
   set_inner_dirs(k);
+  dirs_set = true;
 };
 
+
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_controls_distance(F dist) {
+void mp_spline<F,POINT,CONTAINER>::set_controls_by_distance_open(F dist) {
+  points[0].set_post(dist);
+  for(int i = 1; i < lastidx() - 1; ++i) {
+    points[i].set_pre( dist);
+    points[i].set_post(dist);
+  }
+  points[lastidx()].set_pre(dist);
+  controls_set = true;
+};
+template <typename F, typename POINT, typename CONTAINER>
+void mp_spline<F,POINT,CONTAINER>::set_controls_by_distance_closed(F dist) {
   for(point_t& p : points) {
     p.set_pre( dist);
     p.set_post(dist);
   }
+  controls_set = true;
 };
 
 // Return distance from points(IDX) to previous and next points:
@@ -123,25 +138,35 @@ F mp_spline<F,POINT,CONTAINER>::dist_to_next(std::size_t idx) const {
 }
 
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_pre_by_adjacent_distance(std::size_t idx, F k) {
+void mp_spline<F,POINT,CONTAINER>::set_pre_control_by_adjacent_distance(std::size_t idx, F k) {
   points[idx].set_pre(k * dist_to_prev(idx));
 };
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_post_by_adjacent_distance(std::size_t idx, F k) {
+void mp_spline<F,POINT,CONTAINER>::set_post_control_by_adjacent_distance(std::size_t idx, F k) {
   points[idx].set_post(k * dist_to_next(idx));
 };
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_by_adjacent_distance(std::size_t idx, F k) {
-  set_pre_by_adjacent_distance( idx,k);
-  set_post_by_adjacent_distance(idx,k);
+void mp_spline<F,POINT,CONTAINER>::set_control_by_adjacent_distance(std::size_t idx, F k) {
+  set_pre_control_by_adjacent_distance( idx,k);
+  set_post_control_by_adjacent_distance(idx,k);
 };
 template <typename F, typename POINT, typename CONTAINER>
-void mp_spline<F,POINT,CONTAINER>::set_by_adjacent_distance(F k) {
+void mp_spline<F,POINT,CONTAINER>::set_controls_by_adjacent_distance_closed(F k) {
   for(int i=0; i < points.size(); ++i) {
-    set_pre_by_adjacent_distance( i,k);
-    set_post_by_adjacent_distance(i,k);
+    set_pre_control_by_adjacent_distance( i,k);
+    set_post_control_by_adjacent_distance(i,k);
   }
+  controls_set = true;
 };
+template <typename F, typename POINT, typename CONTAINER>
+void mp_spline<F,POINT,CONTAINER>::set_controls_by_adjacent_distance_open(F k) {
+  set_post_control_by_adjacent_distance(0,k);
+  set_pre_control_by_adjacent_distance(lastidx(),k);
+  for(int i=1; i < (points.size() - 1); ++i)
+    set_control_by_adjacent_distance(i,k);
+  controls_set = true;
+};
+
 
 template <typename F, typename POINT, typename CONTAINER>
 void mp_spline<F,POINT,CONTAINER>::to_svg_p(std::ostream& o, std::size_t idx) const {
@@ -229,5 +254,26 @@ void mp_spline<F,POINT,CONTAINER>::add_online_to_svg_as_circle(std::ostream& o,
   for(int i = 0; i < points.size(); ++i)
     add_online_to_svg_as_circle(o,i,r,attr);
 }
+
+// Compilable constructors:
+
+template <typename F, typename POINT, typename CONTAINER>
+mp_spline<F,POINT,CONTAINER>::mp_spline(std::initializer_list<POINT>  il, F dir1st, F dirLast, F kdir, F kctrls)
+  : points(il), is_closed(false), dirs_set(true), controls_set(true) {
+    set_open_dirs_by_angles_k(             dir1st, dirLast, kdir);
+    set_controls_by_adjacent_distance_open(kctrls);
+  };
+template <typename F, typename POINT, typename CONTAINER>
+mp_spline<F,POINT,CONTAINER>::mp_spline(std::initializer_list<POINT>  il, F kends,              F kdir, F kctrls)
+  : points(il), is_closed(false), dirs_set(true), controls_set(true) {
+    set_open_dirs_by_k_kends(              kdir, kends);
+    set_controls_by_adjacent_distance_open(kctrls);
+  };
+template <typename F, typename POINT, typename CONTAINER>
+mp_spline<F,POINT,CONTAINER>::mp_spline(std::initializer_list<POINT>  il,                       F kdir, F kctrls)
+  : points(il), is_closed(true), dirs_set(true), controls_set(true) {
+    set_closed_dirs(                         kdir  );
+    set_controls_by_adjacent_distance_closed(kctrls);
+  };
 
 #endif
