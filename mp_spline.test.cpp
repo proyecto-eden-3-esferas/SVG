@@ -12,8 +12,6 @@
 #include "svg.h"
 #endif
 
-#include "mp_spline_open.h"
-
 #include  <fstream>
 #include <iostream>
 
@@ -39,8 +37,6 @@ int main() {
   });
 
   mp_spline<     float_type> mps11( vpoint1);
-
-  // mp_spline_open<float_type> mpso11(vpoint1);
 
   mps11.set_closed_dirs();
 
@@ -75,6 +71,8 @@ int main() {
   mpcurve_closed_svg.close();
 
   mpcurve << "\n<p>Now draw the same list of points as an open path:</p>\n";
+  mpcurve << "\n<p>NOTE: The top-control points are out of alignment; they are meaningless and without a function\
+ as they lie outside the line.</p>\n";
   open_svg(mpcurve, 400.0, 600.0, "black", "gray", 0.5);
     open_svg_path_p(mpcurve);
       mps11.set_open_dirs_by_k_kends();

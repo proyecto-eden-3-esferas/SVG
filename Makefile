@@ -53,8 +53,21 @@ mp_spline.print-to-cout.test:   mp_spline.test.cpp   mp_spline.h mp_spline.cpp s
 mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
 	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
 
+MP_POINT_COMMON_DEPS = mp_point.h svg.h geometry_2D.h pair-as-2D-point.h
 # mp_spline<> separate compilation
-mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h svg.h geometry_2D.h pair-as-2D-point.h  mp_point.h# schematics.angle.h
+mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h $(MP_POINT_COMMON_DEPS)
+	date
+	c++ -c -std=c++23 $< -o $@
+	date
+mp_point.o: mp_point.ins.cpp mp_point.cpp $(MP_POINT_COMMON_DEPS)
+	date
+	c++ -c -std=c++23 $< -o $@
+	date
+mp_spline_open.o: mp_spline_open.ins.cpp mp_spline_open.h mp_spline_open.cpp  $(MP_POINT_COMMON_DEPS)
+	date
+	c++ -c -std=c++23 $< -o $@
+	date
+mp_spline_closed.o: mp_spline_closed.ins.cpp mp_spline_closed.h mp_spline_closed.cpp  $(MP_POINT_COMMON_DEPS)
 	date
 	c++ -c -std=c++23 $< -o $@
 	date
@@ -67,13 +80,14 @@ mp_spline.%.test.o: mp_spline.%.test.cpp mp_spline.h svg.h print-pair.h
 	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
 	date
 
+MP_COMMON_OBJ = mp_spline.o mp_point.o
 # "mp_spline.sep.test.cpp" should be generated from "mp_spline.test.cpp" + macro SEPARATE_COMPILATION
-mp_spline.sep.test:                    mp_spline.test.o mp_spline.o
-	c++ -std=c++23                 mp_spline.test.o   mp_spline.o -o $@
-mp_spline.%.sep.test:                  mp_spline.%.test.o mp_spline.o
-	c++ -std=c++23                 mp_spline.%.test.o mp_spline.o -o $@
-mp_spline.%.sep.print-to-cout.test:    mp_spline.%.print-to-cout.test.o mp_spline.o
-	c++ -std=c++23 -DPRINT_TO_COUT mp_spline.%.print-to-cout.test.o mp_spline.o -o $@
+mp_spline.sep.test:                    mp_spline.test.o                 $(MP_COMMON_OBJ)
+	c++ -std=c++23                 mp_spline.test.o                 $(MP_COMMON_OBJ) -o $@
+mp_spline.%.sep.test:                  mp_spline.%.test.o               $(MP_COMMON_OBJ)
+	c++ -std=c++23                 mp_spline.%.test.o               $(MP_COMMON_OBJ) -o $@
+mp_spline.%.sep.print-to-cout.test:    mp_spline.%.print-to-cout.test.o $(MP_COMMON_OBJ)
+	c++ -std=c++23 -DPRINT_TO_COUT mp_spline.%.print-to-cout.test.o $(MP_COMMON_OBJ) -o $@
 
 
 %.test: %.test.cpp %.h
@@ -85,6 +99,11 @@ mp_spline.%.sep.print-to-cout.test:    mp_spline.%.print-to-cout.test.o mp_splin
 	date
 	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
 	date
+
+
+RESOLVE = xmllint --xinclude
+svg.my-images.html: svg.my-images.inc.html *.svg
+	$(RESOLVE) --output $@   $<
 
 
 EXECUTABLES = schematics.rectangle schematics.line schematics.block schematics.round schematics.ic schematics.svg.arc schematics.round-and-arrow segment schematics.label schematics.labeled_block schematics.sq_polyline-and-block schematics.twoport schematics.transistor schematics.capacitor schematics.sq_polyline

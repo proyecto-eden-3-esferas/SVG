@@ -70,6 +70,7 @@
 #include "pair-as-2D-point.h" // transform(pair<F,F>, a, b, c, d, s, t)
 #endif
 
+#include <exception>
 #include <initializer_list>
 #include <iostream>
 #include <utility>
@@ -90,21 +91,29 @@ public:
   typedef CONTAINER points_t;
   typedef geometry_2D<F> geom_t;
   typedef std::size_t size_t;
+  typedef mp_spline<F,POINT,CONTAINER> mp_spline_t;
   points_t points;
+  // The state interface: bools, exceptions and check_state() const:
   bool    is_closed{false};
   bool     dirs_set{false};
   bool controls_set{false};
-  //
-  points_t::iterator begin() {dirs_set=false; controls_set=false; return points.begin();};
-  points_t::iterator   end() {dirs_set=false; controls_set=false; return points.end();};
-  points_t::const_iterator cbegin() const {return points.cbegin();};
-  points_t::const_iterator   cend() const {return points.  cend();};
+  class dirs_not_set     : public std::exception {};
+  class controls_not_set : public std::exception {};
+  virtual void check_state() const;
+  // Iterators: non-const begin() resets bools 'dirs_set' and 'controls_set'
+  points_t::iterator begin();
+  points_t::iterator   end();
+  points_t::const_iterator cbegin() const;
+  points_t::const_iterator   cend() const;
+  // Other accessors for the container of points:
         point_t& operator[] (size_t idx)      ;
   const point_t& operator[] (size_t idx) const;
+  void  clear();
+  mp_spline_t& operator=(const mp_spline_t& lft);
   size_t size() const {return points.size() ;};
-  bool  empty() const {return points.empty();}
+  bool  empty() const {return points.empty();};
   // change y-coordinate in all points in 'points': y = depth - y:
-  void y_invert(F depth);
+  void y_invert(F depth); // turn upside down: y = depth - y
 protected:
   /* Some members taking and returning an index.
    * lastidx(IDX) returns the last valid index into points, while
@@ -179,22 +188,36 @@ protected:
   void to_svg_p(std::ostream& o, size_t idx)          const;
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
   void to_svg_p(std::ostream& o, size_t beg, size_t end) const;
+  void close_svg_p(std::ostream& o) const; // adds Bézier from last to first;
+                                           // use only on closed paths
 public:
   void to_svg_p_open(    std::ostream& o) const {to_svg_p(o,0, lastidx());};
   /* close_svg_p(OSTREAM) adds the closing Bezier curve
      (from last point to first) to the unclosed p attribute in svg::path
      yet it does not close the p attribute as such (no closing quotes added)*/
   void to_svg_p_closed(  std::ostream& o) const;
-  void close_svg_p(std::ostream& o) const; // adds Bézier from last to first;
-                                           // use only on closed paths
-  /* Show both control points for a given on-line point
-   * as svg::circle's at the end of control svg::line's */
-  void add_controls_to_svg_as_circles(std::ostream& o, std::size_t idx, F r=5.0,
+  /*
+   * Show control points for a given on-line point
+   * as svg::circle's at the end of control svg::line's
+   */
+protected:
+  void add_pre_control_to_svg_as_circle(std::ostream& o, std::size_t idx, F r=5.0,
+                                      const std::string& attr = "class=\"bezier-control\"") const;
+  void add_post_control_to_svg_as_circle(std::ostream& o, std::size_t idx, F r=5.0,
+                                      const std::string& attr = "class=\"bezier-control\"") const;
+public:
+  void add_control_to_svg_as_circle(  std::ostream& o, std::size_t idx, F r=5.0,
                                       const std::string& attr = "class=\"bezier-control\"") const;
   void add_controls_to_svg_as_circles(std::ostream& o,                  F r=5.0,
                                       const std::string& attr = "class=\"bezier-control\"") const;
   //
-  void add_controls_to_svg_as_lines(std::ostream& o,   std::size_t idx,
+protected:
+  void add_pre_control_to_svg_as_line(std::ostream& o,   std::size_t idx,
+                                    const std::string& attr = "class=\"bezier-control\"") const;
+  void add_post_control_to_svg_as_line(std::ostream& o,   std::size_t idx,
+                                    const std::string& attr = "class=\"bezier-control\"") const;
+public:
+  void add_control_to_svg_as_line(  std::ostream& o,   std::size_t idx,
                                     const std::string& attr = "class=\"bezier-control\"") const;
   void add_controls_to_svg_as_lines(std::ostream& o,
                                     const std::string& attr = "class=\"bezier-control\"") const;
@@ -203,6 +226,11 @@ public:
                                    const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
   void add_online_to_svg_as_circle(std::ostream& o,                     F r=10.0,
                                    const std::string& attr = "s=\"\" class=\"on-line-point\" fill=\"black\"") const;
+  /* Make a spline_loaded with points either open or closed
+   * by setting its dir's, then its controls */
+  void make_open(F dir1st, F dirLast, F kdir, F kctrls);
+  void make_open(F kends,             F kdir, F kctrls);
+  void make_closed(                   F kdir, F kctrls);
   // constructors that may only cause the points to be loaded:
   mp_spline() {};
   mp_spline(std::initializer_list<point_t>  il) : points(il) {};

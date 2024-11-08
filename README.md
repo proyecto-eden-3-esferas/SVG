@@ -25,6 +25,10 @@
 
 ## General TODOs
 
+mp_spline<> has become a large class for both open and closed lines.
+[ ] Some member definitions need moving into the implementation file (*mp_spline.cpp*)
+[ ] Implement more control by its three boolean variables: `is_closed`, `dirs_set`, and `controls_set`
+
 [ ] watch manipulators (after inclusion of `iomanip`) for number of decimals:
     ```
     o << std::fixed << std::setprecision(SETPRECISION);

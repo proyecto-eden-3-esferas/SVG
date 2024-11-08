@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My SVG Images</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" type="text/css" href="stylesheet.en.css"/>
+    <!--
+    <meta name="keywords" content="KW1, KW2, KW3"/>
+
+    <meta name="author" content="AUTHOR"/>
+    <meta name="description" content="A_DESCRIPTION"/>
+    <meta name="FIELD_NAME" content="FIELD_VALUE"/>
+
+    <link rel="alternate" hreflang="x-default" href="http://www.example.com/"/>
+    <link rel="alternate" hreflang="es" href="http://es.example.com/"/>
+    <link rel="alternate" hreflang="de" href="http://de.example.com/"/>
+
+    <link rel="author" href="https://plus.google.com/ExampleProfile"/>
+    <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
+    -->
+  </head>
+  <body lang="en" class="computing">
+    <nav>
+      <div>
+        <p><a rel="prev" href="svg.html">SVG: XML for Drawing</a></p>
+      </div>
+    </nav>
+
+    <main>
+
+      <h1>My SVG Images</h1>
+
+        <p>This is how a closed line made from cubic Bézier curves looks:</p>
+        <xi:include
+   href="mpcurve-closed.svg"
+   xmlns:xi="http://www.w3.org/2001/XInclude">
+          <xi:fallback><blockquote>(Sorry, no image found.)</blockquote></xi:fallback>
+        </xi:include>
+        <p>The curve has been made to run through six points, and the angle at those points as well as the <dfn>tension</dfn> or taughtness (as in a rope) is shown through tangent lines between control points.</p>
+
+        <p>And this is an open line made from cubic Bézier curves through the same six on-line points:</p>
+        <xi:include
+   href="mpcurve-open.svg"
+   xmlns:xi="http://www.w3.org/2001/XInclude">
+          <xi:fallback><blockquote>(Sorry, no image found.)</blockquote></xi:fallback>
+        </xi:include>
+
+    </main>
+
+  </body>
+
+</html>
