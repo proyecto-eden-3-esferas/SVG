@@ -42,20 +42,27 @@ pair-as-2D-point.test: pair-as-2D-point.test.cpp pair-as-2D-point.h print-pair.h
 	c++ -std=c++23 $< -o $@
 
 
+%.test: %.test.cpp %.h
+	g++ -std=c++23 $<  -o $@
+
+
+MP_POINT_COMMON_DEPS = mp_point.h svg.h geometry_2D.h pair-as-2D-point.h schematics.angle.h
+MP_SPLINE_COMMON_DEPS = $(MP_POINT_COMMON_DEPS) mp_spline.h mp_spline.cpp
+
+
 # mp_spline<> headers-only
-mp_spline.test:   mp_spline.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
+mp_spline.test:   mp_spline.test.cpp mp_$(MP_SPLINE_COMMON_DEPS)
 	c++ -std=c++23 $<  -o $@
-mp_spline.%.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
+mp_spline.%.test: mp_spline.%.test.cpp $(MP_SPLINE_COMMON_DEPS)
 	c++ -std=c++23 $<  -o $@
 # Infix "print-to-cout" causes compilation (of file containing main()) under switch PRINT_TO_COUT:
-mp_spline.print-to-cout.test:   mp_spline.test.cpp   mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
+mp_spline.print-to-cout.test:   mp_spline.test.cpp $(MP_SPLINE_COMMON_DEPS)
 	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
-mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp mp_spline.h mp_spline.cpp schematics.angle.h svg.h mp_point.h
+mp_spline.%.print-to-cout.test: mp_spline.%.test.cpp $(MP_SPLINE_COMMON_DEPS)
 	c++ -std=c++23 -DPRINT_TO_COUT $<  -o $@
 
-MP_POINT_COMMON_DEPS = mp_point.h svg.h geometry_2D.h pair-as-2D-point.h
 # mp_spline<> separate compilation
-mp_spline.o: mp_spline.ins.cpp mp_spline.cpp mp_spline.h $(MP_POINT_COMMON_DEPS)
+mp_spline.o: mp_spline.ins.cpp $(MP_SPLINE_COMMON_DEPS)
 	date
 	c++ -c -std=c++23 $< -o $@
 	date
@@ -63,22 +70,15 @@ mp_point.o: mp_point.ins.cpp mp_point.cpp $(MP_POINT_COMMON_DEPS)
 	date
 	c++ -c -std=c++23 $< -o $@
 	date
-mp_spline_open.o: mp_spline_open.ins.cpp mp_spline_open.h mp_spline_open.cpp  $(MP_POINT_COMMON_DEPS)
-	date
-	c++ -c -std=c++23 $< -o $@
-	date
-mp_spline_closed.o: mp_spline_closed.ins.cpp mp_spline_closed.h mp_spline_closed.cpp  $(MP_POINT_COMMON_DEPS)
-	date
-	c++ -c -std=c++23 $< -o $@
-	date
-mp_spline.test.o:   mp_spline.test.cpp   mp_spline.h svg.h print-pair.h
+mp_spline.test.o:   mp_spline.test.cpp $(MP_SPLINE_COMMON_DEPS)
 	date
 	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
 	date
-mp_spline.%.test.o: mp_spline.%.test.cpp mp_spline.h svg.h print-pair.h
+mp_spline.%.test.o: mp_spline.%.test.cpp $(MP_SPLINE_COMMON_DEPS)
 	date
 	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
 	date
+
 
 MP_COMMON_OBJ = mp_spline.o mp_point.o
 # "mp_spline.sep.test.cpp" should be generated from "mp_spline.test.cpp" + macro SEPARATE_COMPILATION
@@ -86,15 +86,14 @@ mp_spline.sep.test:                    mp_spline.test.o                 $(MP_COM
 	c++ -std=c++23                 mp_spline.test.o                 $(MP_COMMON_OBJ) -o $@
 mp_spline.%.sep.test:                  mp_spline.%.test.o               $(MP_COMMON_OBJ)
 	c++ -std=c++23                 mp_spline.%.test.o               $(MP_COMMON_OBJ) -o $@
+
+
 mp_spline.%.sep.print-to-cout.test:    mp_spline.%.print-to-cout.test.o $(MP_COMMON_OBJ)
 	c++ -std=c++23 -DPRINT_TO_COUT mp_spline.%.print-to-cout.test.o $(MP_COMMON_OBJ) -o $@
-
-
-%.test: %.test.cpp %.h
-	g++ -std=c++23 $<  -o $@
-
 # Pass macro DSEPARATE_COMPILATION when compiling object files:
 %.print-to-cout.test.o: %.test.cpp
+
+
 %.o: %.cpp
 	date
 	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<

@@ -185,7 +185,7 @@ public:
   void set_controls_by_adjacent_distance_open(                   F k=0.4);
   /* Members for printing to an SVG out-stream */
 protected:
-  void to_svg_p(std::ostream& o, size_t idx)          const;
+  void to_svg_p(std::ostream& o, size_t idx)             const;
   // Add curves from points[beg] to points[end] inside svg::path::p attribute:
   void to_svg_p(std::ostream& o, size_t beg, size_t end) const;
   void close_svg_p(std::ostream& o) const; // adds Bézier from last to first;
@@ -196,6 +196,7 @@ public:
      (from last point to first) to the unclosed p attribute in svg::path
      yet it does not close the p attribute as such (no closing quotes added)*/
   void to_svg_p_closed(  std::ostream& o) const;
+  void to_svg_p(std::ostream& o)          const;
   /*
    * Show control points for a given on-line point
    * as svg::circle's at the end of control svg::line's

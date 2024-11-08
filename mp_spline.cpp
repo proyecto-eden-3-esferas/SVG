@@ -233,6 +233,14 @@ void mp_spline<F,POINT,CONTAINER>::to_svg_p(std::ostream& o, std::size_t idx) co
   o << ", " << points[idx+1].prept.first << ' ' << points[idx+1].prept.second;
   o << ", " << points[idx+1].pt.first << ' ' << points[idx+1].pt.second;
 };
+template <typename F, typename POINT, typename CONTAINER>
+void mp_spline<F,POINT,CONTAINER>::to_svg_p(std::ostream& o) const {
+  if(is_closed)
+    to_svg_p_closed(o);
+  else
+    to_svg_p_open(o);
+};
+
 // Add curves from points[beg] to points[end] inside svg::path::p attribute:
 template <typename F, typename POINT, typename CONTAINER>
 void mp_spline<F,POINT,CONTAINER>::to_svg_p(std::ostream& o, std::size_t beg, std::size_t end) const {
