@@ -41,159 +41,135 @@ const float_type pi(std::numbers::pi_v<float_type>);
 
 vector_of_lines_t   open_lines({
   mp_spline_t ({
-   point_t( 50,350),
-   point_t( 50,50),
-   point_t(150,50),
-   point_t(250,50),
-   point_t(350,50),
-   point_t(350,350)
-  })
+   point_t( 223, 110), // bottom of top-left branching
+   point_t( 208,  93),
+   point_t( 181, 72), // fork
+   point_t( 162, 65), // fork
+   point_t( 141,  67),
+   point_t( 113,  34),
+   point_t( 114,  25)
+  }),
+  mp_spline_t ({
+   point_t( 162, 65),
+   point_t( 160, 51),
+   point_t( 144, 27),
+   point_t( 139, 10)
+  }),
+  mp_spline_t ({
+   point_t(181, 72),
+   point_t(183, 42),
+   point_t(200, 33),
+   point_t(208, 22),
+   point_t(223, 22)
+  }),
+
+  mp_spline_t ({
+   point_t( 223, 110), // bottom of top-right branching
+   point_t( 245,  96),
+   point_t( 280,  83),
+   point_t( 284,  58), // fork
+   point_t( 297,  42), // fork
+   point_t( 334,  34),
+   point_t( 351,  31),
+   point_t( 364,  18) }),
+ mp_spline_t ({
+   point_t( 284,  58), // fork
+   point_t( 269,  31),
+   point_t( 251,  16) }),
+ mp_spline_t ({
+   point_t( 297,  42),
+   point_t( 327,  44),
+   point_t( 362,  63) }),
+
+ mp_spline_t ({ // dendrite leftwards
+   point_t( 206, 376),
+   point_t( 180, 378),
+   point_t( 166, 392),
+   point_t( 158, 426),
+   point_t( 150, 444), // fork leftwards
+   point_t( 124, 463), // fork downwards
+   point_t(  89, 468),
+   point_t(  39, 493)
+ }),
+ mp_spline_t ({ // fork leftwards
+   point_t( 150, 444),
+   point_t( 130, 438),
+   point_t(  84, 436),
+   point_t(  75, 410)
+ }),
+ mp_spline_t ({ // fork downwards
+   point_t( 124, 463),
+   point_t( 112, 500),
+   point_t( 107, 539)
+ }),
+ mp_spline_t({
+   point_t( 262, 376), // dendrite down- rightwards
+   point_t( 270, 396),
+   point_t( 274, 418),
+   point_t( 282, 435), // fork rightwards
+   point_t( 313, 460),
+   point_t( 337, 482), // fork downwards
+   point_t( 363, 516),
+   point_t( 385, 530),
+   point_t( 401, 575)
+ }),
+ mp_spline_t({
+   point_t( 282, 435),
+   point_t( 324, 415),
+   point_t( 358, 417), // fork rightwards and up
+   point_t( 385, 428),
+   point_t( 417, 444)
+ }),
+ mp_spline_t({
+   point_t( 358, 417), // subdendrite rightwards and up
+   point_t( 382, 401),
+   point_t( 403, 395)
+ }),
+ mp_spline_t({
+   point_t( 337, 482), // subdendrite downwards
+   point_t( 330, 509),
+   point_t( 333, 534),
+   point_t( 339, 555),
+   point_t( 331, 580),
+   point_t( 305, 598)
+ })
 });
 
 vector_of_lines_t  closed_lines({
-  mp_spline_t ({ // body and dendrites
-   point_t( 227, 308), // top of body, root of upward dendrite
-   point_t( 221, 117),
-   point_t( 208,  93),
-   point_t( 141,  67),
-   point_t( 113,  34),
-   point_t( 114,  25), // tip of thick dendrite
-   point_t( 132,  55),
-   point_t( 140,  59),
-   point_t( 161, 63), // at root of thin upward branching
-   point_t( 165, 65),
-   point_t( 178, 67),
-   point_t( 182, 72),
-   point_t( 181, 71),
-   point_t( 183, 38),
-   point_t( 197, 31),
-   point_t( 208, 22),
-   point_t( 222, 20),
-   point_t( 223, 20),
-   point_t( 211, 24),
-   point_t( 202, 32),
-   point_t( 197, 36),
-   point_t( 186, 42),
-   point_t( 185, 71),
-   point_t( 188, 71),
-   point_t( 205, 83),
-   point_t( 219, 92),
-   point_t( 225, 108),
-   /* right branching of upward dendrite
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   */
-   point_t( 230, 117),
-   point_t( 228, 151),
-   point_t( 230, 208),
-   point_t( 233, 259),
+  mp_spline_t ({
    point_t( 235, 306),
    point_t( 248, 322),
    point_t( 262, 339),
    point_t( 268, 350),
    point_t( 268, 359),
-   point_t( 262, 376),
-   /* dendrite down- leftwards
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   */
+   point_t( 262, 376), // dendrite down- rightwards
    point_t( 254, 378),
    point_t( 232, 381),
    // axon
    point_t( 227, 381),
-   point_t( 206, 376),
-   /* dendrite down- leftwards
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   */
+   point_t( 206, 376), // fork leftwards
    point_t( 200, 368),
    point_t( 210, 352),
    point_t( 216, 339),
    point_t( 223, 319)
-   /*
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0),
-   point_t( 0, 0)
-   *7
   }),
-  mp_spline_t ( {
-   /*
-   point_t( 40,340),
-   point_t( 40,40),
-   point_t(140,40),
-   point_t(240,40),
-   point_t(340,40),
-   point_t(340,340)
-   */
-  } )
+  mp_spline_t ({
+   point_t( 231, 307), // stem of upward dendrite tapers 5u to 3u wide
+   point_t( 222, 219),
+   point_t( 219, 110), // top
+   point_t( 223, 110), // top
+   point_t( 226, 219),
+   point_t( 236, 307)
+  }),
+  mp_spline_t({ // nucleus
+    point_t(239,336),
+    //point_t(240,338), // commented out to prevent an inlet/dent
+    point_t(245,341),
+    point_t(247,351),
+    point_t(241,363),
+    point_t(233,356),
+    point_t(229,342)
+  })
 });
 
 
@@ -215,7 +191,7 @@ int main() {
   open_svg(mpcurve, 450.0, 700.0, "black", "gray", 0.5);
     for(auto & l : open_lines) {
       my_line = l;
-      open_svg_open_path_p(mpcurve);
+      open_svg_open_path_p(mpcurve, "stroke-width=\"4\" stroke=\"gray\"", 1);
       //my_line.to_svg_p(mpcurve);
         my_line.make_open(0.2, 0.2, 0.2);
         my_line.to_svg_p_open(mpcurve);
@@ -231,7 +207,7 @@ int main() {
 
     for(auto & l : closed_lines) {
       my_line = l;
-      open_svg_closed_path_p(mpcurve);
+      open_svg_closed_path_p(mpcurve, "stroke-width=\"1\"", 1);
       //my_line.to_svg_p(mpcurve);
         my_line.make_closed(0.2, 0.2);
         my_line.to_svg_p_closed(mpcurve);

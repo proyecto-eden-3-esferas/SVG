@@ -65,14 +65,19 @@ void open_svg_open_path_p(OUT& o, const std::string & attrs="", int decimals = 2
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << std::fixed << std::setprecision(decimals);
   if(attrs.length() > 0)
-    o << "<path fill=\"none\" " << attrs << " d=\"";
+    o << "<path class=\"open\" fill=\"none\" " << attrs << " d=\"";
   else
-    o << "<path fill=\"none\" d=\"";
+    o << "<path class=\"open\" fill=\"none\" d=\"";
   //return o; // void return type
 };
 template<typename F = double, typename OUT = std::ostream>
 void open_svg_closed_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
-  open_svg_path_p(o,attrs,decimals);
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+  o << std::fixed << std::setprecision(decimals);
+  if(attrs.length() > 0)
+    o << "<path class=\"closed\" " << attrs << " d=\"";
+  else
+    o << "<path class=\"closed\" d=\"";
   //return o; // void return type
 };
 //

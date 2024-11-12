@@ -2,6 +2,7 @@
  * This is a template for making an SVG file ("%.svg").
    (Such an SVG file contains one root svg element
    made up of lines as svg:path's
+ * Change the name of the file from "template.svg" to something meaningful
  * The container of on-line points (the points the lines go through)
    may be found in another source file (*.h) or in this file.
  * When drawing complex lines, several strategies are recommended:

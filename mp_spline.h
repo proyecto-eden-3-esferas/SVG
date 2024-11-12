@@ -233,6 +233,9 @@ public:
   void make_open(F dir1st, F dirLast, F kdir, F kctrls);
   void make_open(F kends,             F kdir, F kctrls);
   void make_closed(                   F kdir, F kctrls);
+  /*
+   * Constructors
+   */
   // constructors that may only cause the points to be loaded:
   mp_spline() {};
   mp_spline(std::initializer_list<point_t>  il) : points(il) {};
