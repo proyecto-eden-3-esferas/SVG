@@ -48,7 +48,7 @@ int main() {
   mpcurve << "<!DOCTYPE html>\n<html>\n<body>\n";
   mpcurve << "\n<p>Draw list of points \'mps11\' as a closed path:</p>\n";
   open_svg(mpcurve, 400.0, 600.0, "black", "gray", 0.5);
-    open_svg_path_p(mpcurve);
+    open_svg_closed_path_p(mpcurve);
       //mps11.to_svg_p(mpcurve);
       mps11.to_svg_p_closed(mpcurve);
     close_svg_path(mpcurve);
@@ -60,7 +60,7 @@ int main() {
   // Now write the same to "mpcurve_closed_svg"
   ofstream mpcurve_closed_svg("mpcurve-closed.svg");
   open_svg(mpcurve_closed_svg, 400.0, 600.0, "black", "gray", 0.5);
-    open_svg_path_p(mpcurve_closed_svg);
+    open_svg_closed_path_p(mpcurve_closed_svg);
       //mps11.to_svg_p(mpcurve_closed_svg);
       mps11.to_svg_p_closed(mpcurve_closed_svg);
     close_svg_path(mpcurve_closed_svg);
@@ -74,7 +74,7 @@ int main() {
   mpcurve << "\n<p>NOTE: The top-control points are out of alignment; they are meaningless and without a function\
  as they lie outside the line.</p>\n";
   open_svg(mpcurve, 400.0, 600.0, "black", "gray", 0.5);
-    open_svg_path_p(mpcurve);
+    open_svg_open_path_p(mpcurve);
       mps11.set_open_dirs_by_k_kends();
       mps11.set_controls_by_adjacent_distance_open(0.4);
       //mps11.to_svg_p(mpcurve);
@@ -88,7 +88,7 @@ int main() {
   ofstream mpcurve_open_svg("mpcurve-open.svg");
   // Now write the same to "mpcurve_open_svg"
   open_svg(mpcurve_open_svg, 400.0, 600.0, "black", "gray", 0.5);
-    open_svg_path_p(mpcurve_open_svg);
+    open_svg_open_path_p(mpcurve_open_svg);
       //mps11.set_open_dirs_by_k_kends();
       //mps11.set_by_adjacent_distance(0.4);
       mps11.to_svg_p_open(mpcurve_open_svg);

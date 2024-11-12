@@ -80,6 +80,7 @@ mp_spline.%.test.o: mp_spline.%.test.cpp $(MP_SPLINE_COMMON_DEPS)
 	date
 
 
+
 MP_COMMON_OBJ = mp_spline.o mp_point.o
 # "mp_spline.sep.test.cpp" should be generated from "mp_spline.test.cpp" + macro SEPARATE_COMPILATION
 mp_spline.sep.test:                    mp_spline.test.o                 $(MP_COMMON_OBJ)
@@ -87,6 +88,27 @@ mp_spline.sep.test:                    mp_spline.test.o                 $(MP_COM
 mp_spline.%.sep.test:                  mp_spline.%.test.o               $(MP_COMMON_OBJ)
 	c++ -std=c++23                 mp_spline.%.test.o               $(MP_COMMON_OBJ) -o $@
 
+# Executables that make an '%.svg file' (on execution) are built from 'mp_spline.make-%-svg.cpp'
+mp_spline.make-%-svg.o: mp_spline.make-%-svg.cpp $(MP_SPLINE_COMMON_DEPS)
+	date
+	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $< #-DSVG_FILE="%.svg"
+	date
+mp_spline.make-%-svg:   mp_spline.make-%-svg.o   $(MP_COMMON_OBJ)
+	date
+	c++ -std=c++23  $<   $(MP_COMMON_OBJ) -o $@
+#	rm              $<
+	date
+
+
+mp_spline.make-complex-svg.o: mp_spline.make-complex-svg.cpp test-lines.two-vectors-of-lines.h $(MP_SPLINE_COMMON_DEPS)
+	date
+	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
+	date
+mp_spline.make-complex-svg: mp_spline.make-complex-svg.o $(MP_COMMON_OBJ)
+	date
+	c++ -std=c++23      mp_spline.make-complex-svg.o $(MP_COMMON_OBJ) -o $@
+#	rm                  mp_spline.make-complex-svg.o
+	date
 
 mp_spline.%.sep.print-to-cout.test:    mp_spline.%.print-to-cout.test.o $(MP_COMMON_OBJ)
 	c++ -std=c++23 -DPRINT_TO_COUT mp_spline.%.print-to-cout.test.o $(MP_COMMON_OBJ) -o $@
@@ -114,11 +136,13 @@ EXECUTABLES_TEST = mp_spline.test mp_spline.sep.test pair-as-2D-point.test
 clean_executables:
 	$(RM) a.out *.test
 	$(RM) $(EXECUTABLES)
+	$(RM) mp_spline.make-*-svg
+	$(RM) mp_spline.make-*-svg.o
+
 clean_all_but_html:
 	$(RM) a.out *.test *.o
 	$(RM) $(EXECUTABLES)
 
 clean_all:
-	#$(RM) $(HTMLS)
-	$(RM) a.out *.test *.o
-	$(RM) $(EXECUTABLES)
+	make clean_executables
+	$(RM) *.o

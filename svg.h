@@ -40,6 +40,16 @@ void open_svg(OUT& o, F w = 200.0, F h = 200.0,
   //return o; // void return type
 }
 
+/*
+ * open_svg_path_p(OUT_STREAM,ATTR,DECIMALS) outputs: <path ATTR d="
+   whereas
+   open_svg_open_path_p( OUT_STREAM,ATTR,DECIMALS) also sets attribute fill="none"
+ * Finally,
+   open_svg_closed_path_p(OUT,ATTRS,DECS) == open_svg_path_p(OUT,ATTRS,DECS)
+ * REMEMBER: These three global functions print: <path [...] d="
+   and expect another global function (close_svg_path(OSTREAM))
+   to close the self-standing element like this: "/>
+ */
 template<typename F = double, typename OUT = std::ostream>
 void open_svg_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
@@ -50,6 +60,22 @@ void open_svg_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
     o << "<path d=\"";
   //return o; // void return type
 };
+template<typename F = double, typename OUT = std::ostream>
+void open_svg_open_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
+  o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
+  o << std::fixed << std::setprecision(decimals);
+  if(attrs.length() > 0)
+    o << "<path fill=\"none\" " << attrs << " d=\"";
+  else
+    o << "<path fill=\"none\" d=\"";
+  //return o; // void return type
+};
+template<typename F = double, typename OUT = std::ostream>
+void open_svg_closed_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
+  open_svg_path_p(o,attrs,decimals);
+  //return o; // void return type
+};
+//
 template<typename OUT = std::ostream>
 void close_svg_path(OUT& o = std::cout) {
   o << "\"/>\n";

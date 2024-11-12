@@ -39,6 +39,7 @@
  */
 
 /* TODO
+ [ ] open paths should set attribute 'fill' to "none"
  [ ] Members set_dir_open_second() and set_dir_open_last_but_1()
      should take points[0].dir and points[lastidx()].dir into account
  [ ] As SVG "inverts" the Y coordinate, given height h,
@@ -235,8 +236,10 @@ public:
   // constructors that may only cause the points to be loaded:
   mp_spline() {};
   mp_spline(std::initializer_list<point_t>  il) : points(il) {};
+  /*
   template <typename CONT>
-  mp_spline(const CONT& c) : points(c.begin(), c.end()) {};
+  mp_spline(const CONT& c) : points(c.cbegin(), c.cend()) {};
+  */
   /* Some constructors are provided which besides loading the points,
    * also set the spline as open or clsoed, set dir's and set controls
    * A contructor taking 4/3 float parameters constructs an open  line, whereas
@@ -264,13 +267,12 @@ public:
     set_closed_dirs(                         kdir  );
     set_controls_by_adjacent_distance_closed(kctrls);
   };
-  /*
+
   template <typename CONT>
   mp_spline(const CONT& c)
   : points(c.begin(), c.end()) {
-
   };
-  */
+
   // constructors which load the points, set dir's and set controls (closed):
   // NOTE: their {bodies}; are the same
   /*
