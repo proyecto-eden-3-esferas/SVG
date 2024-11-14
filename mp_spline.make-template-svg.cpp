@@ -5,7 +5,7 @@
  * Change the name of the file from "template.svg" to something meaningful
  * The container of on-line points (the points the lines go through)
    may be found in another source file (*.h) or in this file.
- * When drawing complex lines, several strategies are recommended:
+ * When drawing complex lines, several STRATEGIES are recommended:
  (1)  split one large, complex (closed) line into several smaller, simpler ones
  (2)  when adding points for longish shapes (like branches, ropes, roads etc),
       try to recorded them in pairs of opposite ones,

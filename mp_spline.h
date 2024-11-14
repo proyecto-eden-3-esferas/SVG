@@ -1,6 +1,7 @@
 #ifndef MP_SPLINE_H
 #define MP_SPLINE_H
 
+
 /* The MetaPost model of curves makes it easier to draw natural objects
    such as rocks, plants, animals, anatomy, landscapes...
  * In this model, a curve is fitted through a set of points.
@@ -39,10 +40,12 @@
  */
 
 /* TODO
- [ ] open paths should set attribute 'fill' to "none"
+ [x] template argument CONTAINER should be checked by a concept
+     to be index addressable (concept IndexAddressable)
+ [x] open paths should set attribute 'fill' to "none"
  [ ] Members set_dir_open_second() and set_dir_open_last_but_1()
      should take points[0].dir and points[lastidx()].dir into account
- [ ] As SVG "inverts" the Y coordinate, given height h,
+ [x] As SVG "inverts" the Y coordinate, given height h,
      a points Y coordinate (y) should be transformed to h - y:
      y = h - y
      That change should be effected when writing to an SVG out-file.
@@ -77,15 +80,25 @@
 #include <utility>
 #include <vector>
 
+
 #ifdef SEPARATE_COMPILATION
 #include "mp_point.h"
 #else
 #include "mp_point.cpp"
 #endif
 
+#include <concepts>
+template <typename CONT>
+concept IndexAddressable = requires(CONT cont, const CONT ccont, std::size_t i)
+{
+  { cont[i]}     -> std::convertible_to<typename CONT::      reference>;
+  {ccont[i]}     -> std::convertible_to<typename CONT::const_reference>;
+  //{cont.size()} -> std::convertible_to<          std::size_t>;
+};
+
 template <typename F = double,
           typename POINT = mp_point<F>,
-          typename CONTAINER=std::vector<POINT> >
+          IndexAddressable CONTAINER=std::vector<POINT> >
 class mp_spline {
 public:
   typedef POINT point_t;
