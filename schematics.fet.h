@@ -24,7 +24,7 @@
    - n-channel: enhancement and depletion mode
  * They generally have  gate, source  and drain ports
    instead of BJT's'    base, emitter and collector
- * MOSFET's additionally have a body port...'
+ * MOSFET's additionally have a body port... often connected to source
  *
  *
  */
@@ -36,6 +36,7 @@ public:
   typedef FLOAT float_t;
   typedef std::size_t size_t;
   typedef transistor<FLOAT> transistor_t;
+  using cir_t::deg_to_rad, cir_t::rad_to_deg;
   using transistor_t::angle_of_sym_axis, transistor_t::aemitter;
   using transistor_t::add_circle_to_svg, transistor_t::add_base_to_svg;
   using transistor_t::get_emitter_angle, transistor_t::get_collector_angle;
@@ -46,17 +47,18 @@ public:
                source_meets_gate             =7, drain_meets_gate             =8,
                midgate                       =9 // middle point of the gate, possibly goes unused
   };
-  FLOAT get_source_angle() const {return get_emitter_angle()  ;};
-  FLOAT get_drain_angle()  const {return get_collector_angle();};
-  FLOAT x_of_pin(size_t idx) const {
+          float_t get_source_angle() const {return get_emitter_angle()  ;};
+          float_t get_drain_angle()  const {return get_collector_angle();};
+  virtual float_t get_gate_angle()   const {return 180 + angle_of_sym_axis - aemitter;};
+  float_t x_of_pin(size_t idx) const {
     switch (idx) {
-      case gate:           return circular_t::xperim(180 - aemitter); break;
+      case gate:           return circular_t::xperim(get_gate_angle()); break;
       default:             return transistor_t::x_of_pin(idx); break;
     }
   };
-  FLOAT y_of_pin(size_t idx) const {
+  float_t y_of_pin(size_t idx) const {
     switch (idx) {
-      case gate:           return circular_t::  yperim(180 - aemitter); break;
+      case gate:           return circular_t::  yperim(get_gate_angle()); break;
       default:             return transistor_t::y_of_pin(idx)         ; break;
     }
   };
@@ -66,52 +68,35 @@ public:
   template <typename OUT = std::ostream>
   void add_drain_to_svg(OUT& o) const {transistor_t::add_collector_to_svg(o);};
   template <typename OUT = std::ostream>
+  void add_to_gate_to_svg(OUT& o) const;
+  template <typename OUT = std::ostream>
   void add_svg(OUT& o) const {
+    add_circle_to_svg(o);
     add_source_to_svg(o);
     add_drain_to_svg(o);
-    add_circle_to_svg(o);
     add_base_to_svg(o); // actually, add gate line inside the enclosing circle
+    add_to_gate_to_svg(o);
   };
   //
     fet(float_t ra, float_t x=0, float_t y=0,
-      float_t angle_source = 50,
-      float_t angle_gate = 125,
-      float_t kgate      = 0.8) :
-      transistor_t(ra, x, y,
-                   angle_source,
-                   180 - angle_source, // dummy, a filler, to be ammended
-                   kgate, 1)
-      {
-        // redefine transistor_t::kkbase
-        float_t ag = cir_t::asin(cir_t::sin(angle_source)/kgate);
-        /*
-        transistor_t::kbase  = cir_t::sin(angle_source);
-        transistor_t::kkbase = 1;
-        */
-      };
+       float_t angle_source = 33.0,
+       float_t kgate        =  0.7) // > 0.77 otherwise a NaN is generated at some step
+    :
+       transistor_t(ra, x, y,
+                    angle_source,
+                    180 - cir_t::asin( cir_t::sin(angle_source) / (2*(kgate > 0.77 ? kgate : 0.78) - 1) ),
+                                                                     (kgate > 0.77 ? kgate : 0.78),  1)
+       {};
 };
 
-// The two implementations below are as the rely on angle_of_sym_axis=0.0 among other mistakes
-/*
 template <typename FLOAT>
 template <typename OUT>
-void fet<FLOAT>::add_source_to_svg(OUT& o) const {
-  o << "<line x1=\"" << x_of_pin(0) << "\" y1=\"" << y_of_pin(0) << '\"';
-  o <<      " x2=\"" << x_of_pin(0) << "\" y2=\"" << y_of_pin(5) << "\"/>\n";
-  o << "<line x1=\"" << x_of_pin(0) << "\" y1=\"" << y_of_pin(5) << '\"';
-  o <<      " x2=\"" << x_of_pin(5) << "\" y2=\"" << y_of_pin(5) << "\"/>\n";
+void fet<FLOAT>::add_to_gate_to_svg(OUT& o) const {
+  o << "<line x1=\"" << x_of_pin(1) << "\" y1=\"" << y_of_pin(1) << '\"';
+  o <<      " x2=\"" << x_of_pin(7) << "\" y2=\"" << y_of_pin(7) << "\"/>\n";
   //return o; // void return type
 };
-template <typename FLOAT>
-template <typename OUT>
-void fet<FLOAT>::add_drain_to_svg(OUT& o) const {
-  o << "<line x1=\"" << x_of_pin(2) << "\" y1=\"" << y_of_pin(2) << '\"';
-  o <<      " x2=\"" << x_of_pin(2) << "\" y2=\"" << y_of_pin(6) << "\"/>\n";
-  o << "<line x1=\"" << x_of_pin(2) << "\" y1=\"" << y_of_pin(6) << '\"';
-  o <<      " x2=\"" << x_of_pin(6) << "\" y2=\"" << y_of_pin(6) << "\"/>\n";
-  //return o; // void return type
-};
-*/
+
 
 template<typename F = double, typename OUT = std::ostream>
 void add_svg_unclosed(const fet<F>& tr, OUT& o = std::cout) { tr.add_svg(o);};

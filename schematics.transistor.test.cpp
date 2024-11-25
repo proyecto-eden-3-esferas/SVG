@@ -18,20 +18,17 @@ typedef        fet<float_type>        fet_t;
 
 int main() {
 
-  /*
-  transistor_t tr1(100,  0, 0);
-  fet_t        ft1(40, 150, 50);
-  */
   transistor_t tr1(TR_RADIUS, 1.5*TR_RADIUS, 1.5*TR_RADIUS);
   fet_t        ft1(TR_RADIUS, 1.5*TR_RADIUS, 1.5*TR_RADIUS);
 
+  /*
   for(int i=0; i < 10; ++i) {
     cout << "point " << i << " is (" << tr1.x_of_pin(i) << ", " << tr1.y_of_pin(i) << ")\n";
   }
-
   for(int i=0; i < 10; ++i) {
     cout << "point " << i << " is (" << ft1.x_of_pin(i) << ", " << ft1.y_of_pin(i) << ")\n";
   }
+  */
 
 
   // open file "test.transistor.html" to hold an SVG element:

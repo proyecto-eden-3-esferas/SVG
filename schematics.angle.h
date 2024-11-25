@@ -67,6 +67,8 @@ public:
    */
   static float_t  sin(float_t a) {return geo2d_t::sin(deg_to_rad(a));};
   static float_t  cos(float_t a) {return geo2d_t::cos(deg_to_rad(a));};
+  static float_t  asin(float_t si) {return rad_to_deg(geo2d_t::asin(si));};
+  static float_t  acos(float_t co) {return rad_to_deg(geo2d_t::acos(co));};
   static float_t atan(float_t x) {return             rad_to_deg(geo2d_t::atan(x));};
   static float_t atan2(float_t y, float_t x) {return rad_to_deg(geo2d_t::atan2(y,x));};
   //

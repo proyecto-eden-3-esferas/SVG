@@ -29,6 +29,7 @@
    [x] template <typename OUT = std::ostream>
        void add_to_midbase_to_svg(OUT& o) const;
    [x] explain/clear up float variable 'abase'
+   [ ] declare 'arrow_len' and 'arrow_wid' for later use
    [ ] all SVG transistor elements should contain a class attribute
        (default: "transistor"). Elements that should be styled differently,
        like a BJT base line, should have their class set to something
