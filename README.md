@@ -32,6 +32,8 @@ NOTE: You can make an SVG from MetaPost code as explained in section [SVG output
 
 ## General TODOs
 
+[ ] all SVG elements should contain a class attribute ("resistor", "transistor" etc.)
+
 In mp_point<>: provide a sextuple interface:
 [ ]      mp_point::mp_point(F x, F y, F prex, F prey, F postx, F posty, F angle = 0.0)
 [ ] void mp_point::print_as_sextuple(OSTREAM, SEP=" ", BRACKET='{', FUNC = "")

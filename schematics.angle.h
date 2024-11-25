@@ -41,8 +41,9 @@ class angle_addressable : public geometry_2D<FLOAT> {
 public:
   typedef FLOAT float_t;
   typedef geometry_2D<float_t> geo2d_t;
-  using geo2d_t::sin,  geo2d_t::cos;
-  using geo2d_t::atan, geo2d_t::atan2;
+  using geo2d_t::sin,   geo2d_t::cos;
+  using geo2d_t::asin,  geo2d_t::acos;
+  using geo2d_t::atan,  geo2d_t::atan2;
   using geo2d_t::abs;
   using geo2d_t::sqrt;
   using geo2d_t::normalize, geo2d_t::normalized;

@@ -21,6 +21,8 @@ public:
   typedef std::pair<float_t,float_t> pair_t;
   static float_t  sin(float_t a) {return  ::sin(a);};
   static float_t  cos(float_t a) {return  ::cos(a);};
+  static float_t  asin(float_t sn) {return  ::asin(sn);};
+  static float_t  acos(float_t cs) {return  ::acos(cs);};
   static float_t atan(float_t a) {return ::atan(a);};
   static float_t atan2(float_t a, float_t b) {return ::atan2(a,b);};
   //
