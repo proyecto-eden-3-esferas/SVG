@@ -8,8 +8,12 @@
  * You rarely want to define <svg stroke="black" fill="black"
    as the filling will hide a lot of detail
  * TODO
-   - write and import a light html headers-only file for HTML/XML (light-html.h)
-   - implement adding attributes (class, id, stroke-width) to svg elements
+   [ ] write and import a light html headers-only file for HTML/XML (light-html.h)
+   [ ] then close_standalone_tag(OSTREAM, ATTRS) should be moved to "light-html.h"
+   [ ] Implement adding attributes (class, id, stroke-width) to svg elements.
+       This might be realized as the last input argument
+       to global functions and constructors, as in:
+       FUNCTION(..., const std::string & attr = "")
  */
 
 #include <iomanip> // for std::setprecision(INT)

@@ -32,6 +32,17 @@ NOTE: You can make an SVG from MetaPost code as explained in section [SVG output
 
 ## General TODOs
 
+[ ] write a units section (*units.h*)
+```
+template <typename TAG=linear, typename F = double>
+class unit {
+  F val;
+  unit(F v) : val(F) {};
+        F operator F()       {return value;};
+  const F operator F() const {return value;};
+};
+```
+
 [ ] all SVG elements should contain a class attribute ("resistor", "transistor" etc.)
 
 In mp_point<>: provide a sextuple interface:

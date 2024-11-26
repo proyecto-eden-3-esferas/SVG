@@ -29,13 +29,20 @@
    [x] template <typename OUT = std::ostream>
        void add_to_midbase_to_svg(OUT& o) const;
    [x] explain/clear up float variable 'abase'
-   [ ] declare 'arrow_len' and 'arrow_wid' for later use
+   [ ] provision for drawing arrows, currently through
+       member variables: arrow_len_k and arrow_half_angle (in hex degrees), and
+       member functions: get_arrow_len() and get_arrow_half_wid(),
+       well...
+       we could define a member function taking all the parameters, like:
+       transistor_t::draw_arrow(X,Y, ANGLE, LEN, HALFWIDTH = LEN / 5,
+                                OUTSTREAM = std::cout,
+                                STRING="class=\"tr-arrow\"")
    [ ] all SVG transistor elements should contain a class attribute
        (default: "transistor"). Elements that should be styled differently,
        like a BJT base line, should have their class set to something
        even more specific.
    [ ] deal with inversion around the X-axis
-   [ ] write classes pnp<> and npn<> (require "schematics.arrow.h"")
+   [ ] write classes pnp<> and npn<>
  */
 
 template <typename FLOAT = double>
@@ -55,17 +62,21 @@ public:
                midbase=9 // middle of the base
   };
   // Inherit variables defining the enclosing circle:
-  FLOAT angle_of_sym_axis{0.0}; // angle     of the symmetry axis to the X axis
-  FLOAT aemitter;    // angle of the emitter to the symmetry axis of the transistor
-  FLOAT abase; // angle of the base's cord meeting the enclosing circle to the X axis
-  FLOAT kbase;  // k is a factor: k==1.0 means the base is drawn as a chord
-  FLOAT kkbase; // k==1.0 means emitter and collector leads meet the base at the edge
+  float_t angle_of_sym_axis{0.0}; // angle     of the symmetry axis to the X axis
+  float_t aemitter;    // angle of the emitter to the symmetry axis of the transistor
+  float_t abase; // angle of the base's cord meeting the enclosing circle to the X axis
+  float_t kbase;  // k is a factor: k==1.0 means the base is drawn as a chord
+  float_t kkbase; // k==1.0 means emitter and collector leads meet the base at the edge
   //
-  FLOAT get_emitter_angle()   const {return angle_of_sym_axis + aemitter;};
-  FLOAT get_collector_angle() const {return angle_of_sym_axis - aemitter;};
+  float_t get_emitter_angle()   const {return angle_of_sym_axis + aemitter;};
+  float_t get_collector_angle() const {return angle_of_sym_axis - aemitter;};
   //
-  FLOAT x_of_pin(size_t idx) const;
-  FLOAT y_of_pin(size_t idx) const;
+  float_t arrow_len_k{0.2}, arrow_half_angle{15}; // in hex degrees
+  float get_arrow_len()      const {return arrow_len_k*r;}
+  float get_arrow_half_wid() const {return get_arrow_len()*cir_t::sin(arrow_half_angle);}
+  //
+  float_t x_of_pin(size_t idx) const;
+  float_t y_of_pin(size_t idx) const;
   template <typename OUT = std::ostream>
   void add_circle_to_svg(OUT& o) const;
   // Lines inside the transistor circle: base, emitter, collector
