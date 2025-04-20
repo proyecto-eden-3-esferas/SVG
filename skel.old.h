@@ -2,18 +2,14 @@
 #define SKEL_H
 
 #include "point.h"
-#include <vector>
-
-
+#include <array>
 
 /*
  * class mechalink<> is a (stretchable) mechanical link
- * It generates its endpoint whenever it is requested (through a getter. say)
-   by adding 'dx', 'dy', and 'dz' to its initial point reference ('src')
- * Each mechalink<> object holds references to its follow-up mechalink<>'s
-   so that changes in position and rotation may cascade
+ * It generates its endpoint whenever it is requested (through a getter)
+   by adding 'dx', 'dy', and 'dz' to its initial point reference.
  * mechalink<> objects are chained thus:
- * each holds a reference ('src') to a preceding point, possibly inside
+ * each may hold a reference ('src') to another, previous one
  */
 
 template<typename FLOAT,
@@ -23,46 +19,41 @@ class mechalink; // forward declaration
 
 template<typename FLOAT = double,
          std::size_t DIM = 3, // typically 2 or 3
-         typename POINT = point<FLOAT,DIM>
-        >
+         typename POINT = std::array<FLOAT,DIM>
+         //, typename CoordinateSystem = boost::geometry::cs::cartesian
+         >
 class mechalink {
 public:
   typedef                     POINT      point_type;
   typedef mechalink<FLOAT,DIM,POINT> mechalink_type;
-  typedef std::vector<mechalink_type*> children_type;
 protected:
-  const point_type & src; // source point
-        point_type   dst; // destination point
+  const   mechalink_type *src; //     source point
+              point_type  dst; // destination link
   bool updated; // false if dx, dy or dz have changed, yet dst remains the same
   FLOAT dx, dy, dz;
-  children_type children;
-  FLOAT angle;
 public:
   mechalink_type& set_dx(FLOAT x) {dx=x; updated=false; return *this;};
   mechalink_type& set_dy(FLOAT y) {dy=y; updated=false; return *this;};
   mechalink_type& set_dz(FLOAT z) {dz=z; updated=false; return *this;};
-  mechalink_type& update();
+  mechalink_type& update(); // {return *this;}; // DUMMY IMPLEMENTATION
   const mechalink_type& get_src() const {return src;};
+  const     point_type& get_src_point();
             point_type& get_dst()       {update(); return dst;};
   const     point_type& get_dst() const {update(); return dst;};
   void set_sep(FLOAT s) {};  // DUMMY IMPLEMENTATION
+  bool  is_initialized() const {return !(src==nullptr);};
 public:
   // FLOAT separation() const {return sqrt(dx*dx + dy*dy + dz*dz);};
   mechalink_type& separation(FLOAT s)         {return *this;}; // DUMMY IMPLEMENTATION
   mechalink_type& rotate_around_x(FLOAT rads) {return *this;}; // DUMMY IMPLEMENTATION
   mechalink_type& rotate_around_y(FLOAT rads) {return *this;}; // DUMMY IMPLEMENTATION
   mechalink_type& rotate_around_z(FLOAT rads) {return *this;}; // DUMMY IMPLEMENTATION
-  mechalink_type& grow(FLOAT x=0.0, FLOAT y=0.0, FLOAT z=0.0);
 public:
+  mechalink(FLOAT x=0.0, FLOAT y=0.0, FLOAT z=0.0) : src(nullptr), dst{x,y,z}, updated(true),
+            dx(x), dy(y), dz(z) {};
   mechalink(const mechalink_type& ml,
-            FLOAT x=0.0, FLOAT y=0.0, FLOAT z=0.0) : src(ml.get_dst()),
-            dx(x), dy(y), dz(z)
-            {update();};
-  mechalink(const point_type& pt,
-            FLOAT x=0.0, FLOAT y=0.0, FLOAT z=0.0) : src(pt),
-            dx(x), dy(y), dz(z)
-            {update();};
-}; // class mechalink<>
-
+            FLOAT x=0.0, FLOAT y=0.0, FLOAT z=0.0) : src(    &ml),             updated(false),
+            dx(x), dy(y), dz(z) {update();};
+};
 
 #endif

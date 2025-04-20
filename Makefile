@@ -41,6 +41,15 @@ schematics.transistor: schematics.transistor.test.cpp schematics.transistor.h sc
 pair-as-2D-point.test: pair-as-2D-point.test.cpp pair-as-2D-point.h print-pair.h
 	c++ -std=c++23 $< -o $@
 
+point.test: point.test.cpp point.h
+	c++ -std=c++23 $< -o $@
+
+skel.test:  skel.test.cpp skel.h skel.cpp point.h
+	c++ -std=c++23 $< -o $@
+diagram.test:  diagram.test.cpp diagram.h diagram.cpp point.h
+	c++ -std=c++23 $< -o $@
+square_diagram.test:  square_diagram.test.cpp diagram.h diagram.cpp square_diagram.h point.h
+	c++ -std=c++23 $< -o $@
 
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@

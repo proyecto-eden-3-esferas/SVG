@@ -25,6 +25,21 @@ public:
   point(FLOAT const & v0, FLOAT const & v1)                   : coordinates{v0, v1} {};
   point(FLOAT const & v0, FLOAT const & v1, FLOAT const & v2) : coordinates{v0,v1,v2} {};
 };
+// partial specialization for DIM=2
+template<typename FLOAT,
+         typename CoordinateSystem>
+class point<FLOAT,2,CoordinateSystem> {
+  std::array<FLOAT,2> coordinates;
+public:
+  template<std::size_t IDX>
+  FLOAT const  & get() const {return coordinates[IDX];}; // Get a coordinate.
+  template<std::size_t IDX>
+  void set(FLOAT const & value) {coordinates[IDX] = value;}; // Set a coordinate.
+  // constructors:
+  point() = default; // Default constructor, no initialization.
+  point(FLOAT const & v0)                                     : coordinates{v0} {};
+  point(FLOAT const & v0, FLOAT const & v1)                   : coordinates{v0, v1} {};
+};
 
 
 namespace bg = boost::geometry;
