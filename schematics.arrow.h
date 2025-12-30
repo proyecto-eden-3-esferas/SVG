@@ -37,14 +37,14 @@ public:
   void rotate_by( float rel_angle ) {rotate_to(shaft_angle + rel_angle);};
   float_t get_shaft_angle() const {return shaft_angle;};
   //
-  void add_svg_unclosed(std::ostream& o = std::cout) const override;
+  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   // constructor(s)
   slim_arrowhead(float_t ra, float_t x=0, float_t y=0,
                  float_t sa = 0.0, float_t ha=cir_t::deg_to_rad(15))
   : circular_t(ra,x,y), half_angle(ha), shaft_angle(sa) {};
 };
 template<typename F>
-void slim_arrowhead<F>::add_svg_unclosed(std::ostream& o) const {
+void slim_arrowhead<F>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
   o << "<polyline fill=\"none\" points=\"";
   o << this->get_barb0x() << ' ' << this->get_barb0y() << "  ";
   o << this->cx << ' ' << this->cy << "  ";
@@ -66,14 +66,14 @@ public:
   float_t get_base_x() const {return (get_barb0x() + get_barb1x()) / 2;};
   float_t get_base_y() const {return (get_barb0y() + get_barb1y()) / 2;};
   //
-  void add_svg_unclosed(std::ostream& o = std::cout) const override;
+  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   // constructor:
   solid_arrowhead(float_t ra, float_t x=0, float_t y=0,
                   float_t sa = 0.0, float_t ha=cir_t::deg_to_rad(15))
   : slim_arrowhead<FLOAT>(ra, x, y, sa, ha) {};
 };
 template<typename F>
-void solid_arrowhead<F>::add_svg_unclosed(std::ostream& o) const {
+void solid_arrowhead<F>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
   o << "<polygon points=\"";
   o << this->get_barb0x() << ' ' << this->get_barb0y() << "  ";
   o << this->cx << ' ' << this->cy << "  ";

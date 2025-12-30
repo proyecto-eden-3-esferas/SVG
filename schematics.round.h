@@ -33,7 +33,7 @@ public:
   using cir_t::sin, cir_t::cos;
   virtual float_t xperim(float_t degs) const {return cx + r * cos(degs);};
   virtual float_t yperim(float_t degs) const {return cy + r * sin(degs);};
-  void add_svg_unclosed(std::ostream& o = std::cout) const override;
+  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   //
   circular(float_t ra, float_t x=0, float_t y=0) : cir_t(x,y), r(ra) {};
 };
@@ -48,7 +48,7 @@ public:
   float_t rx, ry;
   virtual float_t xperim(float_t degs) const {return cx + rx * cos(degs);};
   virtual float_t yperim(float_t degs) const {return cy + ry * sin(degs);};
-  void add_svg_unclosed(std::ostream& o = std::cout) const override;
+  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   //
   elliptical(float_t r_x, float_t r_y, float_t x=0, float_t y=0) : cir_t(x,y), rx(r_x), ry(r_y) {};
 };
@@ -75,7 +75,7 @@ public:
   float_t get_long_radius() const {return long_radius;};
   virtual float_t xperim(float_t degs) const;// {return rx*cos(degs);};
   virtual float_t yperim(float_t degs) const;// {return rx*sin(degs);};
-  void add_svg_unclosed(std::ostream& o = std::cout) const override;
+  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   //
   rectangular(float_t xr, float_t yr, float_t _cx = 0, float_t _cy=0) :
   cir_t(_cx, _cy), rx(xr), ry(yr), trans_angle(atan(yr/xr)), long_radius(sqrt(xr*xr + yr*yr)) {};
@@ -83,11 +83,11 @@ public:
 
 /* Implementaions of class member funcions: */
 template <typename FLOAT>
-void circular<FLOAT>::add_svg_unclosed(std::ostream& o) const {
+void circular<FLOAT>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
   o << "<circle cx=\"" << this->cx << "\" cy=\"" << this->cy << "\" r=\"" << this->r << "\"";
 };
 template <typename FLOAT>
-void elliptical<FLOAT>::add_svg_unclosed(std::ostream& o) const {
+void elliptical<FLOAT>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
   o << "<ellipse cx=\"" << this->cx << "\" cy=\"" << this->cy << "\" rx=\"" << this->rx << "\" ry=\"" << this->ry << "\"";
   //return o; // void return type
 };
@@ -119,7 +119,7 @@ FLOAT rectangular<FLOAT>::yperim(FLOAT degs) const {
       return cy - ry;
 };
 template <typename FLOAT>
-void rectangular<FLOAT>::add_svg_unclosed(std::ostream& o) const {
+void rectangular<FLOAT>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
   o << "<rect x=\"" << this->cx - this->rx <<      "\" y=\"" << this->cy - this->ry << "\" ";
   o << "width=\"" << 2 * this->rx << "\" height=\"" << 2 * this->ry << "\"";
 };

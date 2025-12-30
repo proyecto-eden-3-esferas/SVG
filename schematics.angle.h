@@ -87,14 +87,15 @@ public:
   //
   virtual float_t xperim(float_t degs) const {return cx;}; // = 0;
   virtual float_t yperim(float_t degs) const {return cy;}; // = 0;
-  void add_svg_unclosed(std::ostream& o = std::cout) const override {
-    ::add_svg_unclosed(*this,o);
-  };
+  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   //
   angle_addressable() = default;
   angle_addressable(float_t x, float_t y) : cx(x), cy(y) {};
 };
-
+template <typename FLOAT>
+void  angle_addressable<FLOAT>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
+  ::add_svg_unclosed(*this,o);
+};
 
 
 

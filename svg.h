@@ -2,10 +2,13 @@
 #define SVG_H
 
 /* SVG Interface Struct svg_shape<FLOAT> and Helping Functions
+ * I am in the process of reliying on struc svg_shape<FLOAT> members
+ * (such as add_svg_unclosed, add_svg, close_standalone_tag)
+   instead of same-named global functions
  * Remember to define attribute 'stroke' (as black or some non-white colour)
    in the svg opening tag, or in each svg shape
  * Sometimes you want to define 'fill' , possibly inside specific svg shapes
- * You rarely want to define <svg stroke="black" fill="black"
+ * You don't always want to define <svg stroke="black" fill="black"
    as the filling will hide a lot of detail
  * TODO
    [ ] write and import a light html headers-only file for HTML/XML (light-html.h)
@@ -18,34 +21,54 @@
 
 #include <iomanip> // for std::setprecision(INT)
 #include <iostream>
+#include <map>
 #include <string>
 
 #ifndef SVG_PLAIN_SHAPES_H
 #include "svg.plain-shapes.h"
 #endif
 
+
 template <typename F = double>
 struct svg_shape {
-  virtual void add_svg_unclosed(    std::ostream& o = std::cout) const = 0;
-  virtual void add_svg(             std::ostream& o = std::cout, const std::string& attrs = "") const
-  {
-    add_svg_unclosed(o);
-    close_standalone_tag(o,attrs);
-  };
-  void close_standalone_tag(std::ostream& o = std::cout, const std::string& attrs = "") const
-  {
-    if(attrs.length() > 0)
-      o << ' ' << attrs << ' ';
-    o << "/>\n";
-  };
+  /* A typedef for a map from attribute keys to values.
+   * These attributes are "non-essential" or intrinsic to the shape.
+   * For example a circle's centre is essential (needed for code to make sense)
+   * whereas a fill (a color) is non-essential and could be defined as CSS */
+  typedef std::map<std::string,std::string> attr_map_type;
+  //
+  virtual void add_svg_unclosed(   std::ostream& o = std::cout, const std::string& attrs = "") const = 0;
+  virtual void add_svg_opening_tag(std::ostream& o = std::cout, const std::string& attrs = "") const;
+  virtual void add_svg(            std::ostream& o = std::cout, const std::string& attrs = "") const;
+  void        close_standalone_tag(std::ostream& o = std::cout, const std::string& attrs = "") const;
 };
+template <typename F>
+void svg_shape<F>::add_svg_opening_tag(std::ostream& o, const std::string& attrs) const
+{
+  add_svg_unclosed(o,attrs);
+  o << ">\n";
+};
+template <typename F>
+void svg_shape<F>::add_svg(std::ostream& o, const std::string& attrs) const
+{
+  add_svg_unclosed(o);
+  close_standalone_tag(o,attrs);
+};
+
+template <typename F>
+void svg_shape<F>::close_standalone_tag(std::ostream& o, const std::string& attrs) const
+{
+  if(attrs.length() > 0)
+    o << ' ' << attrs << ' ';
+  o << "/>\n";
+};
+
 
 
 // Define an indentation string, typically 2 spaces ("  ")
 #ifndef SVG_FILE_INDENT_STR
 #define SVG_FILE_INDENT_STR "  "
 #endif
-
 
 /* Open and close an SVG element
  * open_svg(OUT&, width, height, STROKECOLOUR, FILLCOLOUR, FILLOPACITY)
@@ -127,7 +150,10 @@ void close_svg(OUT& o) {
  * Remember to add 'close_standalone_tag(OUT&)' after calling add_svg_unclosed()
  */
 template <typename T, typename F = double, typename OUT = std::ostream>
-void add_svg_unclosed(const T& t, OUT& o = std::cout) {o << "UNDEFINED WHATEVER!!!\n";};
+void add_svg_unclosed(const T& t, OUT& o = std::cout, const std::string& attrs = "")
+{
+  o << "UNDEFINED WHATEVER!!!\n";
+};
 template <typename OUT = std::ostream>
 void close_standalone_tag(OUT& o = std::cout, const std::string& attrs = "") {
   if(attrs.length() > 0)
