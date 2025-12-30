@@ -7,7 +7,7 @@
 
 NOTE: SVG images can be viewed with `lximage-qt` or other viewers. Just type:
 ```
-MY_IMAGE.svg &
+lximage-qt MY_IMAGE.svg &
 ```
 
 NOTE: You can make an SVG from MetaPost code as explained in section [SVG output](http://proyecto-eden-3-esferas.github.io/metapost.html#svg-output)
@@ -220,7 +220,7 @@ which probably makes more sense namewise.
 
 ### Classes and Functions with the Same Interface as those in Boost Geometry
 
-I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all calls relieant on these classes compatible with Boost Geometry.
+I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all calls relyant on these classes compatible with Boost Geometry.
 
 These classes are to be held in files without a `schematics` prefix.
 
@@ -239,17 +239,24 @@ One of the first items one will need is a point class, followed closely by recta
 ### Segments
 
 > In geometry, a line segment is a part of a line that is bounded by two distinct end points, and contains every point on the line between its end points.
-
-(Wikipedia)
+> (Wikipedia)
 
 ### Boost.Geometry
 
-The prestigious, STL-compatible headers-only Boost library contains Geometry, a geometry library. To use Boost.Geometry one needs to comply with some rules. You can write your own classes, but for them to interoperate with the library you need to register them. Whenever you build an executable, the tool chain spends some 12 seconds doing some internal paperwork. And since it is headers-only, separate compilation proves very work-intensive: you have to write the header files plus code to compile every foreseeable instantiation of template classes and template functions.
+The prestigious, STL-compatible headers-only Boost library contains *Geometry*, a geometry library. To use Boost.Geometry one needs to comply with some rules. You can write your own classes, but for them to interoperate with the library you need to register them. Whenever you build an executable, the tool chain spends some 12 seconds doing some internal paperwork. And since it is headers-only, separate compilation proves very work-intensive: you have to write the header files plus code to compile every foreseeable instantiation of template classes and template functions.
 
 
 ## Diagrammes, Schematics and Electronics
 
 Components are divided into (1) those located or placed by their centre of gravity (circles, ellipses..., all of them children of angle_addressable<>) and (2) those located by their upper left-hand corner coordinates, such as rectangle and its derived classes (block, ic...)
+
+### Graphs
+
+You can draw a graph from ready-made SVG elements like circle, rectangle, ellipse... and lines. The lines may be drawn between the centres of their source and destination vertices and before the (opaque) vertices are drawn.
+
+To draw directed graphs you need:
+- arrow heads, possibly implemented as a `<marker>`, and
+- a procedure for finding where to place the tip, as implemented by virtual members angle_addressable::xperim(ANGLE) and angle_addressable::yperim(ANGLE)
 
 ### Blocks and IC's
 
@@ -282,8 +289,7 @@ Both `ic` (in *schematics.ic.h*) and `block` (in *schematics.rectangle.h*) are d
 
 Sometimes you will want to view SVG drawings on their own, as an independent file in your web browser or SVG viewer. Some other times, you will want your graphic to be integrated in a larger document, which contains paragraphs of text, or other content that SVG cannot display easily.
 
-Here, we shall be discussin various ways of integrating SVG within HTML and other document types. There are two
-fundamental approaches:
+Here, we shall be discussing various ways of integrating SVG within HTML and other document types. There are two fundamental approaches:
 
 (1) you can include the image within the HTML markup in an `<img>` element (recommended when the image is a fundamental part of the page’s content),
 
@@ -307,7 +313,7 @@ On the bright side, animation is supported within images (in browsers that suppo
 The HTML `<img>` element defines a space into which the browser should draw an external image file. The image file to use is specified with the src (source) attribute. Including an SVG image within an `<img>` element is as simple as setting the source to point to the location of your SVG file.
 
 You should also
-provide a description with an alt and/or a title attribute so that users
+provide a description with an `alt` and/or a `title` attribute so that users
 who cannot see the image can still understand what it represents.
 For example:
 ```

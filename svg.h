@@ -1,7 +1,7 @@
 #ifndef SVG_H
 #define SVG_H
 
-/* SVG Helping Functions
+/* SVG Interface Struct svg_shape<FLOAT> and Helping Functions
  * Remember to define attribute 'stroke' (as black or some non-white colour)
    in the svg opening tag, or in each svg shape
  * Sometimes you want to define 'fill' , possibly inside specific svg shapes
@@ -20,17 +20,39 @@
 #include <iostream>
 #include <string>
 
+#ifndef SVG_PLAIN_SHAPES_H
+#include "svg.plain-shapes.h"
+#endif
+
+template <typename F = double>
+struct svg_shape {
+  virtual void add_svg_unclosed(    std::ostream& o = std::cout) const = 0;
+  virtual void add_svg(             std::ostream& o = std::cout, const std::string& attrs = "") const
+  {
+    add_svg_unclosed(o);
+    close_standalone_tag(o,attrs);
+  };
+  void close_standalone_tag(std::ostream& o = std::cout, const std::string& attrs = "") const
+  {
+    if(attrs.length() > 0)
+      o << ' ' << attrs << ' ';
+    o << "/>\n";
+  };
+};
+
+
 // Define an indentation string, typically 2 spaces ("  ")
 #ifndef SVG_FILE_INDENT_STR
 #define SVG_FILE_INDENT_STR "  "
 #endif
+
 
 /* Open and close an SVG element
  * open_svg(OUT&, width, height, STROKECOLOUR, FILLCOLOUR, FILLOPACITY)
    sets enough attributes to show the contained shapes suitably.
  * Both functions output indentation string (SVG_FILE_INDENT_STR) twice
  */
-template<typename F = double, typename OUT = std::ostream>
+template <typename F = double, typename OUT = std::ostream>
 void open_svg(OUT& o, F w = 200.0, F h = 200.0,
                                    const std::string& strk = "black",
                                    const std::string&  fll = "gray",
@@ -54,7 +76,7 @@ void open_svg(OUT& o, F w = 200.0, F h = 200.0,
    and expect another global function (close_svg_path(OSTREAM))
    to close the self-standing element like this: "/>
  */
-template<typename F = double, typename OUT = std::ostream>
+template <typename F = double, typename OUT = std::ostream>
 void open_svg_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << std::fixed << std::setprecision(decimals);
@@ -64,7 +86,7 @@ void open_svg_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
     o << "<path d=\"";
   //return o; // void return type
 };
-template<typename F = double, typename OUT = std::ostream>
+template <typename F = double, typename OUT = std::ostream>
 void open_svg_open_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << std::fixed << std::setprecision(decimals);
@@ -74,7 +96,7 @@ void open_svg_open_path_p(OUT& o, const std::string & attrs="", int decimals = 2
     o << "<path class=\"open\" fill=\"none\" d=\"";
   //return o; // void return type
 };
-template<typename F = double, typename OUT = std::ostream>
+template <typename F = double, typename OUT = std::ostream>
 void open_svg_closed_path_p(OUT& o, const std::string & attrs="", int decimals = 2) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << std::fixed << std::setprecision(decimals);
@@ -85,13 +107,13 @@ void open_svg_closed_path_p(OUT& o, const std::string & attrs="", int decimals =
   //return o; // void return type
 };
 //
-template<typename OUT = std::ostream>
+template <typename OUT = std::ostream>
 void close_svg_path(OUT& o = std::cout) {
   o << "\"/>\n";
   //return o; // void return type
 };
 
-template<typename OUT = std::ostream>
+template <typename OUT = std::ostream>
 void close_svg(OUT& o) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << "</svg>\n";
   //return o; // void return type
@@ -104,50 +126,19 @@ void close_svg(OUT& o) {
  * If you do not need to add further attributes, use 'add_svg(T&,OUT&)'
  * Remember to add 'close_standalone_tag(OUT&)' after calling add_svg_unclosed()
  */
-template<typename T, typename F = double, typename OUT = std::ostream>
+template <typename T, typename F = double, typename OUT = std::ostream>
 void add_svg_unclosed(const T& t, OUT& o = std::cout) {o << "UNDEFINED WHATEVER!!!\n";};
-template<typename OUT = std::ostream>
+template <typename OUT = std::ostream>
 void close_standalone_tag(OUT& o = std::cout, const std::string& attrs = "") {
   if(attrs.length() > 0)
     o << ' ' << attrs << ' ';
   o << "/>\n";
 };
-template<typename T, typename F = double, typename OUT = std::ostream>
+template <typename T, typename F = double, typename OUT = std::ostream>
 void add_svg(const T& t, OUT& o = std::cout) {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   add_svg_unclosed(t,o);
   close_standalone_tag(o);
 };
-
-
-/* Printing shapes to an outstream (default std::ostream)
- * Originally writing for mp_spline<> in "mp_spline.*"
- * General format:
-     add_SHAPE_to_svg(OSTREAM&, PARAMS, NUM_DECIMALS=2, ATTR="")
- * ATTR is a string that gets included in the (stand-alone) tag
-   and it just comprises attributes
- *
- * Some of the shapes:
-   - circle
-   - line
-   etc.
- */
-template<typename F = double, typename OUT = std::ostream>
-void add_circle_to_svg(OUT& o, F x, F y, F r, /*int decimals = 2, */const std::string& attr="") {
-  o << "<circle ";
-  if(attr.length() > 0)
-    o << attr << ' ';
-  //o << std::fixed << std::setprecision(decimals);
-  o << "cx=\"" << x << "\" cy=\"" << y <<  "\" r=\"" << r <<"\"/>\n";
-};
-template<typename F = double, typename OUT = std::ostream>
-void add_line_to_svg(OUT& o, F x1, F y1, F x2, F y2, /*int decimals = 2, */const std::string& attr="") {
-  o << "<line ";
-  if(attr.length() > 0)
-    o << attr << ' ';
-  //o << std::fixed << std::setprecision(decimals);
-  o <<    "x1=\"" << x1 << "\" y1=\"" << y1;
-  o << "\" x2=\"" << x2 << "\" y2=\"" << y2 << "\"/>\n";
-}
 
 #endif

@@ -4,9 +4,11 @@
 
 
 #include <fstream>
+#include <vector>
 using namespace std;
 
 typedef            double float_type;
+typedef         svg_shape<float_type> svg_t;
 typedef angle_addressable<float_type> cir_t;
 typedef          circular<float_type>    circular_component_t;
 typedef slim_arrowhead<float_type> slim_arrowhead_component_t;
@@ -122,7 +124,27 @@ int main()
   ofr << "</body>\n</html>";
   ofr.close();
 
-// open file "test-arrowhead.html" to hold an SVG arrowhead element and more:
+
+  std::vector<const svg_t*> vector_of_refs(0);
+  vector_of_refs.emplace_back(&cc1);
+  vector_of_refs.emplace_back(&ec2);
+  vector_of_refs.emplace_back(&rc1);
+  vector_of_refs.emplace_back(&rc2);
+  vector_of_refs.emplace_back(&rc3);
+  vector_of_refs.emplace_back(&ah1);
+  vector_of_refs.emplace_back(&ah2);
+  // open file "test-round-and-arrow.html" to print an assortment angle_addressable<> elements:
+  ofstream ofall("test-round-and-arrow.html");
+  ofall << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics arrowhead svg...</p>\n"; //<svg stroke=\"black\">\n  ";
+    open_svg(ofall, 500.0, 500.0, "black", "gray", 0.5);
+      for(const svg_t * ptr : vector_of_refs)
+        ptr->add_svg(ofall);
+    close_svg(ofall);
+  ofall << "</body>\n</html>";
+  ofall.close();
+
+
+  // open file "test-arrowhead.html" to hold an SVG arrowhead element and more:
   ofstream ofah("test-arrowhead.html");
   ofah << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics arrowhead svg...</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofah, 500.0, 500.0, "black", "gray", 0.5);

@@ -6,7 +6,7 @@
  *   circular
  *   elliptical, and
  *   rectangular
- * Note that the names of the classes are adjectives
+ * Note that the names of the classes are adjectives, not nouns
  */
 
 #ifndef SCHEMATICS_ANGLE_H
@@ -31,13 +31,12 @@ public:
   float_t r;
   using cir_t::cx, cir_t::cy;
   using cir_t::sin, cir_t::cos;
-  using cir_t::atan, cir_t::atan2;
-  using cir_t::abs, cir_t::sqrt;
   virtual float_t xperim(float_t degs) const {return cx + r * cos(degs);};
   virtual float_t yperim(float_t degs) const {return cy + r * sin(degs);};
+  void add_svg_unclosed(std::ostream& o = std::cout) const override;
+  //
   circular(float_t ra, float_t x=0, float_t y=0) : cir_t(x,y), r(ra) {};
 };
-
 
 template <typename FLOAT = double>
 class elliptical : public angle_addressable<FLOAT> {
@@ -49,11 +48,15 @@ public:
   float_t rx, ry;
   virtual float_t xperim(float_t degs) const {return cx + rx * cos(degs);};
   virtual float_t yperim(float_t degs) const {return cy + ry * sin(degs);};
+  void add_svg_unclosed(std::ostream& o = std::cout) const override;
+  //
   elliptical(float_t r_x, float_t r_y, float_t x=0, float_t y=0) : cir_t(x,y), rx(r_x), ry(r_y) {};
 };
 
+
+
 /* rectangular<> has sides parallel to X and Y axes */
-template <typename FLOAT = double>
+template <typename FLOAT>
 class rectangular : public angle_addressable<FLOAT> {
 public:
   typedef angle_addressable<FLOAT> cir_t;
@@ -72,10 +75,23 @@ public:
   float_t get_long_radius() const {return long_radius;};
   virtual float_t xperim(float_t degs) const;// {return rx*cos(degs);};
   virtual float_t yperim(float_t degs) const;// {return rx*sin(degs);};
+  void add_svg_unclosed(std::ostream& o = std::cout) const override;
   //
   rectangular(float_t xr, float_t yr, float_t _cx = 0, float_t _cy=0) :
   cir_t(_cx, _cy), rx(xr), ry(yr), trans_angle(atan(yr/xr)), long_radius(sqrt(xr*xr + yr*yr)) {};
 };
+
+/* Implementaions of class member funcions: */
+template <typename FLOAT>
+void circular<FLOAT>::add_svg_unclosed(std::ostream& o) const {
+  o << "<circle cx=\"" << this->cx << "\" cy=\"" << this->cy << "\" r=\"" << this->r << "\"";
+};
+template <typename FLOAT>
+void elliptical<FLOAT>::add_svg_unclosed(std::ostream& o) const {
+  o << "<ellipse cx=\"" << this->cx << "\" cy=\"" << this->cy << "\" rx=\"" << this->rx << "\" ry=\"" << this->ry << "\"";
+  //return o; // void return type
+};
+
 /* Member functions rectangular::xperim(DEGS) and rectangular::xperim(DEGS)
    first normalize the angle input parameter to the interval [0,360]
    through angle_addressable::normalize(),
@@ -102,6 +118,13 @@ FLOAT rectangular<FLOAT>::yperim(FLOAT degs) const {
     else
       return cy - ry;
 };
+template <typename FLOAT>
+void rectangular<FLOAT>::add_svg_unclosed(std::ostream& o) const {
+  o << "<rect x=\"" << this->cx - this->rx <<      "\" y=\"" << this->cy - this->ry << "\" ";
+  o << "width=\"" << 2 * this->rx << "\" height=\"" << 2 * this->ry << "\"";
+};
+
+
 
 
 // Partial specializations of add_svg_unclosed(ANGLE_ADDRESSABLE&,OUT&)

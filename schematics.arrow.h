@@ -36,11 +36,23 @@ public:
   void rotate_to( float abs_angle ) {shaft_angle = abs_angle;};
   void rotate_by( float rel_angle ) {rotate_to(shaft_angle + rel_angle);};
   float_t get_shaft_angle() const {return shaft_angle;};
+  //
+  void add_svg_unclosed(std::ostream& o = std::cout) const override;
   // constructor(s)
   slim_arrowhead(float_t ra, float_t x=0, float_t y=0,
                  float_t sa = 0.0, float_t ha=cir_t::deg_to_rad(15))
   : circular_t(ra,x,y), half_angle(ha), shaft_angle(sa) {};
 };
+template<typename F>
+void slim_arrowhead<F>::add_svg_unclosed(std::ostream& o) const {
+  o << "<polyline fill=\"none\" points=\"";
+  o << this->get_barb0x() << ' ' << this->get_barb0y() << "  ";
+  o << this->cx << ' ' << this->cy << "  ";
+  o << this->get_barb1x() << ' ' << this->get_barb1y() << '\"';
+  //return o; // void return type
+};
+
+
 
 template <typename FLOAT = double>
 class  solid_arrowhead : public slim_arrowhead<FLOAT> {
@@ -53,12 +65,32 @@ public:
   // The "base" is the point where the shaft would meet the arrowhead as a triangle
   float_t get_base_x() const {return (get_barb0x() + get_barb1x()) / 2;};
   float_t get_base_y() const {return (get_barb0y() + get_barb1y()) / 2;};
+  //
+  void add_svg_unclosed(std::ostream& o = std::cout) const override;
   // constructor:
   solid_arrowhead(float_t ra, float_t x=0, float_t y=0,
                   float_t sa = 0.0, float_t ha=cir_t::deg_to_rad(15))
   : slim_arrowhead<FLOAT>(ra, x, y, sa, ha) {};
 };
+template<typename F>
+void solid_arrowhead<F>::add_svg_unclosed(std::ostream& o) const {
+  o << "<polygon points=\"";
+  o << this->get_barb0x() << ' ' << this->get_barb0y() << "  ";
+  o << this->cx << ' ' << this->cy << "  ";
+  o << this->get_barb1x() << ' ' << this->get_barb1y() << '\"';
+};
 
+#ifndef FORMER
+// Specializations for slim_arrowhead<FLOAT> and solid_arrowhead<FLOAT>:
+template<typename F = double, typename OUT = std::ostream>
+void add_svg_unclosed(const slim_arrowhead<F>& ah, OUT& o = std::cout) {
+  ah.add_svg_unclosed(o);
+};
+template<typename F = double, typename OUT = std::ostream>
+void add_svg_unclosed(const solid_arrowhead<F>& ah, OUT& o = std::cout) {
+  ah.add_svg_unclosed(o);
+};
+#else
 // Specializations for slim_arrowhead<FLOAT> and solid_arrowhead<FLOAT>:
 template<typename F = double, typename OUT = std::ostream>
 void add_svg_unclosed(const slim_arrowhead<F>& ah, OUT& o = std::cout) {
@@ -66,7 +98,6 @@ void add_svg_unclosed(const slim_arrowhead<F>& ah, OUT& o = std::cout) {
   o << ah.get_barb0x() << ' ' << ah.get_barb0y() << "  ";
   o << ah.cx << ' ' << ah.cy << "  ";
   o << ah.get_barb1x() << ' ' << ah.get_barb1y() << '\"';
-  //return o; // void return type
 };
 template<typename F = double, typename OUT = std::ostream>
 void add_svg_unclosed(const solid_arrowhead<F>& ah, OUT& o = std::cout) {
@@ -74,7 +105,7 @@ void add_svg_unclosed(const solid_arrowhead<F>& ah, OUT& o = std::cout) {
   o << ah.get_barb0x() << ' ' << ah.get_barb0y() << "  ";
   o << ah.cx << ' ' << ah.cy << "  ";
   o << ah.get_barb1x() << ' ' << ah.get_barb1y() << '\"';
-  //return o; // void return type
 };
+#endif
 
 #endif

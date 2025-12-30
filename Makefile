@@ -1,5 +1,8 @@
 CLANG     = clang++ -std=c++2b
 Gplusplus =     c++ -std=c++23
+DropboxDir = ~/Dropbox
+
+
 %: %.cpp
 	c++    -std=c++23 $<  -o $@
 
@@ -49,6 +52,9 @@ skel.test:  skel.test.cpp skel.h skel.cpp point.h
 diagram.test:  diagram.test.cpp diagram.h diagram.cpp point.h
 	c++ -std=c++23 $< -o $@
 square_diagram.test:  square_diagram.test.cpp diagram.h diagram.cpp square_diagram.h point.h
+	c++ -std=c++23 $< -o $@
+
+schematics.round-graph.test: schematics.round-graph.test.cpp schematics.round.h schematics.line.h schematics.arrow.h schematics.angle.diagram.h
 	c++ -std=c++23 $< -o $@
 
 %.test: %.test.cpp %.h
@@ -155,3 +161,6 @@ clean_all_but_html:
 clean_all:
 	make clean_executables
 	$(RM) *.o
+
+save_to_Dropbox:
+	cp --update *.html *.xhtml *.h *.cpp *.svg $(DropboxDir)/SVG/

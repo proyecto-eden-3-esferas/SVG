@@ -5,6 +5,12 @@
 #include "geometry_2D.h"
 #endif
 
+#ifndef SVG_H
+#include "svg.h"
+#endif
+
+#include <iostream>
+
 // For compatibility:
 template <typename F = double>
 using angle_addressable_base = geometry_2D<F>;
@@ -36,22 +42,29 @@ using angle_addressable_base = geometry_2D<F>;
  *
  */
 
+template<typename F> class angle_addressable;
+
+template<typename F>
+void add_svg_unclosed(const angle_addressable<F>& aa, std::ostream& o = std::cout) {
+  o << "<text x=\"" << aa.cx << "\" y=\"" << aa.cy << "\" style=\"text-anchor: middle\"";
+};
+
 template <typename FLOAT = double>
-class angle_addressable : public geometry_2D<FLOAT> {
+class angle_addressable : public geometry_2D<FLOAT>, public svg_shape<FLOAT> {
 public:
   typedef FLOAT float_t;
   typedef geometry_2D<float_t> geo2d_t;
   using geo2d_t::sin,   geo2d_t::cos;
-  using geo2d_t::asin,  geo2d_t::acos;
-  using geo2d_t::atan,  geo2d_t::atan2;
+  //using geo2d_t::asin,  geo2d_t::acos;
+  //using geo2d_t::atan,  geo2d_t::atan2;
   using geo2d_t::abs;
   using geo2d_t::sqrt;
-  using geo2d_t::normalize, geo2d_t::normalized;
+  //using geo2d_t::normalize, geo2d_t::normalized;
   using geo2d_t::distance;
   using geo2d_t::angle;
   using geo2d_t::deg_to_rad, geo2d_t::rad_to_deg;
   //
-  float_t cx, cy;
+  float_t cx, cy;  // the centre of a circle, rectangle, ellipse...
   static void  normalize( float_t& deg); // add/subtract 360 to get 'a' into [0,360]
   static FLOAT normalized(float_t  deg) {return normalize(deg);};
   // Members for rotating a point around around this->(cx,cy)
@@ -72,18 +85,26 @@ public:
   static float_t atan(float_t x) {return             rad_to_deg(geo2d_t::atan(x));};
   static float_t atan2(float_t y, float_t x) {return rad_to_deg(geo2d_t::atan2(y,x));};
   //
-  virtual float_t xperim(float_t degs) const = 0;
-  virtual float_t yperim(float_t degs) const = 0;
+  virtual float_t xperim(float_t degs) const {return cx;}; // = 0;
+  virtual float_t yperim(float_t degs) const {return cy;}; // = 0;
+  void add_svg_unclosed(std::ostream& o = std::cout) const override {
+    ::add_svg_unclosed(*this,o);
+  };
+  //
   angle_addressable() = default;
   angle_addressable(float_t x, float_t y) : cx(x), cy(y) {};
 };
+
+
 
 
 // Implementations of angle_addressable<> members
 
 template <typename FLOAT>
 void  angle_addressable<FLOAT>::normalize( float_t& deg) {
-  rad_to_deg(normalize(deg_to_rad(deg)));
+  /*const */float_t r {deg_to_rad(deg)};
+  geo2d_t::normalize(r);
+  deg = rad_to_deg(r);
 };
 
 template <typename FLOAT>

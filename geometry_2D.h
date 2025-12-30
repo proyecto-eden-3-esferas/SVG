@@ -10,8 +10,16 @@
 /* class geometry_2D_base<>
    provides trigonometric functions, plus abs() and sqrt()
    in specializations for float, double and long double.
- * It uses radians, whereas its only child angle_addressable<>
-   uses degrees.
+ * It uses radians,
+ * Its only child, 'geometry_2D' adds member functions:
+   - normalize
+   - normalized
+   - distance
+   - angle
+   - deg_to_rad
+   - rad_to_deg
+ * whereas its grandchild, angle_addressable<>, uses degrees.
+ * neiher geometry_2D_base nor geometry_2D have member variables
  */
 
 template <typename FLOAT = double>
@@ -60,8 +68,8 @@ public:
 /* class geometry_2D<> provides geometry static functions
  * that need not be specialized for numeric type (fload, double, long double)
    - normalize(FLOAT&) and normalized(FLOAT)
-   - distance(X1,Y1, X2,Y2)
-   - distance(X1,Y1, X2,Y2), and
+   - distance(X1,Y1, X2,Y2),
+   - distance(std::pair(X1,Y1), std::pair(X2,Y2), and
    - set_angle_dist_from_of(ANGLE, DISTANCE, CONST POINT&, POINT&)
  * Like its parent, it uses radians,
  * (whereas its only child angle_addressable<>,
@@ -81,20 +89,14 @@ public:
   using geometry_2D_base_t::abs;
   using geometry_2D_base_t::sqrt;
   //
-  static void normalize(FLOAT& a) { // add/subtract 2pi until a is within [a, 2pi]
-    while( a < 0)
-      a +=     2 * std::numbers::pi_v<FLOAT>;
-    while( a > 2 * std::numbers::pi_v<FLOAT>)
-      a -=     2 * std::numbers::pi_v<FLOAT>;
-  };
+  static void normalize(FLOAT& a);
   static float_t normalized(float_t  a) {float_t temp(a); normalize(temp); return temp;};
   //
-  static float_t distance(float_t x1, float_t y1, float_t x2, float_t y2) {
-    return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) );};
-  static float_t distance(const pair_t& p1, const pair_t& p2) {
-    return distance(p1.first, p1.second, p2.first, p2.second); }
-  static float_t    angle(float_t x1, float_t y1, float_t x2, float_t y2) {
-    return atan2(y2 - y1, x2 - x1);};
+  static float_t distance(float_t x1, float_t y1, float_t x2, float_t y2);
+  static float_t distance(const pair_t& p1, const pair_t& p2);
+
+  static float_t    angle(float_t x1, float_t y1, float_t x2, float_t y2);
+
   static float_t deg_to_rad(float_t d) {return (d / 180) * std::numbers::pi_v<float_t>;};
   static float_t rad_to_deg(float_t r) {return (r / std::numbers::pi_v<float_t>) * 180;};
   /* static void set_angle_dist_from_of(...)
@@ -103,10 +105,43 @@ public:
      and sets the in/out point 'to'
      so that the line from 'from' to 'to' is at an angle 'a' to the X-axis,
      and is dist[ance] units long.*/
-  static void set_angle_dist_from_of(float_t a, float_t dist, const pair_t& from, pair_t& to) {
-    to.first  = from.first  + dist*cos(a);
-    to.second = from.second + dist*sin(a);
-  };
+  static void set_angle_dist_from_of(float_t a, float_t dist, const pair_t& from, pair_t& to);
 }; // class geometry_2D<FLOAT>
+
+#endif
+
+
+#ifndef GEOMETRY_2D_CPP
+#define GEOMETRY_2D_CPP
+
+#ifndef GEOMETRY
+#include "geometry_2D.h"
+#endif
+
+template <typename FLOAT>
+void geometry_2D<FLOAT>::normalize(FLOAT& a) { // add/subtract 2pi until a is within [a, 2pi]
+  while( a < 0)
+    a +=     2 * std::numbers::pi_v<FLOAT>;
+  while( a > 2 * std::numbers::pi_v<FLOAT>)
+    a -=     2 * std::numbers::pi_v<FLOAT>;
+};
+
+template <typename FLOAT>
+FLOAT geometry_2D<FLOAT>::distance(FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2) {
+    return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) );};
+template <typename FLOAT>
+FLOAT geometry_2D<FLOAT>::distance(const std::pair<FLOAT,FLOAT>& p1, const std::pair<FLOAT,FLOAT>& p2) {
+  return distance(p1.first, p1.second, p2.first, p2.second); };
+template <typename FLOAT>
+FLOAT geometry_2D<FLOAT>::angle(FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2) {
+  return atan2(y2 - y1, x2 - x1);};
+template <typename FLOAT>
+void geometry_2D<FLOAT>::set_angle_dist_from_of(FLOAT a,
+                                         FLOAT dist,
+                                         const std::pair<FLOAT,FLOAT>& from,
+                                               std::pair<FLOAT,FLOAT>& to) {
+  to.first  = from.first  + dist*cos(a);
+  to.second = from.second + dist*sin(a);
+};
 
 #endif
