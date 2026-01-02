@@ -6,13 +6,19 @@
 using namespace std;
 
 typedef       double float_type;
+typedef label_base<     float_type> label_base_t;
 typedef label<     float_type> label_t;
 typedef multilabel<float_type> multilabel_t;
 
 label_t lbl1(100.0, 100.0, "original");
-label_t lbl2(200.0, 100.0, "rising", -45, text_anchor::start);
+label_t lbl2(200.0, 100.0,
+             "rising",
+             -45//, typename label_t::text_anchor::start,
+             );
 multilabel_t::lines_t lines({"First line", "Second line", "Third line"});
-multilabel_t mlbl1(200.0, 200.0, 40.0, lines, 0.0, text_anchor::middle, 20.0);
+multilabel_t mlbl1(200.0, 200.0, 40.0,
+                   lines, 0.0//, //typename label_base_t::text_anchor::middle, 20.0
+                  );
 
 int main() {
 
