@@ -88,7 +88,7 @@ void svg_shape<F>::close_standalone_tag(std::ostream& o, const std::string& attr
 // Implementation of Attribute-Map SVG Members:
 template <typename F>
 void svg_shape<F>::add_svg_unclosed(const svg_shape<F>::attr_map_type& m,
-                                    std::ostream& o ,
+                                    std::ostream& o,
                                     char sep) const {
   add_svg_unclosed(o);
   add_attrs(m,o,sep);
