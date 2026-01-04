@@ -42,15 +42,8 @@ using angle_addressable_base = geometry_2D<F>;
  *
  */
 
-template<typename F> class angle_addressable;
-
-template<typename F>
-void add_svg_unclosed(const angle_addressable<F>& aa, std::ostream& o = std::cout) {
-  o << "<text x=\"" << aa.cx << "\" y=\"" << aa.cy << "\" style=\"text-anchor: middle\"";
-};
-
 template <typename FLOAT = double>
-class angle_addressable : public geometry_2D<FLOAT>, public svg_shape<FLOAT> {
+class angle_addressable : public geometry_2D<FLOAT> {
 public:
   typedef FLOAT float_t;
   typedef geometry_2D<float_t> geo2d_t;
@@ -87,16 +80,10 @@ public:
   //
   virtual float_t xperim(float_t degs) const {return cx;}; // = 0;
   virtual float_t yperim(float_t degs) const {return cy;}; // = 0;
-  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   //
   angle_addressable() = default;
   angle_addressable(float_t x, float_t y) : cx(x), cy(y) {};
 };
-template <typename FLOAT>
-void  angle_addressable<FLOAT>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
-  ::add_svg_unclosed(*this,o);
-};
-
 
 
 // Implementations of angle_addressable<> members

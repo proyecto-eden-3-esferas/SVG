@@ -25,9 +25,11 @@ int main() {
   angle_addressable<float_type> aa{3,4};
   cout << "cx=" << aa.xperim(1.0) << " and cy=" << aa.yperim(1.0) << '\n';
 
+  /*
   cout << " and output into an std::ostream as:\n  ";
   aa.add_svg_unclosed(std::cout);
-  //add_svg_unclosed(aa, std::cout);
+  add_svg_unclosed(aa, std::cout);
+  */
 
   return 0;
 }

@@ -7,6 +7,7 @@
  *   elliptical, and
  *   rectangular
  * Note that the names of the classes are adjectives, not nouns
+ * TODO
  */
 
 #ifndef SCHEMATICS_ANGLE_H
@@ -17,6 +18,10 @@
 #include "svg.h"
 #endif
 
+#ifndef POLYGONAL_H
+#include "schematics.polygonal.h"
+#endif
+
 //  Children of angle_addressable<>
 
 /* A 'circular' subhierarchy:
@@ -24,7 +29,7 @@
    from which 'solid_arrowhead' is derived in turn.
  */
 template <typename FLOAT = double>
-class circular : public angle_addressable<FLOAT> {
+class circular : public angle_addressable<FLOAT>, public svg_shape<FLOAT> {
 public:
   typedef angle_addressable<FLOAT> cir_t;
   typedef FLOAT float_t;
@@ -39,7 +44,7 @@ public:
 };
 
 template <typename FLOAT = double>
-class elliptical : public angle_addressable<FLOAT> {
+class elliptical : public angle_addressable<FLOAT>, public svg_shape<FLOAT> {
 public:
   typedef angle_addressable<FLOAT> cir_t;
   typedef FLOAT float_t;
@@ -57,7 +62,7 @@ public:
 
 /* rectangular<> has sides parallel to X and Y axes */
 template <typename FLOAT>
-class rectangular : public angle_addressable<FLOAT> {
+class rectangular : public angle_addressable<FLOAT>, public svg_shape<FLOAT> {
 public:
   typedef angle_addressable<FLOAT> cir_t;
   typedef FLOAT float_t;
