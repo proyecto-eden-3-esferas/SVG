@@ -17,6 +17,8 @@ schematics.globals.label: schematics.label.globals.test.cpp schematics.label.glo
 	c++ -std=c++23 $<  -o $@
 schematics.rectangle: schematics.rectangle.test.cpp schematics.rectangle.h svg.h
 	c++ -std=c++23 $<  -o $@
+schematics.rectangle.globals: schematics.rectangle.globals.test.cpp schematics.rectangle.h schematics.rectangle.globals.h svg.h
+	c++ -std=c++23 $<  -o $@
 schematics.line: schematics.line.test.cpp schematics.line.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.round-and-arrow: schematics.round-and-arrow.test.cpp svg.h schematics.round.h schematics.angle.h schematics.arrow.h
