@@ -8,6 +8,10 @@
 #include "schematics.label.h"
 #endif
 
+#ifndef SCHEMATICS_MULTILABEL_H
+#include "schematics.multilabel.h"
+#endif
+
 #include <fstream>
 #include <vector>
 using namespace std;
@@ -33,7 +37,8 @@ int main() {
 
   // open file "test-label.html" to hold an SVG element:
   ofstream ofs("test-label.html");
-  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
+  ofs << "<!DOCTYPE html>\n<html>\n<body>\n";
+  ofs << "<p>Testing objects of class <code>label</code> and <code>multilabel</code> through references:</p>\n"; //<svg stroke=\"black\">\n  ";
     open_svg(ofs, 500.0, 500.0, "black", "gray", 0.2);
       for(const auto& p : vector_of_pointers)
         p->add_svg(ofs, default_svg_text_std_attrs);

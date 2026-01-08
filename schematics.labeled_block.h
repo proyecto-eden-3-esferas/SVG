@@ -27,12 +27,18 @@ public:
   typedef STRING string_t;
   typedef std::vector<string_t> string_container_t;
   using block_t::num_lft, block_t::num_btm, block_t::num_rht, block_t::num_upr;
-  using block_t::xperim, block_t::yperim;
+  //using block_t::xperim, block_t::yperim;
   using block_t::facing;
+  using block_t::facing::lt, block_t::facing::bt, block_t::facing::rt, block_t::facing::tp;
   using block_t::faces;
   string_container_t strings;
+  float_t spacing;
   float_t raise;
   //
+  size_t size() const {return strings.size();};
+  //
+  float_t xperim(size_t idx) const override;
+  float_t yperim(size_t idx) const override;
   void add_svg_labels(  std::ostream& o = std::cout,
                         const std::string& attrs = " fill=\"black\" fill-opacity=\"1.0\"") const;
   void add_svg(         std::ostream& o = std::cout,
@@ -55,19 +61,67 @@ public:
     */
   };
   // constructor:
+
   labeled_block(float_t x, float_t y, float_t w, float_t h,
                 float_t l, float_t b, float_t r, float_t u,
-                float_t rai=0.0) :
-                block_t(x, y, w, h, l, b, r, u), raise(rai) {};
+                float spa/*=15.0*/, float_t rai=0.0) :
+                block_t(x, y, w, h, l, b, r, u),
+                spacing(spa), raise(rai) {};
   template <typename ITER>
   labeled_block(float_t x, float_t y, float_t w, float_t h,
                 float_t l, float_t b, float_t r, float_t u,
                 ITER beg, ITER end,
-                float_t rai=0.0) :
-                block_t(x, y, w, h, l, b, r, u), strings(beg,end), raise(rai) {};
+                float spa/*=15.0*/, float_t rai=0.0) :
+                block_t(x, y, w, h, l, b, r, u),
+                strings(beg,end),
+                spacing(spa), raise(rai) {};
 };
 
 // Implementation of member functions in labeled_block<>:
+
+
+template <typename FLOAT, typename STRING>
+FLOAT labeled_block<FLOAT,STRING>::xperim(std::size_t idx) const {
+  switch(faces(idx)) {
+    case lt:
+      return block_t::xperim(idx) - spacing;
+      break;
+    case bt:
+      return block_t::xperim(idx);
+      break;
+    case rt:
+      return block_t::xperim(idx) + spacing;
+      break;
+    case tp:
+      return block_t::xperim(idx);
+      break;
+    default:
+      return block_t::xperim(idx);;
+      break;
+  }
+};
+template <typename FLOAT, typename STRING>
+FLOAT labeled_block<FLOAT,STRING>::yperim(std::size_t idx) const {
+  switch(faces(idx)) {
+    case lt:
+      return block_t::yperim(idx);
+      break;
+    case bt:
+      return block_t::yperim(idx) + spacing;
+      break;
+    case rt:
+      return block_t::yperim(idx);
+      break;
+    case tp:
+      return block_t::yperim(idx) - spacing;
+      break;
+    default:
+      return block_t::yperim(idx);;
+      break;
+  }
+};
+
+
 template <typename FLOAT, typename STRING>
 void labeled_block<FLOAT,STRING>::add_svg_labels(std::ostream& o, const std::string& attrs) const {
   for(int i = 0; i < strings.size(); ++i) {

@@ -11,8 +11,12 @@ save_to_github:
 
 schematics.angle.test: schematics.angle.test.cpp schematics.angle.h
 	c++ -std=c++23 $<  -o $@
-schematics.label: schematics.label.test.cpp schematics.label.h svg.h
+
+schematics.label: schematics.label.test.cpp schematics.label.h schematics.multilabel.h svg.h
 	c++ -std=c++23 $<  -o $@
+schematics.ref_label: schematics.ref_label.test.cpp schematics.ref_label.h svg.h
+	c++ -std=c++23 $<  -o $@
+
 schematics.globals.label: schematics.label.globals.test.cpp schematics.label.globals.h schematics.label.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.rectangle: schematics.rectangle.test.cpp schematics.rectangle.h svg.h
@@ -39,6 +43,7 @@ schematics.block: schematics.block.test.cpp $(SCHEMATICS_BLOCK_HEADERS)
 	c++ -std=c++23 $<  -o $@
 schematics.block.globals: schematics.block.globals.test.cpp $(SCHEMATICS_BLOCK_HEADERS) schematics.block.globals.h
 	c++ -std=c++23 $<  -o $@
+
 SCHEMATICS_LABELED_BLOCK_HEADERS = $(SCHEMATICS_BLOCK_HEADERS) schematics.labeled_block.h
 schematics.labeled_block: schematics.labeled_block.test.cpp $(SCHEMATICS_LABELED_BLOCK_HEADERS)
 	c++ -std=c++23 $<  -o $@

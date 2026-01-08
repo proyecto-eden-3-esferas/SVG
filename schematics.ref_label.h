@@ -1,11 +1,11 @@
-#ifndef SCHEMATICS_LABEL_H
-#define SCHEMATICS_LABEL_H
+#ifndef SCHEMATICS_REF_LABEL_H
+#define SCHEMATICS_REF_LABEL_H
 
 #ifndef SCHEMATICS_LABEL_BASE_H
 #include "schematics.label_base.h"
 #endif
 
-/* This file defines class label<FLOAT,CHAR,CONT>
+/* This file defines class ref_label<FLOAT,CHAR,CONT>
  * TODO
  * [ ] define class ref_label<>,
  *     which holds not values but references to 'x', 'y' and (possibly also) 'deg'
@@ -18,7 +18,7 @@
 template<typename FLOAT = double,
          typename  CHAR = char,
          template <typename> typename CONT = std::vector >
-class label : public label_base<FLOAT,CHAR,CONT> {
+class ref_label : public label_base<FLOAT,CHAR,CONT> {
 public:
   typedef svg_shape<FLOAT> svg_t;
   typedef label_base<FLOAT,CHAR,CONT> label_base_t;
@@ -26,9 +26,9 @@ public:
   using typename label_base_t::text_anchor;
   using typename label_base_t::attr_map_type;
   //
-  FLOAT x, y;
+  const FLOAT &x, &y;
   string_t text;
-  FLOAT deg;
+  const FLOAT & deg;
   text_anchor anchor;
   FLOAT baseline_drop;
   void add_svg_unclosed(std::ostream& o = std::cout, const string_t& attrs = "") const {
@@ -42,9 +42,12 @@ public:
     svg_t::add_svg_unclosed(m,o,sep);
     o << '>' <<  text << "</text>\n";
   };
-  //
-  label(FLOAT xx, FLOAT yy, string_t s,
-        FLOAT dg = 0.0, text_anchor ta = text_anchor::middle, FLOAT bld = 0.0)
+  // Constructor(s):
+  ref_label(const FLOAT & xx, const FLOAT & yy,
+            string_t s,
+            const FLOAT & dg,
+            text_anchor ta = text_anchor::middle,
+            FLOAT bld = 0.0)
   : x(xx), y(yy), text(s), deg(dg), anchor(ta), baseline_drop(bld) {};
 };
 
