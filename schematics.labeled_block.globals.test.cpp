@@ -9,13 +9,11 @@
 #endif
 
 typedef        double float_type;
-typedef svg_shape<float_type> svg_t;
 typedef labeled_block<float_type> labeled_block_t;
 typedef std::vector<std::string> string_container_t;
 
-#ifdef DRAW_LINES
-#include "schematics.line.h"
-typedef twoline<float_type> line_t;
+#ifndef SCHEMATICS_LABELED_BLOCK_GLOBALS_H
+#include "schematics.labeled_block.globals.h"
 #endif
 
 #include <fstream>
@@ -37,18 +35,14 @@ int main()
   for(int i=0; i < lbl1.size(); ++i)
     cout << "position: " << lbl1.xperim(i) << ", " << lbl1.yperim(i) << '\n';
 
-  cout << "Now write <code>labeled_block</code> objects as SVG through references into file \"test-labeled_block.html\"\n";
-  const svg_t* p1 = & lbl1;
-  const svg_t* p2 = & lbl2;
-  const svg_t* p3 = & lbl3;
-
-  // open file "test-labeled_block.html" to hold an SVG element:
-  ofstream ofs("test-labeled_block.html");
-  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Here goes some schematics svg...</p>\n"; //<svg stroke=\"black\">\n  ";
-    open_svg(ofs, 500.0, 500.0, "black", "yellow", 0.25);
-      p2->add_svg(ofs, " fill=\"black\" fill-opacity=\"1.0\"");
-      p3->add_svg(ofs, " fill=\"black\" fill-opacity=\"1.0\"");
-      //p3->add_svg(ofs);
+  // open file "test.labeled_block.html" to hold an SVG element:
+  cout << "Last, print \'lbl2\' and \'lbl3\' into file \"test-labeled_block-globals.html\"\n";
+  ofstream ofs("test-labeled_block-globals.html");
+  ofs << "<!DOCTYPE html>\n<html>\n<body>\n<p>Show <code>labeled_block</code> objects as SVG:</p>\n"; //<svg stroke=\"black\">\n  ";
+    open_svg(ofs, 600.0, 600.0, "black", "yellow", 0.25);
+  // Keep adding components to the SVG file (handle='ofs')
+      add_svg(lbl2,  ofs, 0.0);
+      add_svg(lbl3,  ofs, 0.0);
     close_svg(ofs);
   ofs << "</body>\n</html>";
   ofs.close();

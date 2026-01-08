@@ -45,6 +45,7 @@ public:
   virtual float_t xperim(size_t idx) const;
   virtual float_t yperim(size_t idx) const;
   //
+  void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
   block(float_t x, float_t y, float_t w, float_t h,
         float_t l, float_t b, float_t r, float_t u) :
     rectangle_t(w,h,x,y), num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
@@ -109,16 +110,11 @@ FLOAT block<FLOAT>::yperim(std::size_t idx) const {
   }
 };
 
-// Partial specialization of svg_unclosed(BLOCK&,OUT&)
-#ifndef SVG_H
-#include "svg.h"
-#endif
-
-template<typename F = double, typename OUT = std::ostream>
-void add_svg_unclosed(const block<F>& blk, OUT& o = std::cout) {
-  o << "<rect x=\"" << blk.x     << "\" y=\""      << blk.y << "\" ";
-  o <<   "width=\"" << blk.width << "\" height=\"" << blk.height << "\"";
-  //return o; // void return type
+template <typename FLOAT>
+void block<FLOAT>::add_svg_unclosed(std::ostream& o, const std::string& attrs) const {
+  o << "<rect x=\"" << x     << "\" y=\""      << y << "\" ";
+  o <<   "width=\"" << width << "\" height=\"" << height << "\"";
+  o << ' ' << attrs;
 };
 
 #endif

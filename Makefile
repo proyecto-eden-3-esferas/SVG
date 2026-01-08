@@ -34,10 +34,17 @@ schematics.twoport:   schematics.twoport.test.cpp   svg.h schematics.line.h sche
 	c++ -std=c++23 $<  -o $@
 schematics.capacitor: schematics.twoport.test.cpp svg.h schematics.line.h schematics.angle.h schematics.twoport.h schematics.capacitor.h
 
-schematics.block: schematics.block.test.cpp schematics.rectangle.h schematics.block.h svg.h
+SCHEMATICS_BLOCK_HEADERS = schematics.rectangle.h schematics.block.h svg.h
+schematics.block: schematics.block.test.cpp $(SCHEMATICS_BLOCK_HEADERS)
 	c++ -std=c++23 $<  -o $@
-schematics.labeled_block: schematics.labeled_block.test.cpp schematics.labeled_block.h schematics.rectangle.h schematics.block.h svg.h
+schematics.block.globals: schematics.block.globals.test.cpp $(SCHEMATICS_BLOCK_HEADERS) schematics.block.globals.h
 	c++ -std=c++23 $<  -o $@
+SCHEMATICS_LABELED_BLOCK_HEADERS = $(SCHEMATICS_BLOCK_HEADERS) schematics.labeled_block.h
+schematics.labeled_block: schematics.labeled_block.test.cpp $(SCHEMATICS_LABELED_BLOCK_HEADERS)
+	c++ -std=c++23 $<  -o $@
+schematics.labeled_block.globals: schematics.labeled_block.globals.test.cpp $(SCHEMATICS_LABELED_BLOCK_HEADERS) schematics.labeled_block.globals.h
+	c++ -std=c++23 $<  -o $@
+
 schematics.sq_polyline: schematics.sq_polyline.test.cpp schematics.sq_polyline.h schematics.vec_polyline.h svg.h
 	c++ -std=c++23 $<  -o $@
 schematics.sq_polyline-and-block: schematics.sq_polyline-and-block.test.cpp schematics.block.h schematics.sq_polyline.h schematics.vec_polyline.h svg.h
