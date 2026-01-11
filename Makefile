@@ -29,8 +29,12 @@ schematics.round-and-arrow: schematics.round-and-arrow.test.cpp svg.h schematics
 	c++ -std=c++23 $<  -o $@
 schematics.ic: schematics.ic.test.cpp svg.h schematics.ic.h
 	c++ -std=c++23 $<  -o $@
+
 schematics.svg.arc: schematics.svg.arc.test.cpp svg.h schematics.svg.arc.h
 	c++ -std=c++23 $<  -o $@
+schematics.svg.arc.globals: schematics.svg.arc.globals.test.cpp svg.h schematics.svg.arc.globals.h schematics.svg.arc.h
+	c++ -std=c++23 $<  -o $@
+
 segment: segment.test.cpp svg.h segment.h schematics.twoport.h
 	c++ -std=c++23 $<  -o $@
 

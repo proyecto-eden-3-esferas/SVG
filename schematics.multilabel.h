@@ -31,7 +31,9 @@ public:
   typedef                                      CONT<string_t> lines_t;
   typedef svg_shape<FLOAT> svg_t;
   //
-  FLOAT x, y, r;
+  FLOAT x, y, r; // Just as with ref_multilabel (its ref analog)
+                 // the baselines of the first and last line in 'lines'
+                 // meet the top and bottom of a circle of radius == r
   FLOAT deg;
   text_anchor anchor;
   FLOAT baseline_drop;

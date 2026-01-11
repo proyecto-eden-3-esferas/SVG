@@ -31,7 +31,10 @@ public:
   typedef                                      CONT<string_t> lines_t;
   typedef svg_shape<FLOAT> svg_t;
   //
-  const FLOAT &x,&y, &radius;
+  const FLOAT &x,&y;
+  const FLOAT &r; // Just as with multilabel (its non-ref analog)
+                  // the baselines of the first and last line in 'lines'
+                  // meet the top and bottom of a circle of radius == 'r'
   const FLOAT & deg;
   text_anchor anchor;
   FLOAT baseline_drop;
@@ -43,13 +46,13 @@ public:
   void add_svg(std::ostream& o = std::cout, const std::string& attrs = "") const override {
     add_svg_unclosed(o,attrs);
     o << '>';
-    label_base_t::add_lines(x, y, radius, lines, o);
+    label_base_t::add_lines(x, y, r, lines, o);
     o <<  "</text>\n";
   };
   void add_svg(const attr_map_type& m, std::ostream& o = std::cout, char sep='\"') const override {
     svg_t::add_svg_unclosed(m, o, sep);
     o << '>';
-    label_base_t::add_lines(x, y, radius, lines, o);
+    label_base_t::add_lines(x, y, r, lines, o);
     o <<  "</text>\n";
   };
   //
@@ -58,14 +61,14 @@ public:
              const FLOAT & dg,
              text_anchor ta = text_anchor::middle,
              FLOAT bld = 0.0)
-  : x(xx), y(yy), radius(rr),           deg(dg), anchor(ta), baseline_drop(bld) {};
+  : x(xx), y(yy), r(rr),           deg(dg), anchor(ta), baseline_drop(bld) {};
   ref_multilabel(const FLOAT & xx, const FLOAT & yy,
              const FLOAT & rr,
              const lines_t& l,
              const FLOAT & dg,
              text_anchor ta = text_anchor::middle,
              FLOAT bld = 0.0)
-  : x(xx), y(yy), radius(rr), lines(l), deg(dg), anchor(ta), baseline_drop(bld) {};
+  : x(xx), y(yy), r(rr), lines(l), deg(dg), anchor(ta), baseline_drop(bld) {};
 };
 
 #endif
