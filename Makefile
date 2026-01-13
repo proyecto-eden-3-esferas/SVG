@@ -1,6 +1,8 @@
 CLANG     = clang++ -std=c++2b
 Gplusplus =     c++ -std=c++23
+# Directory variables with no trailing slash (/)
 DropboxDir = ~/Dropbox
+CppCodeDir = ../cpp_code
 
 
 %: %.cpp
@@ -25,7 +27,9 @@ schematics.rectangle.globals: schematics.rectangle.globals.test.cpp schematics.r
 	c++ -std=c++23 $<  -o $@
 schematics.line: schematics.line.test.cpp schematics.line.h svg.h
 	c++ -std=c++23 $<  -o $@
-schematics.round-and-arrow: schematics.round-and-arrow.test.cpp svg.h schematics.round.h schematics.angle.h schematics.arrow.h
+
+ROUND_HEADERS = schematics.round.h schematics.angle.h svg.h schematics.rectangular.h schematics.polygonal.h
+schematics.round-and-arrow: schematics.round-and-arrow.test.cpp $(ROUND_HEADERS) schematics.arrow.h
 	c++ -std=c++23 $<  -o $@
 schematics.ic: schematics.ic.test.cpp svg.h schematics.ic.h
 	c++ -std=c++23 $<  -o $@
@@ -74,7 +78,7 @@ diagram.test:  diagram.test.cpp diagram.h diagram.cpp point.h
 square_diagram.test:  square_diagram.test.cpp diagram.h diagram.cpp square_diagram.h point.h
 	c++ -std=c++23 $< -o $@
 
-schematics.round-graph.test: schematics.round-graph.test.cpp schematics.round.h schematics.line.h schematics.arrow.h schematics.angle.diagram.h
+schematics.round-graph.test: schematics.round-graph.test.cpp $(ROUND_HEADERS) schematics.line.h schematics.arrow.h schematics.angle.diagram.h
 	c++ -std=c++23 $< -o $@
 
 %.test: %.test.cpp %.h

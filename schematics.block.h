@@ -22,7 +22,9 @@ public:
   typedef std::size_t size_t;
   typedef std::size_t index_t;
   typedef rectangle<FLOAT> rectangle_t;
-  using rectangle_t::x, rectangle_t::y, rectangle_t::width, rectangle_t::height;
+  using rectangle_t::x,     rectangle_t::y;
+  using rectangle_t::width, rectangle_t::height;
+  using rectangle_t::rx,    rectangle_t::ry;
   //
   size_t size() const {return num_lft + num_btm + num_rht + num_upr;};
 protected:
@@ -46,9 +48,16 @@ public:
   virtual float_t yperim(size_t idx) const;
   //
   void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs = "") const override;
+  // Constructors:
   block(float_t x, float_t y, float_t w, float_t h,
-        float_t l, float_t b, float_t r, float_t u) :
-    rectangle_t(w,h,x,y), num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
+        size_t  l, size_t  b, size_t  r, size_t  u) :
+    rectangle_t(w,h,x,y),        num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
+  block(float_t x, float_t y, float_t w, float_t h, float_t ra,
+        size_t  l, size_t  b, size_t  r, size_t  u) :
+    rectangle_t(w,h, x,y, ra),   num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
+  block(float_t x, float_t y, float_t w, float_t h, float_t rx, float_t ry,
+        size_t  l, size_t  b, size_t  r, size_t  u) :
+    rectangle_t(w,h, x,y, rx,ry), num_lft(l), num_btm(b), num_rht(r), num_upr(u)  {};
 };
 // block_t(x,y,w,h, l,b,r,u)
 

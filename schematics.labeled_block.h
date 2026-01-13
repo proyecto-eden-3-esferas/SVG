@@ -60,7 +60,7 @@ public:
     //o << "\n<!-- out of labeled_block::add_svg_unclosed -->\n";
     */
   };
-  // constructor:
+  // Constructor(s):
 
   labeled_block(float_t x, float_t y, float_t w, float_t h,
                 float_t l, float_t b, float_t r, float_t u,
@@ -96,7 +96,7 @@ FLOAT labeled_block<FLOAT,STRING>::xperim(std::size_t idx) const {
       return block_t::xperim(idx);
       break;
     default:
-      return block_t::xperim(idx);;
+      return block_t::xperim(idx);
       break;
   }
 };
@@ -116,7 +116,7 @@ FLOAT labeled_block<FLOAT,STRING>::yperim(std::size_t idx) const {
       return block_t::yperim(idx) - spacing;
       break;
     default:
-      return block_t::yperim(idx);;
+      return block_t::yperim(idx);
       break;
   }
 };
