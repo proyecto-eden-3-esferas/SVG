@@ -60,7 +60,12 @@ public:
   float_t cx, cy;  // the centre of a circle, rectangle, ellipse...
   static void  normalize( float_t& deg); // add/subtract 360 to get 'a' into [0,360]
   static FLOAT normalized(float_t  deg) {return normalize(deg);};
-  // Members for rotating a point around around this->(cx,cy)
+  /* Members for rotating a point around around this->(cx,cy)
+   * First, distance(X,Y) calculates the distance from (cx,cy) to (X,Y),
+   * while     angle(X,Y) calculates the angle to the X-axis of a line from (cx,cy) to (X,Y),
+   * get_x_rotated(X,Y,ANGLE) and get_x_rotated(X,Y,ANGLE)
+   * return the x and y coordinates of a point (X,Y) rotated around (cx,cy) through ANGLE
+   */
   float_t distance(float_t x, float_t y) const {return distance(cx, cy, x, y);};
   float_t    angle(float_t x, float_t y) const {return  rad_to_deg(angle(cx, cy, x, y));};
   float_t get_x_rotated(float_t x, float_t y, float_t a) const;

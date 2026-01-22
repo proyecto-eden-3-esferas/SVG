@@ -81,6 +81,11 @@ square_diagram.test:  square_diagram.test.cpp diagram.h diagram.cpp square_diagr
 schematics.round-graph.test: schematics.round-graph.test.cpp $(ROUND_HEADERS) schematics.line.h schematics.arrow.h schematics.angle.diagram.h
 	c++ -std=c++23 $< -o $@
 
+wheel.test: wheel.test.cpp wheel.h geometry_2D.h schematics.angle.h
+	c++ -std=c++23 $< -o $@
+gear.test:  gear.test.cpp  wheel.h geometry_2D.h schematics.angle.h gear.h
+	c++ -std=c++23 $< -o $@
+
 %.test: %.test.cpp %.h
 	g++ -std=c++23 $<  -o $@
 
