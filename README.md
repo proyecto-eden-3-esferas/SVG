@@ -32,9 +32,11 @@ NOTE: You can make an SVG from MetaPost code as explained in section [SVG output
 
 ## General TODOs
 
-[ ] write a units section (*units.h*)
+[ ] write a units section (*units.h*), currently *NamedType.h* following Jonathan Boccara
+
+The initial proposal was code like:
 ```
-template <typename TAG=linear, typename F = double>
+template <typename TAG=linear_tag, typename F = double>
 class unit {
   F val;
   unit(F v) : val(F) {};
@@ -42,6 +44,8 @@ class unit {
   const F operator F() const {return value;};
 };
 ```
+The take away lesson is: use a tag, that is a template argument to create a distinct class, here `linear_tag`. Names like: `duration_seconds_tag`, `radians` etc.
+
 
 [ ] all SVG elements should contain a class attribute ("resistor", "transistor" etc.)
 
@@ -220,9 +224,11 @@ which probably makes more sense namewise.
 
 ### Classes and Functions with the Same Interface as those in Boost Geometry
 
-I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all calls relyant on these classes compatible with Boost Geometry.
+I set out to code some classes and functions with the same interface as those in Boost Geometry. That will automatically make all calls relyant on these classes compatible with Boost Geometry. (As in files *point.h*, *segment.h*, )
 
 These classes are to be held in files without a `schematics` prefix.
+
+I guess I have deviated from this guideline a lot (see classes `wheel`, `gear`, files *svg.h*, *svg_path.h*...)
 
 
 ### For SVG, but also for PostScript, among other formats
@@ -260,7 +266,7 @@ To draw directed graphs you need:
 
 ### Blocks and IC's
 
-An IC has a fixed separation between pins, whereas on a block in a block diagram the separation should discretionary.
+An IC has a fixed separation between pins, whereas on a block in a block diagram the separation is discretionary.
 
 Both `ic` (in *schematics.ic.h*) and `block` (in *schematics.rectangle.h*) are derived from `rectangle`.
 
@@ -280,14 +286,15 @@ Both `ic` (in *schematics.ic.h*) and `block` (in *schematics.rectangle.h*) are d
 
 ## Music Notation TODOs
 
-[x] Pentagrams, tetragrams...
+[?] Pentagrams (illustrated in *SVG-pentagram.html*), tetragrams...
 
 [ ] Notes
 
 
+
 ## Inclusion of SVG Files
 
-Sometimes you will want to view SVG drawings on their own, as an independent file in your web browser or SVG viewer. Some other times, you will want your graphic to be integrated in a larger document, which contains paragraphs of text, or other content that SVG cannot display easily.
+Sometimes you will want to view SVG drawings on their own, as an independent file in your web browser or SVG viewer. Some other times, you will want your graphic to be integrated in a larger document, which contains paragraphs of text, or other content that SVG cannot display easily, say in an HTML file.
 
 Here, we shall be discussing various ways of integrating SVG within HTML and other document types. There are two fundamental approaches:
 
@@ -320,7 +327,6 @@ For example:
 <img src="cat.svg" title="Cat Image"
 alt="Stick Figure of a Cat" />
 ```
-
 The height and width of the image can be set using attributes or CSS properties (which take precedence). Other CSS properties control the placement of the image within the web page. If you do not specify dimensions for the `<img>` element, the intrinsic dimensions of the image file are used. If you specify only one of height or width, the other dimension is scaled proportionally so that the aspect ratio (the ratio of width to height) matches the intrinsic dimensions.
 
 If the root `<svg>` element in the file has explicit height and width attributes, those are used as the intrinsic dimensions of the file. If one of height or width is specified, but not both, and the `<svg>` has a viewBox attribute, then the viewBox will be used to calculate the aspect ratio and the image will be scaled to match the specified dimension. Otherwise, if the `<svg>` has a viewBox attribute but no dimensions, then the height and width parts of the viewBox are treated as lengths in pixels.

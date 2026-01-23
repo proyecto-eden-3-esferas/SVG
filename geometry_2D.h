@@ -5,8 +5,6 @@
 #include <numbers>
 #include <utility>
 
-
-
 /* class geometry_2D_base<>
    provides trigonometric functions, plus abs() and sqrt()
    in specializations for float, double and long double.
@@ -19,7 +17,8 @@
    - deg_to_rad
    - rad_to_deg
  * whereas its grandchild, angle_addressable<>, uses degrees.
- * neiher geometry_2D_base nor geometry_2D have member variables
+ * Neiher geometry_2D_base nor geometry_2D have member variables.
+ * Thus, all member functions are declared static.
  */
 
 template <typename FLOAT = double>

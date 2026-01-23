@@ -135,7 +135,10 @@ void open_svg(OUT& o, F w = 200.0, F h = 200.0,
 {
   o << SVG_FILE_INDENT_STR << SVG_FILE_INDENT_STR;
   o << std::fixed << std::setprecision(decimals);
-  o << "<svg width=\"" << w << "\" height=\"" << h;
+  o << "<svg";
+  o << " xmlns=\"http://www.w3.org/2000/svg\"";
+  o << " version=\"1.1\"";
+  o << "" width=\"" << w << "\" height=\"" << h;
   o << "\" stroke=\"" << strk << "\" fill=\"" << fll << "\" fill-opacity=\"" << fllopct << "\">\n";
   //return o; // void return type
 }

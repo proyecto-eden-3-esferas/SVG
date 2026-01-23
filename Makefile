@@ -191,5 +191,8 @@ clean_all:
 	make clean_executables
 	$(RM) *.o
 
+SOURCE_FILES = *.h *.cpp
+RESULT_FILES = *.html *.xhtml  *.svg
+BACKUP_FILES = *.h.bak *.cpp.bak *.html.bak *.Xhtml.bak *.svg.bak
 save_to_Dropbox:
-	cp --update *.html *.xhtml *.h *.cpp *.svg $(DropboxDir)/SVG/
+	cp --update $(SOURCE_FILES) $(RESULT_FILES) $(BACKUP_FILES) $(DropboxDir)/SVG/

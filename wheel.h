@@ -39,8 +39,8 @@ public:
 protected:
   void add_svg_unclosed(std::ostream& o = std::cout, const std::string& attrs ="") const override;
 public:
-  virtual void print_svg_part(      std::ostream&    o=std::cout,
-                                         size_t      n=0,
+  virtual void print_svg_part(std::ostream& o=std::cout,
+                              size_t n=0,
                               const std::string& attrs="") const;
   void print_svg_circle(std::ostream& o=std::cout,             const std::string& attrs="") const;
   void add_svg(         std::ostream& o = std::cout, const std::string& attrs = "") const override;
@@ -54,9 +54,17 @@ public:
   enum angleDir {anticlockwise, clockwise};
   void animate_rotate(std::ostream& o = std::cout,
                       enum angleDir ad = angleDir::anticlockwise,
-                      F durInSecs = 10, // this default should be overriden!
+                      F durInSecs = get_num_parts(), // this default should be overriden!
                       F begSecs = 0, F fromAngle = 0, F toAngle = 360) const;
-  //void add_svg_animate_rotate(OSTREAM&,CLOCKWISE,SECONDS)
+
+  void animate_rotate_at_RPS(std::ostream& o = std::cout,
+                             enum angleDir ad = angleDir::anticlockwise,
+                             F rps = 1.0, // rotations per second
+                             F begSecs = 0, F fromAngle = 0, F toAngle = 360) const;
+  void animate_rotate_at_RPM(std::ostream& o = std::cout,
+                             enum angleDir ad = angleDir::anticlockwise,
+                             F rpm = 60.0, // RPM = rotations per minute
+                             F begSecs = 0, F fromAngle = 0, F toAngle = 360) const;
 
   //
   wheel(F cx=0.0, F cy=0.0, F r=100, size_t n=16, F sa=0.0)
@@ -85,6 +93,24 @@ void wheel<F>::animate_rotate(std::ostream& o, enum angleDir ad,
   o <<   " to=\"" <<    toAngle << ' ' << get_cx() << ' ' << get_cy() << "\"";
   o << " repeatCount=\"indefinite\"/>";
 };
+
+template <typename F>
+void wheel<F>::animate_rotate_at_RPS(std::ostream& o,
+                             enum angleDir ad,
+                             F rps, // rotations per second
+                             F begSecs, F fromAngle, F toAngle) const
+  {
+    animate_rotate(o, ad, 1 / rps, begSecs, fromAngle, toAngle);
+  };
+template <typename F>
+void wheel<F>::animate_rotate_at_RPM(std::ostream& o,
+                             enum angleDir ad,
+                             F rpm, // RPM = rotations per minute
+                             F begSecs, F fromAngle, F toAngle) const
+  {
+    animate_rotate(o, ad, 60 / rpm, begSecs, fromAngle, toAngle);
+  };
+
 
 template <typename F>
 void wheel<F>::set_num_parts(std::size_t n) {
