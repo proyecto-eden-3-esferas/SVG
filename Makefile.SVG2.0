@@ -1,0 +1,63 @@
+CLANG     = clang++ -std=c++2b
+Gplusplus =     c++ -std=c++23
+
+# Directory variables with no trailing slash (/)
+DropboxDir = ~/Dropbox
+PREVIOUS_SVG_DIR = ../SVG
+CppCodeDir = ../cpp_code
+MAKEFILE_RENAME = Makefile.SVG2.0
+README = Readme.SVG2.0
+README_MD = $(README).md
+NAMED_TYPE_SRC = ../cpp_code/NamedType.h
+RESULT_FILES = *.html *.xhtml *.svg
+
+%: %.cpp
+	c++    -std=c++23 $<  -o $@
+
+
+
+%.o: %.cpp
+	date
+	g++ -DSEPARATE_COMPILATION -DPRINT_TO_COUT -c -std=c++23 $<
+	date
+
+
+
+RESOLVE = xmllint --xinclude
+svg.my-images.html: svg.my-images.inc.html *.svg
+	$(RESOLVE) --output $@   $<
+
+
+
+NamedType.h: $(NAMED_TYPE_SRC)
+	cp $(NAMED_TYPE_SRC) NamedType.h
+
+MATH_HEADERS = trigonometry.h numerical.h geometry_2d.h NamedType.h
+
+trigonometry: trigonometry.test.cpp trigonometry.h NamedType.h
+	c++    -std=c++23 $<  -o $@
+numerical:    numerical.test.cpp    numerical.h    NamedType.h
+	c++    -std=c++23 $<  -o $@
+geometry_2d: geometry_2d.test.cpp $(MATH_HEADERS)
+	c++    -std=c++23 $<  -o $@
+
+
+EXECUTABLES = trigonometry numerical geometry_2d
+
+#HTMLS =
+
+clean_executables:
+	$(RM) a.out *.test
+	$(RM) $(EXECUTABLES)
+
+clean_all_but_result_files:
+	$(RM) a.out *.test *.o
+	$(RM) $(EXECUTABLES)
+
+update_from_previous_svg:
+	cp --update $(PREVIOUS_SVG_DIR)/README.md ./README.Previous-SVG.md
+
+
+save_to_Dropbox:
+	cp --update Makefile                               $(DropboxDir)/SVG2.0/$(MAKEFILE_RENAME)
+	cp --update *.h *.cpp $(README_MD) $(RESULT_FILES) $(DropboxDir)/SVG2.0/
