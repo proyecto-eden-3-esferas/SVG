@@ -188,8 +188,37 @@ PostScriptFile.test: PostScriptFile.test.cpp PostScriptFile.h PostScriptFile.cpp
 	g++ -std=c++23 -DTEST_UNDO_CHANGE $<  -o $@
 
 
-boosted.*.test: boosted.*.test.cpp boosted.*.h boosted.*.cpp
-	g++ -std=c++23 $<  -o $@
+
+BOOSTED_BLOCK_SRC = boosted.block.h boosted.block.cpp
+# Annoyingly, separate compilation of slim source still takes a lot of time
+# possibly due to the Boost.Geometry burocracy...
+boosted.block.o:        $(BOOSTED_BLOCK_SRC) boosted.block_diagram.h NamedType.h
+	date
+	g++ -DSEPARATE_COMPILATION -std=c++23 -c boosted.block.cpp
+	date
+boosted.block.test.o: boosted.block.test.cpp boosted.block_diagram.h NamedType.h boosted.block.h
+	date
+	g++ -DSEPARATE_COMPILATION -std=c++23 -c boosted.block.test.cpp
+	date
+boosted.block.test: boosted.block.o boosted.block.test.o
+	g++  boosted.block.o boosted.block.test.o -o $@
+boosted.block.sep-comp.test: boosted.block.test.cpp $(BOOSTED_BLOCK_SRC) boosted.block_diagram.h boosted.block.o
+	g++ -DSEPARATE_COMPILATION -std=c++23  boosted.block.o $<  -o $@
+
+
+
+BOOSTLIKE_SRC       = NamedType.h boost-like.point.h boost-like.block-diagram.h
+BOOSTLIKE_BOX_SRC   = $(BOOSTLIKE_SRC)     boost-like.box.h
+BOOSTLIKE_BLOCK_SRC = $(BOOSTLIKE_BOX_SRC) boost-like.block.h boosted.block.cpp
+boost-like.block.test: boost-like.block.test.cpp $(BOOSTLIKE_BLOCK_SRC)
+	g++ -std=c++23  $<  -o $@
+
+BOOSTLIKE_LABELED_BLOCK_SRC = $(BOOSTLIKE_BLOCK_SRC) boost-like.labeled_block.h boost-like.labeled_block.cpp
+boost-like.labeled_block.test: boost-like.labeled_block.test.cpp $(BOOSTLIKE_LABELED_BLOCK_SRC)
+	g++ -std=c++23  $<  -o $@
+
+
+
 
 
 clean_former:
