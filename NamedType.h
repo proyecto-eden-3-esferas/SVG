@@ -2,24 +2,27 @@
 #define NAMED_TYPE_H
 
 /* This file defines class NamedType<T,TAG>
- * and its partial specializations for TAG,
- * thereby obtaining template classes for measurements
- * such as Kelvin<FLOAT>, Radian<FLOAT> and so on.
+   and its partial specializations for TAG,
+   thereby obtaining template classes for measurements
+   such as Kelvin<FLOAT>, Radian<FLOAT> and so on.
+ * This template class was proposed by Jonathan Boccara
+ * It takes input parameters by value and does not defines a move copy constructor
+   (unlike Boccara's class)
  *
+
  * TODO:
- * [x] Change Sexagesimal into Sexagesimal
  * [ ] Compare with user-defined literals.
  *     Which is better?
  */
 
 #include <iostream>
+#include <numbers>
 
 template <typename T, typename TAG>
 class NamedType
 {
 public:
-    explicit NamedType(T const& val) : value(          val)  {};
-    explicit NamedType(T&& val)      : value(std::move(val)) {};
+    explicit NamedType(T val) : value(          val)  {};
     T&       get()       { return value; }
     T const& get() const { return value; }
 private:
@@ -47,9 +50,8 @@ struct PerCentTag{};
 template <typename FLOAT>
 class NamedType<FLOAT,PerCentTag> {
 public:
-  explicit NamedType(const NamedType<FLOAT,PerOneTag>& pop) : value(pop.get() * 100.0) {};
-  explicit NamedType(const                     FLOAT & val) : value(             val)  {};
-  explicit NamedType(FLOAT&& val)      : value(std::move(val)) {};
+  /*explicit */NamedType(NamedType<FLOAT,PerOneTag> pop) : value(pop.get() * 100.0) {};
+  explicit NamedType(          FLOAT            val) : value(val)               {};
   FLOAT&       get()       { return value; }
   FLOAT const& get() const { return value; }
 private:
@@ -58,9 +60,8 @@ private:
 template <typename FLOAT>
 class NamedType<FLOAT,PerOneTag> {
 public:
-  explicit NamedType(const NamedType<FLOAT,PerCentTag>& pcp) : value(pcp.get() / 100.0) {};
-  explicit NamedType(const FLOAT & val)                      : value(val)               {};
-  explicit NamedType(FLOAT&& val)      : value(std::move(val)) {};
+  /*explicit */NamedType(NamedType<FLOAT,PerCentTag> pcp) : value(pcp.get() / 100.0) {};
+  explicit NamedType(          FLOAT             val) : value(val)               {};
   FLOAT&       get()       { return value; }
   FLOAT const& get() const { return value; }
 private:
@@ -73,10 +74,8 @@ struct SexagesimalsTag {};
 template <typename FLOAT>
 class NamedType<FLOAT,RadiansTag> {
 public:
-  explicit NamedType(const NamedType<FLOAT,SexagesimalsTag>& deg) :
-    value( (deg.get() / 180) * std::numbers::pi_v<FLOAT>) {};
-  explicit NamedType(const                     FLOAT & val) : value(             val)  {};
-  explicit NamedType(FLOAT&& val)      : value(std::move(val)) {};
+  NamedType(NamedType<FLOAT,SexagesimalsTag> deg) : value( (deg.get() / 180) * std::numbers::pi_v<FLOAT>) {};
+  explicit  NamedType(FLOAT                  val) : value(val)  {};
   FLOAT&       get()       { return value; }
   FLOAT const& get() const { return value; }
 private:
@@ -85,10 +84,8 @@ private:
 template <typename FLOAT>
 class NamedType<FLOAT,SexagesimalsTag> {
 public:
-  explicit NamedType(const NamedType<FLOAT,RadiansTag>& rad) :
-    value( ( rad.get() / std::numbers::pi_v<FLOAT>) * 180 ) {};
-  explicit NamedType(const                     FLOAT & val) : value(             val)  {};
-  explicit NamedType(FLOAT&& val)      : value(std::move(val)) {};
+  NamedType(NamedType<FLOAT,RadiansTag> rad) : value( ( rad.get() / std::numbers::pi_v<FLOAT>) * 180 ) {};
+  explicit NamedType(FLOAT val) : value(val)  {};
   FLOAT&       get()       { return value; }
   FLOAT const& get() const { return value; }
 private:
@@ -102,12 +99,11 @@ struct FahrenheitTag {};
 template <typename FLOAT>
 class NamedType<FLOAT,KelvinTag> {
 public:
-  explicit NamedType(const NamedType<FLOAT,CelsiusTag>   & cel) :
+  NamedType(const NamedType<FLOAT,CelsiusTag>   & cel) :
     value(  cel.get()           + 273.15) {};
-  explicit NamedType(const NamedType<FLOAT,FahrenheitTag>& fah) :
+  NamedType(const NamedType<FLOAT,FahrenheitTag>& fah) :
     value( (fah.get() - 32)*5/9 + 273.15) {};
-  explicit NamedType(const FLOAT & val) : value(val)  {};
-  explicit NamedType(      FLOAT&& val) : value(std::move(val)) {};
+  explicit NamedType(FLOAT val) : value(val)  {};
   FLOAT&       get()       { return value; }
   FLOAT const& get() const { return value; }
 private:
@@ -116,12 +112,9 @@ private:
 template <typename FLOAT>
 class NamedType<FLOAT,FahrenheitTag> {
 public:
-  explicit NamedType(const NamedType<FLOAT,KelvinTag>& kel) :
-    value( (kel.get() * 9/5) + 32 + 273.15) {};
-  explicit NamedType(const NamedType<FLOAT,CelsiusTag>& cel) :
-    value( (cel.get() * 9/5) + 32 ) {};
-  explicit NamedType(const FLOAT & val)                      : value(val)               {};
-  explicit NamedType(FLOAT&& val)      : value(std::move(val)) {};
+  NamedType(NamedType<FLOAT,KelvinTag> kel)  : value( (kel.get() * 9/5) + 32 + 273.15) {};
+  NamedType(NamedType<FLOAT,CelsiusTag> cel) : value( (cel.get() * 9/5) + 32 ) {};
+  explicit NamedType(FLOAT val)              : value(val)               {};
   FLOAT&       get()       { return value; }
   FLOAT const& get() const { return value; }
 private:
@@ -130,12 +123,10 @@ private:
 template <typename FLOAT>
 class NamedType<FLOAT,CelsiusTag> {
 public:
-  explicit NamedType(const NamedType<FLOAT,KelvinTag>& kel) :
+  NamedType(NamedType<FLOAT,KelvinTag> kel) :
     value(kel.get() - 273.15) {};
-  explicit NamedType(const NamedType<FLOAT,FahrenheitTag>& fah) :
-    value( (fah.get() - 32)*5/9 ) {};
-  explicit NamedType(const FLOAT & val)                      : value(val)               {};
-  explicit NamedType(FLOAT&& val)      : value(std::move(val)) {};
+  NamedType(NamedType<FLOAT,FahrenheitTag> fah) : value( (fah.get() - 32)*5/9 ) {};
+  explicit NamedType( FLOAT val)                      : value(val)               {};
   FLOAT&       get()       { return value; }
   FLOAT const& get() const { return value; }
 private:
@@ -173,6 +164,8 @@ template <typename FLOAT = double>
 using Radian = NamedType<FLOAT, struct RadiansTag>;
 template <typename FLOAT = double>
 using Sexagesimal = NamedType<FLOAT, struct SexagesimalsTag>;
+template <typename FLOAT = double>
+using Degree      = NamedType<FLOAT, struct SexagesimalsTag>;
 
 
 /*
